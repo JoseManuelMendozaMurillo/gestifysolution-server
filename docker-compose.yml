@@ -15,7 +15,7 @@ services:
       - ./:/administrative-app
     working_dir: /administrative-app
     environment:
-      - DATABASE_URL=jdbc:mysql://administrative-app-db:3306/${MYSQL_DATABASE}
+      - DATABASE_URL=jdbc:mysql://administrative-app-db:${MYSQL_PORT}/${MYSQL_DATABASE}
     depends_on:
       - administrative-app-db
 
