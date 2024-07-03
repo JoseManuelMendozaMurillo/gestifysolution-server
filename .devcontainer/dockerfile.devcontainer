@@ -1,0 +1,9 @@
+ 
+# Image based on Red Hat 
+FROM maven:3.9.8-amazoncorretto-21-al2023
+
+# Installation of additional needed software
+RUN yum update -y && \
+    yum install -y tar && \
+    yum install -y gzip && \
+    yum install -y tar gzip git ncurses 

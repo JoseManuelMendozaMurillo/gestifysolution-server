@@ -1,0 +1,35 @@
+version: '3.9'
+
+services:
+  administrative-app-api:
+    build: 
+      context: .
+      dockerfile: dockerfile
+    image: ${DOCKER_SERVER_IMAGE_NAME}:${DOCKER_SERVER_IMAGE_VERSION}  
+    container_name: ${DOCKER_SERVER_CONTAINER_NAME}
+    ports:
+      - ${SERVER_PORT}:8080
+    links:
+      - administrative-app-db
+    volumes:
+      - ./:/administrative-app
+    working_dir: /administrative-app
+    environment:
+      - DATABASE_URL=jdbc:mysql://administrative-app-db:3306/${MYSQL_DATABASE}
+    depends_on:
+      - administrative-app-db
+
+  administrative-app-db:
+    image: mysql:8.4.0
+    container_name: ${DOCKER_DATABASE_CONTAINER_NAME}
+    ports:
+      - ${MYSQL_PORT}:3306
+    volumes:
+      - administrative-app-db-data:/var/lib/mysql
+    environment:
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+
+volumes:
+  administrative-app-db-data:
