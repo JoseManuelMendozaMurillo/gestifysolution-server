@@ -1,6 +1,14 @@
  # Image based on Red Hat 
 FROM maven:3.9.8-amazoncorretto-21-al2023
 
+# Set build arguments
+ARG ROOT_USER_PASSWORD
+
 # Installation of additional needed software
 RUN yum update -y && \
     yum install -y tar gzip git ncurses util-linux util-linux-user gnupg2 --allowerasing
+
+# Set root password
+RUN echo 'root:${ROOT_USER_PASSWORD}' | chpasswd
+
+USER vscode

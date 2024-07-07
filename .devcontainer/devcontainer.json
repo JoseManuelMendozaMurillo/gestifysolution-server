@@ -20,6 +20,7 @@
 		"ghcr.io/devcontainers/features/git:1": {}
 	},
 	
+
 	// Install all dependencies 
 	// "postCreateCommand": "mvn install",
 
