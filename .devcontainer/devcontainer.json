@@ -1,44 +1,57 @@
-// For format details, see https://aka.ms/devcontainer.json. For config options, see the
-// README at: https://github.com/devcontainers/templates/tree/main/src/docker-outside-of-docker-compose
 {
-	"name": "Development environment",
+	"name": "Ventuit development environment",
 
 	"dockerComposeFile": ["../docker-compose.yml", "docker-compose.devcontainer.yml"],
 	"service": "administrative-app-api",
+	"forwardPorts": [8080],
 	"runServices": ["administrative-app-db"],
-	"forwardPorts": ["${SERVER_PORT}", "${MYSQL_PORT}"],
-	
 	"shutdownAction": "stopCompose",
-	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+	"workspaceFolder": "/administrative-app",
 
 	// Use this environment variable if you need to bind mount your local source code into a new container.
 	"remoteEnv": {
-		"LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}"
+		"LOCAL_WORKSPACE_FOLDER": "/administrative-app"
 	},
 
 	"features": {
-		"ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
-			"version": "latest",
-			"enableNonRootDocker": "true",
-			"moby": "true"
-		},
 		"ghcr.io/devcontainers/features/common-utils:2": {
 			"configureZshAsDefaultShell": true
 		},
 		"ghcr.io/devcontainers/features/git:1": {}
-	}
+	},
 	
+	// Install all dependencies 
+	// "postCreateCommand": "mvn install",
 
+	// // Update dependencies and start the spring-boot project
+	// "postStartCommand": "mvn install",
 
+	// "postCreateCommand": "mvn clean install",
+	// "postStartCommand": "mvn clean install",
 
-	// Use 'postCreateCommand' to run commands after the container is created.
-	// "postCreateCommand": "docker --version",
-
-	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
-	// "remoteUser": "root"
-
-	// TODO: Install the Code Spell Checker extension
-	// DOCUMENTATION: https://containers.dev/guide/dockerfile 
-	// 				  https://code.visualstudio.com/docs/devcontainers/create-dev-container#_extend-your-docker-compose-file-for-development
+	// Configure tool-specific properties.
+	"customizations": {
+		// Extensions recommended for the porject inside to development environment
+		"extensions": [
+			"vscjava.vscode-java-pack",
+			"vmware.vscode-boot-dev-pack",
+			"streetsidesoftware.code-spell-checker",
+			"eamodio.gitlens",
+			"usernamehw.errorlens", 
+			"gruntfuggly.todo-tree"
+		],
+		// Configurations to vscode inside to development environment
+		"settings": {
+			"java.configuration.runtimes": [
+				{
+				  "name": "Java-21",
+				  "path": "/usr/lib/jvm/java-21-amazon-corretto",
+				  "default":  true
+				}
+			],
+			// General settings to vscode
+			"editor.formatOnSave": true
+		}
+	}
 }
 

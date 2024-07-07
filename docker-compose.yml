@@ -11,9 +11,6 @@ services:
       - ${SERVER_PORT}:8080
     links:
       - administrative-app-db
-    volumes:
-      - ./:/administrative-app
-    working_dir: /administrative-app
     environment:
       - DATABASE_URL=jdbc:mysql://administrative-app-db:${MYSQL_PORT}/${MYSQL_DATABASE}
     depends_on:

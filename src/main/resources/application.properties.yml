@@ -1,3 +1,18 @@
 spring:
     application:
         name: adminstrativeapp
+    datasource:
+        url: ${DATABASE_URL}
+        username: ${MYSQL_USER}
+        password: ${MYSQL_PASSWORD}
+        driver-class-name: com.mysql.cj.jdbc.Driver
+    jpa:
+        hibernate:
+            ddl-auto: create-drop
+        database-platform: org.hibernate.dialect.MySQL8Dialect
+        show-sql: true
+
+server:
+    servlet:
+        context-path: /api/v1
+
