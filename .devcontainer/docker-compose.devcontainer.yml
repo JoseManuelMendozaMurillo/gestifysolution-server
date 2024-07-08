@@ -4,16 +4,14 @@ services:
   administrative-app-api:
     build: 
       context: ./.devcontainer/
+      args:
+        ROOT_USER_PASSWORD: ${ROOT_USER_PASSWORD}
       dockerfile: dockerfile.devcontainer
     volumes:
-      - ./:/administrative-app
-    working_dir: /administrative-app
+      - ./:/workspace/administrative-app
+    working_dir: /workspace/administrative-app
     env_file:
       - ./.devcontainer/.env.dev
-    
-    # Overrides default command so things don't shut down after the process ends.
     # entrypoint: /usr/local/share/docker-init.sh
     command: sleep infinity 
-    # stdin_open: true
-    # tty: true
 

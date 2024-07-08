@@ -1,58 +1,55 @@
 {
 	"name": "Ventuit development environment",
-
-	"dockerComposeFile": ["../docker-compose.yml", "docker-compose.devcontainer.yml"],
+	"dockerComposeFile": [
+		"../docker-compose.yml",
+		"docker-compose.devcontainer.yml"
+	],
 	"service": "administrative-app-api",
-	"forwardPorts": [8080],
-	"runServices": ["administrative-app-db"],
+	"forwardPorts": [
+		8080
+	],
+	"runServices": [
+		"administrative-app-db"
+	],
 	"shutdownAction": "stopCompose",
-	"workspaceFolder": "/administrative-app",
-
+	"workspaceFolder": "/workspace/administrative-app",
 	// Use this environment variable if you need to bind mount your local source code into a new container.
 	"remoteEnv": {
-		"LOCAL_WORKSPACE_FOLDER": "/administrative-app"
+		"LOCAL_WORKSPACE_FOLDER": "/workspace/administrative-app"
 	},
-
 	"features": {
 		"ghcr.io/devcontainers/features/common-utils:2": {
 			"configureZshAsDefaultShell": true
 		},
 		"ghcr.io/devcontainers/features/git:1": {}
 	},
-	
 
-	// Install all dependencies 
 	// "postCreateCommand": "mvn install",
-
-	// // Update dependencies and start the spring-boot project
-	// "postStartCommand": "mvn install",
-
-	// "postCreateCommand": "mvn clean install",
-	// "postStartCommand": "mvn clean install",
 
 	// Configure tool-specific properties.
 	"customizations": {
-		// Extensions recommended for the porject inside to development environment
-		"extensions": [
-			"vscjava.vscode-java-pack",
-			"vmware.vscode-boot-dev-pack",
-			"streetsidesoftware.code-spell-checker",
-			"eamodio.gitlens",
-			"usernamehw.errorlens", 
-			"gruntfuggly.todo-tree"
-		],
 		// Configurations to vscode inside to development environment
-		"settings": {
-			"java.configuration.runtimes": [
-				{
-				  "name": "Java-21",
-				  "path": "/usr/lib/jvm/java-21-amazon-corretto",
-				  "default":  true
-				}
+		"vscode": {
+			// Extensions recommended for the project inside to development environment
+			"extensions": [
+				"vscjava.vscode-java-pack",
+				"vmware.vscode-boot-dev-pack",
+				"streetsidesoftware.code-spell-checker",
+				"eamodio.gitlens",
+				"usernamehw.errorlens",
+				"gruntfuggly.todo-tree"
 			],
 			// General settings to vscode
-			"editor.formatOnSave": true
+			"settings": {
+				"java.configuration.runtimes": [
+					{
+						"name": "JavaSE-21",
+						"path": "/usr/lib/jvm/java-21-amazon-corretto",
+						"default": true
+					}
+				],
+				"editor.formatOnSave": true
+			}
 		}
 	}
 }
-
