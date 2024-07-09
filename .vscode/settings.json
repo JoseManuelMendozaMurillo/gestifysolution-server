@@ -12,5 +12,6 @@
         "usernamehw",
         "Ventuit",
         "vscjava"
-    ]
+    ],
+    "java.configuration.updateBuildConfiguration": "interactive"
 }

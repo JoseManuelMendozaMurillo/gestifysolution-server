@@ -6,7 +6,7 @@ ARG ROOT_USER_PASSWORD
 
 # Installation of additional needed software
 RUN yum update -y && \
-    yum install -y tar gzip git ncurses util-linux util-linux-user gnupg2 --allowerasing
+    yum install -y tar gzip ncurses util-linux util-linux-user gnupg2 --allowerasing
 
 # Set root password
 RUN echo 'root:${ROOT_USER_PASSWORD}' | chpasswd

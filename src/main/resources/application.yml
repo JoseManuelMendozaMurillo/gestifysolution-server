@@ -3,8 +3,8 @@ spring:
         name: adminstrativeapp
     datasource:
         url: ${DATABASE_URL}
-        username: ${MYSQL_USER}
-        password: ${MYSQL_PASSWORD}
+        username: ${DATABASE_USER}
+        password: ${DATABASE_PASSWORD}
         driver-class-name: com.mysql.cj.jdbc.Driver
     jpa:
         hibernate:

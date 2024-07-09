@@ -1,32 +1,35 @@
 version: '3.9'
 
 services:
+
   administrative-app-api:
+    extends:
+      file: ./docker/docker-compose.base.yml
+      service: administrative-app-api-base
     build: 
       context: .
       dockerfile: dockerfile
-    image: ${DOCKER_SERVER_IMAGE_NAME}:${DOCKER_SERVER_IMAGE_VERSION}  
-    container_name: ${DOCKER_SERVER_CONTAINER_NAME}
-    ports:
-      - ${SERVER_PORT}:8080
-    links:
-      - administrative-app-db
     environment:
       - DATABASE_URL=jdbc:mysql://administrative-app-db:${MYSQL_PORT}/${MYSQL_DATABASE}
     depends_on:
       - administrative-app-db
+    networks:
+      - backend
+    env_file:
+      - ./.env
 
   administrative-app-db:
-    image: mysql:8.4.0
-    container_name: ${DOCKER_DATABASE_CONTAINER_NAME}
-    ports:
-      - ${MYSQL_PORT}:3306
+    extends:
+      file: ./docker/docker-compose.base.yml
+      service: administrative-app-db-base
     volumes:
       - administrative-app-db-data:/var/lib/mysql
-    environment:
-      - MYSQL_USER=${MYSQL_USER}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-      - MYSQL_DATABASE=${MYSQL_DATABASE}
+    networks:
+      - backend
 
 volumes:
   administrative-app-db-data:
+
+networks:
+  backend:
+    driver: bridge

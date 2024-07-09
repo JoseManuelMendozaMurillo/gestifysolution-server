@@ -1,17 +1,43 @@
 version: '3.9'
 
 services:
-  administrative-app-api:
+
+  administrative-app-api-dev:
+    extends:
+      file: ../docker/docker-compose.base.yml
+      service: administrative-app-api-base
     build: 
-      context: ./.devcontainer/
+      context: .
       args:
         ROOT_USER_PASSWORD: ${ROOT_USER_PASSWORD}
       dockerfile: dockerfile.devcontainer
-    volumes:
-      - ./:/workspace/administrative-app
     working_dir: /workspace/administrative-app
-    env_file:
-      - ./.devcontainer/.env.dev
-    # entrypoint: /usr/local/share/docker-init.sh
-    command: sleep infinity 
+    volumes:
+      - ../:/workspace/administrative-app
+    networks:
+      - backend-dev
+    environment:
+      - DATABASE_URL=jdbc:mysql://administrative-app-db-dev:3306/${MYSQL_DATABASE}
+      - DATABASE_USER=root
+      - DATABASE_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    depends_on:
+      - administrative-app-db-dev
+    command: sleep infinity
+    
+  administrative-app-db-dev:
+    extends:
+      file: ../docker/docker-compose.base.yml
+      service: administrative-app-db-base
+    volumes:
+      - administrative-app-db-data-dev:/var/lib/mysql
+    ports:
+      - ${MYSQL_PORT}:3306
+    networks:
+      - backend-dev
 
+volumes:
+  administrative-app-db-data-dev:
+
+networks:
+  backend-dev:
+    driver: bridge
