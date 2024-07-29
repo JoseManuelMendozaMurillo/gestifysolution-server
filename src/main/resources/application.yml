@@ -12,6 +12,14 @@ spring:
         database-platform: org.hibernate.dialect.MySQL8Dialect
         show-sql: true
 
+springdoc:
+    swagger-ui:
+        enabled: true
+        path: /docs/swagger-ui.html
+    api-docs:
+        enabled: true
+        path: /docs/api-docs
+        
 server:
     servlet:
         context-path: /api/v1
