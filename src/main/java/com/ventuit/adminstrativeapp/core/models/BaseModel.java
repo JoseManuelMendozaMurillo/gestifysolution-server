@@ -10,10 +10,12 @@ import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.PrePersist;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 @SuperBuilder
 @AllArgsConstructor
+@NoArgsConstructor
 @Data
 @MappedSuperclass
 public class BaseModel {

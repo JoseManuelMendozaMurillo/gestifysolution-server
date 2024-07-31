@@ -25,11 +25,11 @@ public interface CrudControllerInterface<DTO, ID> {
     @ResponseBody
     ResponseEntity<?> create(@RequestBody DTO dto);
 
-    @PutMapping()
+    @PutMapping("/{id}")
     @ResponseBody
     ResponseEntity<String> update(@PathVariable ID id, @RequestBody DTO dto);
 
-    @DeleteMapping()
+    @DeleteMapping("/{id}")
     @ResponseBody
     ResponseEntity<String> delete(@PathVariable ID id);
 }
