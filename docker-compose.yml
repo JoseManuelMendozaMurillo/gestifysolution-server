@@ -10,7 +10,7 @@ services:
       context: .
       dockerfile: dockerfile
     environment:
-      - DATABASE_URL=jdbc:mysql://administrative-app-db:${MYSQL_PORT}/${MYSQL_DATABASE}
+      - DATABASE_URL=jdbc:mysql://administrative-app-db:3306/${MYSQL_DATABASE}
     depends_on:
       - administrative-app-db
     networks:
@@ -23,7 +23,19 @@ services:
       file: ./docker/docker-compose.base.yml
       service: administrative-app-db-base
     volumes:
+      - ./docker/provisions/mysql/init:/docker-entrypoint-initdb.d
       - administrative-app-db-data:/var/lib/mysql
+    networks:
+      - backend
+  
+  administrative-app-keycloak:
+    extends:
+      file: ./docker/docker-compose.base.yml
+      service: administrative-app-keycloak-base
+    environment:
+      - KC_DB_URL=jdbc:mysql://administrative-app-db:3306/${KEYCLOAK_DATABASE_NAME}
+    depends_on:
+      - administrative-app-db
     networks:
       - backend
 

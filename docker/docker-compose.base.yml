@@ -15,4 +15,17 @@ services:
       - ${MYSQL_PORT}:3306
     environment:
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-      - MYSQL_DATABASE=${MYSQL_DATABASE}
+  
+  administrative-app-keycloak-base:
+    image: quay.io/keycloak/keycloak:25.0.2
+    container_name: ${DOCKER_KEYCLOAK_CONTAINER_NAME}
+    ports:
+      - ${KEYCLOAK_PORT}:8080
+    environment:
+      - KC_HEALTH_ENABLED=${KEYCLOAK_HEALTH_CHECK}
+      - KC_METRICS_ENABLED=${KEYCLOAK_METRICS}
+      - KC_DB=${KEYCLOAK_DATABASE_PROVIDER}
+      - KC_DB_USERNAME=root
+      - KC_DB_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - KEYCLOAK_ADMIN=${KEYCLOAK_ADMIN_USER}
+      - KEYCLOAK_ADMIN_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD}

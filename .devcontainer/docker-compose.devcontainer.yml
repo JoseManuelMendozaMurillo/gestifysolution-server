@@ -29,11 +29,26 @@ services:
       file: ../docker/docker-compose.base.yml
       service: administrative-app-db-base
     volumes:
+      - ../docker/provisions/mysql/init:/docker-entrypoint-initdb.d
       - administrative-app-db-data-dev:/var/lib/mysql
-    ports:
-      - ${MYSQL_PORT}:3306
+    environment:
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - KEYCLOAK_DATABASE_NAME=${KEYCLOAK_DATABASE_NAME}
     networks:
       - backend-dev
+  
+  administrative-app-keycloak-dev:
+    extends:
+      file: ../docker/docker-compose.base.yml
+      service: administrative-app-keycloak-base
+    environment:
+      - KC_DB_URL=jdbc:mysql://administrative-app-db-dev:3306/${KEYCLOAK_DATABASE_NAME}
+    depends_on:
+      - administrative-app-db-dev
+    networks:
+      - backend-dev
+    command:
+      - "start-dev"
 
 volumes:
   administrative-app-db-data-dev:
