@@ -1,13 +1,16 @@
 package com.ventuit.adminstrativeapp.bosses.models;
 
 import java.sql.Date;
+import java.util.Set;
 
 import com.ventuit.adminstrativeapp.core.models.BaseModel;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -39,5 +42,8 @@ public class BossesModel extends BaseModel {
 
     @Column(nullable = true)
     private Date birthdate;
+
+    @OneToMany(mappedBy = "boss", cascade = CascadeType.ALL)
+    private Set<BossesBusinessesModel> bossesBusinesses;
 
 }

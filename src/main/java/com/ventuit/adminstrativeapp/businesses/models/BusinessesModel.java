@@ -2,15 +2,19 @@ package com.ventuit.adminstrativeapp.businesses.models;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 import org.hibernate.annotations.Check;
 
+import com.ventuit.adminstrativeapp.bosses.models.BossesBusinessesModel;
 import com.ventuit.adminstrativeapp.core.models.ExtendedBaseModel;
 import com.ventuit.adminstrativeapp.utils.RegexUtils;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Pattern;
@@ -67,4 +71,6 @@ public class BusinessesModel extends ExtendedBaseModel {
     @JoinColumn(name = "tax_regimen_id", nullable = false)
     private TypesRegimensTaxesModel taxRegimen;
 
+    @OneToMany(mappedBy = "businesses", cascade = CascadeType.ALL)
+    private Set<BossesBusinessesModel> bossesBusinesses;
 }
