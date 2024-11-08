@@ -53,10 +53,10 @@ public class BusinessesModel extends ExtendedBaseModel {
     @Column(nullable = false, columnDefinition = "boolean default false")
     private boolean active;
 
-    @Column(nullable = true)
+    @Column(nullable = true, insertable = false)
     private Integer activeChangedBy;
 
-    @Column(nullable = true)
+    @Column(nullable = true, insertable = false)
     private LocalDateTime activeChangedAt;
 
     @OneToOne()

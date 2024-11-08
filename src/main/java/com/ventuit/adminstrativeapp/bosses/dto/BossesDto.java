@@ -2,6 +2,9 @@ package com.ventuit.adminstrativeapp.bosses.dto;
 
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.Set;
+
+import com.ventuit.adminstrativeapp.bosses.models.BossesBusinessesModel;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -27,6 +30,8 @@ public class BossesDto {
     private String phone;
 
     private Date birthdate;
+
+    private Set<BossesBusinessesModel> bossesBusinesses;
 
     private LocalDateTime createdAt;
 

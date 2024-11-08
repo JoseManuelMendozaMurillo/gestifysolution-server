@@ -3,6 +3,7 @@ package com.ventuit.adminstrativeapp.bosses.mappers;
 import java.util.List;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants.ComponentModel;
 import org.mapstruct.MappingTarget;
 
@@ -20,9 +21,14 @@ public abstract class BossesMapper implements CrudMapperInterface<BossesDto, Bos
     public abstract BossesDto toDto(BossesModel entity);
 
     @Override
+    @Mapping(target = "bossesBusinesses", ignore = true)
+    @Mapping(target = "id", ignore = true)
     public abstract BossesModel toEntity(BossesDto dto);
 
     @Override
+    @Mapping(target = "bossesBusinesses", ignore = true)
+    @Mapping(target = "id", ignore = true)
+    // TODO: get deletedAt field from DB
     public abstract BossesModel updateFromDto(BossesDto dto, @MappingTarget BossesModel entity);
 
 }

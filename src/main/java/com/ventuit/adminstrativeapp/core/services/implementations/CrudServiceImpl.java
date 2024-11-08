@@ -3,13 +3,14 @@ package com.ventuit.adminstrativeapp.core.services.implementations;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.http.ResponseEntity;
 
 import com.ventuit.adminstrativeapp.core.mappers.interfaces.CrudMapperInterface;
+import com.ventuit.adminstrativeapp.core.models.BaseModel;
+import com.ventuit.adminstrativeapp.core.repositories.BaseRepository;
 import com.ventuit.adminstrativeapp.core.services.interfaces.CrudServiceInterface;
 
-public abstract class CrudServiceImpl<DTO, ENTITY, ID, MAPPER extends CrudMapperInterface<DTO, ENTITY>, REPOSITORY extends JpaRepository<ENTITY, ID>>
+public abstract class CrudServiceImpl<DTO, ENTITY extends BaseModel, ID, MAPPER extends CrudMapperInterface<DTO, ENTITY>, REPOSITORY extends BaseRepository<ENTITY, ID>>
         implements CrudServiceInterface<DTO, ID> {
 
     protected REPOSITORY repository;
@@ -22,12 +23,12 @@ public abstract class CrudServiceImpl<DTO, ENTITY, ID, MAPPER extends CrudMapper
 
     @Override
     public List<DTO> getAll() {
-        return this.mapper.entitiesToDtos(this.repository.findAll());
+        return this.mapper.entitiesToDtos(this.repository.findByDeletedAtIsNull());
     }
 
     @Override
     public DTO getById(ID id) {
-        Optional<ENTITY> optionalEntity = this.repository.findById(id);
+        Optional<ENTITY> optionalEntity = this.repository.findByIdAndDeletedAtIsNull(id);
 
         if (!optionalEntity.isPresent())
             return null;
@@ -65,10 +66,10 @@ public abstract class CrudServiceImpl<DTO, ENTITY, ID, MAPPER extends CrudMapper
             return true;
 
         // Deleting the entity
-        this.repository.deleteById(id);
+        this.repository.softRemoveById(id);
 
         // Checking if the entity was deleted
-        return !this.repository.findById(id).isPresent();
+        return !this.repository.findByIdAndDeletedAtIsNull(id).isPresent();
     }
 
 }

@@ -2,12 +2,17 @@ package com.ventuit.adminstrativeapp.core.models;
 
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+
+import jakarta.annotation.PreDestroy;
 import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,6 +23,8 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @Data
 @MappedSuperclass
+@FilterDef(name = "deletedFilter")
+@Filter(name = "deletedFilter", condition = "deleted_at IS NULL")
 public class BaseModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,13 +40,17 @@ public class BaseModel {
     private LocalDateTime deletedAt;
 
     @PrePersist
-    /**
-     * This method is annotated with @PrePersist, indicating that it will be
-     * executed before the entity is persisted (before it is inserted into the
-     * database for the first time).
-     */
     protected void onCreate() {
-        // Set the 'createdAt' field to the current date and time
         this.createdAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    @PreDestroy
+    protected void onDestroy() {
+        this.deletedAt = LocalDateTime.now();
     }
 }

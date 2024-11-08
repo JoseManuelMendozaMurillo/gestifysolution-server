@@ -1,11 +1,11 @@
 package com.ventuit.adminstrativeapp.businesses.repositories;
 
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.ventuit.adminstrativeapp.businesses.models.IndustriesModel;
+import com.ventuit.adminstrativeapp.core.repositories.BaseRepository;
 
 @Repository
-public interface IndustriesRepository extends JpaRepository<IndustriesModel, Integer> {
+public interface IndustriesRepository extends BaseRepository<IndustriesModel, Integer> {
 
 }

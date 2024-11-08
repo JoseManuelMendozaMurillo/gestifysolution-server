@@ -4,7 +4,9 @@ import java.util.List;
 
 import org.mapstruct.MappingTarget;
 
-public interface CrudMapperInterface<DTO, ENTITY> {
+import com.ventuit.adminstrativeapp.core.models.BaseModel;
+
+public interface CrudMapperInterface<DTO, ENTITY extends BaseModel> {
 
     ENTITY toEntity(DTO dto);
 
