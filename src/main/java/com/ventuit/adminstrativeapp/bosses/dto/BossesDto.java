@@ -1,23 +1,24 @@
 package com.ventuit.adminstrativeapp.bosses.dto;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Set;
 
 import com.ventuit.adminstrativeapp.bosses.models.BossesBusinessesModel;
+import com.ventuit.adminstrativeapp.core.dto.BaseDto;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
-@Builder
+@EqualsAndHashCode(callSuper = true)
+@SuperBuilder
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class BossesDto {
-    private Integer id;
+public class BossesDto extends BaseDto {
 
     private String keycloakUserId;
 
@@ -32,10 +33,4 @@ public class BossesDto {
     private Date birthdate;
 
     private Set<BossesBusinessesModel> bossesBusinesses;
-
-    private LocalDateTime createdAt;
-
-    private LocalDateTime updatedAt;
-
-    private LocalDateTime deletedAt;
 }

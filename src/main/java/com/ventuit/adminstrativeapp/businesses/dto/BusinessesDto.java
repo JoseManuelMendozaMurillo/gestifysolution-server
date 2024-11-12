@@ -12,23 +12,24 @@ import com.ventuit.adminstrativeapp.businesses.models.TypesRegimensTaxesModel;
 import com.ventuit.adminstrativeapp.businesses.serialization.BusinessesTypeModelDeserializer;
 import com.ventuit.adminstrativeapp.businesses.serialization.IndustriesModelDeserializer;
 import com.ventuit.adminstrativeapp.businesses.serialization.TypesRegimensTaxesModelDeserializer;
+import com.ventuit.adminstrativeapp.core.dto.ExtendedBaseDto;
 import com.ventuit.adminstrativeapp.utils.RegexUtils;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
-@Builder
+@EqualsAndHashCode(callSuper = true)
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class BusinessesDto {
-
-    private Integer id;
+public class BusinessesDto extends ExtendedBaseDto {
 
     @NotBlank(message = "You must send the business's name")
     private String name;
@@ -61,17 +62,4 @@ public class BusinessesDto {
     private TypesRegimensTaxesModel taxRegimen;
 
     private Set<BossesBusinessesModel> bossesBusinesses;
-
-    @NotBlank(message = "You must send the id who is responsible to create this business")
-    private Integer createdBy;
-
-    private LocalDateTime createdAt;
-
-    private Integer updatedBy;
-
-    private LocalDateTime updatedAt;
-
-    private Integer deletedBy;
-
-    private LocalDateTime deletedAt;
 }

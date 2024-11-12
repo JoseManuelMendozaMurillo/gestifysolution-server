@@ -5,12 +5,13 @@ import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
 
+import com.ventuit.adminstrativeapp.core.dto.BaseDto;
 import com.ventuit.adminstrativeapp.core.mappers.interfaces.CrudMapperInterface;
 import com.ventuit.adminstrativeapp.core.models.BaseModel;
 import com.ventuit.adminstrativeapp.core.repositories.BaseRepository;
 import com.ventuit.adminstrativeapp.core.services.interfaces.CrudServiceInterface;
 
-public abstract class CrudServiceImpl<DTO, ENTITY extends BaseModel, ID, MAPPER extends CrudMapperInterface<DTO, ENTITY>, REPOSITORY extends BaseRepository<ENTITY, ID>>
+public abstract class CrudServiceImpl<DTO extends BaseDto, ENTITY extends BaseModel, ID, MAPPER extends CrudMapperInterface<DTO, ENTITY>, REPOSITORY extends BaseRepository<ENTITY, ID>>
         implements CrudServiceInterface<DTO, ID> {
 
     protected REPOSITORY repository;
@@ -54,7 +55,11 @@ public abstract class CrudServiceImpl<DTO, ENTITY extends BaseModel, ID, MAPPER 
             return false;
 
         ENTITY existingEntity = optionalEntity.get();
+
+        dto.setDeletedAt(existingEntity.getDeletedAt()); // preserve logical deletion when updating
+
         ENTITY updatedEntity = this.mapper.updateFromDto(dto, existingEntity);
+
         return updatedEntity != null; // Return true if the entity was updated successfully
     }
 

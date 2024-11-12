@@ -27,5 +27,11 @@ public abstract class BusinessesMapper implements CrudMapperInterface<Businesses
     @Override
     @Mapping(target = "bossesBusinesses", ignore = true)
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "deletedAt", ignore = true)
+    @Mapping(target = "deletedBy", ignore = true)
+    @Mapping(target = "updatedBy", ignore = true)
+    @Mapping(target = "createdBy", ignore = true)
     public abstract BusinessesModel updateFromDto(BusinessesDto dto, @MappingTarget BusinessesModel entity);
 }

@@ -28,7 +28,9 @@ public abstract class BossesMapper implements CrudMapperInterface<BossesDto, Bos
     @Override
     @Mapping(target = "bossesBusinesses", ignore = true)
     @Mapping(target = "id", ignore = true)
-    // TODO: get deletedAt field from DB
+    @Mapping(target = "deletedAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
     public abstract BossesModel updateFromDto(BossesDto dto, @MappingTarget BossesModel entity);
 
 }
