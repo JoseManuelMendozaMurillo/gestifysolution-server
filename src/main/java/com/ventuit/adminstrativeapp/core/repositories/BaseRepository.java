@@ -16,14 +16,41 @@ public interface BaseRepository<ENTITY extends BaseModel, ID> extends JpaReposit
 
     @Modifying
     @Transactional
-    default void softRemoveById(ID id) {
+    default void softDeleteById(ID id) {
         findById(id).ifPresent(entity -> {
             entity.setDeletedAt(LocalDateTime.now());
             save(entity);
         });
     }
 
+    @Modifying
+    @Transactional
+    default void softDelete(ENTITY entity) {
+        entity.setDeletedAt(LocalDateTime.now());
+        save(entity); // Save the entity to persist the soft deletion
+    }
+
+    @Modifying
+    @Transactional
+    default void restoreById(ID id) {
+        findByIdAndDeletedAtIsNotNull(id).ifPresent(entity -> {
+            entity.setDeletedAt(null);
+            save(entity);
+        });
+    }
+
+    @Modifying
+    @Transactional
+    default void restore(ENTITY entity) {
+        entity.setDeletedAt(null);
+        save(entity);
+    }
+
     List<ENTITY> findByDeletedAtIsNull();
 
     Optional<ENTITY> findByIdAndDeletedAtIsNull(ID id);
+
+    List<ENTITY> findByDeletedAtIsNotNull();
+
+    Optional<ENTITY> findByIdAndDeletedAtIsNotNull(ID id);
 }

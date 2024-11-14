@@ -26,8 +26,36 @@ public class CrudControllerImpl<DTO, ID, SERVICE extends CrudServiceInterface<DT
     }
 
     @Override
+    public ResponseEntity<List<DTO>> getAllActive() {
+        List<DTO> data = this.crudService.getAllActive();
+        return ResponseEntity.ok(data);
+    }
+
+    @Override
+    public ResponseEntity<List<DTO>> getAllInactive() {
+        List<DTO> data = this.crudService.getAllInactive();
+        return ResponseEntity.ok(data);
+    }
+
+    @Override
     public ResponseEntity<?> getById(ID id) {
         DTO record = this.crudService.getById(id);
+        if (record == null)
+            ResponseEntity.notFound().build();
+        return ResponseEntity.ok(record);
+    }
+
+    @Override
+    public ResponseEntity<?> getByActiveId(ID id) {
+        DTO record = this.crudService.getByActiveId(id);
+        if (record == null)
+            ResponseEntity.notFound().build();
+        return ResponseEntity.ok(record);
+    }
+
+    @Override
+    public ResponseEntity<?> getByInactiveId(ID id) {
+        DTO record = this.crudService.getByInactiveId(id);
         if (record == null)
             ResponseEntity.notFound().build();
         return ResponseEntity.ok(record);
@@ -51,10 +79,30 @@ public class CrudControllerImpl<DTO, ID, SERVICE extends CrudServiceInterface<DT
 
     @Override
     @Transactional(value = TxType.REQUIRED)
+    public ResponseEntity<String> softDelete(ID id) {
+        Boolean isDeletedEntity = this.crudService.softDeleteById(id);
+        if (isDeletedEntity)
+            return ResponseEntity.ok("Entity was soft deleted");
+        else
+            return ResponseEntity.internalServerError().build();
+    }
+
+    @Override
+    @Transactional(value = TxType.REQUIRED)
     public ResponseEntity<String> delete(ID id) {
-        Boolean isDeletedEntity = this.crudService.delete(id);
+        Boolean isDeletedEntity = this.crudService.deleteById(id);
         if (isDeletedEntity)
             return ResponseEntity.ok("Entity was deleted");
+        else
+            return ResponseEntity.internalServerError().build();
+    }
+
+    @Override
+    @Transactional(value = TxType.REQUIRED)
+    public ResponseEntity<String> restore(ID id) {
+        Boolean isRestoredEntity = this.crudService.restoreById(id);
+        if (isRestoredEntity)
+            return ResponseEntity.ok("Entity was restored");
         else
             return ResponseEntity.internalServerError().build();
     }

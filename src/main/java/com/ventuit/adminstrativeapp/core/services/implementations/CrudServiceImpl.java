@@ -24,12 +24,42 @@ public abstract class CrudServiceImpl<DTO extends BaseDto, ENTITY extends BaseMo
 
     @Override
     public List<DTO> getAll() {
+        return this.mapper.entitiesToDtos(this.repository.findAll());
+    }
+
+    @Override
+    public List<DTO> getAllInactive() {
+        return this.mapper.entitiesToDtos(this.repository.findByDeletedAtIsNotNull());
+    }
+
+    @Override
+    public List<DTO> getAllActive() {
         return this.mapper.entitiesToDtos(this.repository.findByDeletedAtIsNull());
     }
 
     @Override
     public DTO getById(ID id) {
+        Optional<ENTITY> optionalEntity = this.repository.findById(id);
+
+        if (!optionalEntity.isPresent())
+            return null;
+
+        return this.mapper.toDto(optionalEntity.get());
+    }
+
+    @Override
+    public DTO getByActiveId(ID id) {
         Optional<ENTITY> optionalEntity = this.repository.findByIdAndDeletedAtIsNull(id);
+
+        if (!optionalEntity.isPresent())
+            return null;
+
+        return this.mapper.toDto(optionalEntity.get());
+    }
+
+    @Override
+    public DTO getByInactiveId(ID id) {
+        Optional<ENTITY> optionalEntity = this.repository.findByIdAndDeletedAtIsNotNull(id);
 
         if (!optionalEntity.isPresent())
             return null;
@@ -64,17 +94,45 @@ public abstract class CrudServiceImpl<DTO extends BaseDto, ENTITY extends BaseMo
     }
 
     @Override
-    public Boolean delete(ID id) {
+    public Boolean softDeleteById(ID id) {
         Optional<ENTITY> optionalEntity = this.repository.findById(id);
 
         if (!optionalEntity.isPresent())
             return true;
 
         // Deleting the entity
-        this.repository.softRemoveById(id);
+        this.repository.softDeleteById(id);
 
         // Checking if the entity was deleted
         return !this.repository.findByIdAndDeletedAtIsNull(id).isPresent();
+    }
+
+    @Override
+    public Boolean deleteById(ID id) {
+        Optional<ENTITY> optionalEntity = this.repository.findById(id);
+
+        if (!optionalEntity.isPresent())
+            return true;
+
+        // Deleting the entity
+        this.repository.deleteById(id);
+
+        // Checking if the entity was deleted
+        return !this.repository.findById(id).isPresent();
+    }
+
+    @Override
+    public Boolean restoreById(ID id) {
+        Optional<ENTITY> optionalEntity = this.repository.findByIdAndDeletedAtIsNotNull(id);
+
+        if (!optionalEntity.isPresent())
+            return true;
+
+        // Restoring the entity
+        this.repository.restoreById(id);
+
+        // Checking if the entity was restored
+        return this.repository.findByIdAndDeletedAtIsNull(id).isPresent();
     }
 
 }

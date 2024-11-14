@@ -8,12 +8,23 @@ public interface CrudServiceInterface<DTO, ID> {
 
     List<DTO> getAll();
 
+    List<DTO> getAllInactive();
+
+    List<DTO> getAllActive();
+
     DTO getById(ID id);
+
+    DTO getByActiveId(ID id);
+
+    DTO getByInactiveId(ID id);
 
     ResponseEntity<?> create(DTO dto);
 
     Boolean update(ID id, DTO dto);
 
-    Boolean delete(ID id);
+    Boolean restoreById(ID id);
 
+    Boolean softDeleteById(ID id);
+
+    Boolean deleteById(ID id);
 }
