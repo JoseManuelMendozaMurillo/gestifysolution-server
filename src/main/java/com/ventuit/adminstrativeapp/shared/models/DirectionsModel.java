@@ -33,12 +33,18 @@ public class DirectionsModel extends ExtendedBaseModel {
     private String exteriorNumber;
 
     @Column(length = 10)
+    private String exteriorLetter;
+
+    @Column(length = 10)
     private String interiorNumber;
+
+    @Column(length = 10)
+    private String interiorLetter;
 
     @Column(length = 60)
     private String neighborhood;
 
-    @Column(length = 60, nullable = false)
+    @Column(length = 20, nullable = false)
     private String postalCode;
 
     @Column(length = 60, nullable = false)

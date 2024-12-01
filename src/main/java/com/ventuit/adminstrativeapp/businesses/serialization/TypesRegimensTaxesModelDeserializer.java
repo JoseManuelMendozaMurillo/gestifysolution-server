@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.ventuit.adminstrativeapp.businesses.models.TypesRegimensTaxesModel;
 import com.ventuit.adminstrativeapp.businesses.repositories.TypesRegimensTaxesRepository;
-import com.ventuit.adminstrativeapp.exceptions.EntityNotFoundException;
+import com.ventuit.adminstrativeapp.shared.exceptions.EntityNotFoundException;
 
 import lombok.RequiredArgsConstructor;
 

@@ -1,4 +1,4 @@
-package com.ventuit.adminstrativeapp.exceptions;
+package com.ventuit.adminstrativeapp.shared.exceptions;
 
 public class EntityNotFoundException extends RuntimeException {
 

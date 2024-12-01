@@ -4,6 +4,8 @@ import java.sql.Date;
 import java.util.Set;
 
 import com.ventuit.adminstrativeapp.core.models.BaseModel;
+import com.ventuit.adminstrativeapp.shared.validations.pastorpresentdate.PastOrPresentDate;
+import com.ventuit.adminstrativeapp.shared.validations.phone.Phone;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -38,9 +40,11 @@ public class BossesModel extends BaseModel {
     private String surname;
 
     @Column(length = 30, nullable = true, unique = true)
+    @Phone
     private String phone;
 
     @Column(nullable = true)
+    @PastOrPresentDate
     private Date birthdate;
 
     @OneToMany(mappedBy = "boss", cascade = CascadeType.ALL)

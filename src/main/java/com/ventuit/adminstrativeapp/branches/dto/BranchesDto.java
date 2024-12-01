@@ -1,19 +1,18 @@
-package com.ventuit.adminstrativeapp.branches.models;
+package com.ventuit.adminstrativeapp.branches.dto;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import com.ventuit.adminstrativeapp.core.models.ExtendedBaseModel;
+import com.ventuit.adminstrativeapp.core.dto.ExtendedBaseDto;
 import com.ventuit.adminstrativeapp.shared.models.DirectionsModel;
 import com.ventuit.adminstrativeapp.shared.validations.email.Email;
 import com.ventuit.adminstrativeapp.shared.validations.pastorpresentdate.PastOrPresentDate;
 import com.ventuit.adminstrativeapp.shared.validations.phone.Phone;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -22,38 +21,33 @@ import lombok.experimental.SuperBuilder;
 
 @EqualsAndHashCode(callSuper = true)
 @SuperBuilder
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Data
-@Entity
-@Table(name = "branches")
-public class BranchesModel extends ExtendedBaseModel {
+public class BranchesDto extends ExtendedBaseDto {
 
-    @Column(length = 60, nullable = false)
+    @NotBlank(message = "You must send the branches's name")
+    @Size(max = 60, message = "Name cannot exceed 60 characters")
     private String name;
 
-    @Column(length = 30, nullable = true)
+    @Size(max = 30, message = "Phone cannot exceed 30 characters")
     @Phone
     private String phone;
 
-    @Column(length = 60, nullable = true)
+    @Size(max = 60, message = "Email cannot exceed 60 characters")
     @Email
     private String email;
 
-    @Column(nullable = true)
     @PastOrPresentDate(message = "Opening date must be in the past or present")
     private LocalDate openingDate;
 
-    @Column(nullable = false, columnDefinition = "boolean default false")
     private boolean active;
 
-    @Column(nullable = true, insertable = false)
     private Integer activeChangedBy;
 
-    @Column(nullable = true, insertable = false)
     private LocalDateTime activeChangedAt;
 
-    @OneToOne
-    @JoinColumn(name = "direction_id", nullable = false)
+    @NotNull(message = "You must send the direction's branch information")
+    @Valid
     private DirectionsModel direction;
 }

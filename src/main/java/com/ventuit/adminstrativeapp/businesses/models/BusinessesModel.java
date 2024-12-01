@@ -8,7 +8,8 @@ import org.hibernate.annotations.Check;
 
 import com.ventuit.adminstrativeapp.bosses.models.BossesBusinessesModel;
 import com.ventuit.adminstrativeapp.core.models.ExtendedBaseModel;
-import com.ventuit.adminstrativeapp.utils.RegexUtils;
+import com.ventuit.adminstrativeapp.shared.validations.pastorpresentdate.PastOrPresentDate;
+import com.ventuit.adminstrativeapp.shared.validations.rfc.Rfc;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -17,7 +18,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -44,10 +44,11 @@ public class BusinessesModel extends ExtendedBaseModel {
 
     @Column(length = 13, nullable = false, unique = true)
     @Size(min = 12, max = 13, message = "RFC must be 12 or 13 characters long")
-    @Pattern(regexp = RegexUtils.RFC_PATTERN, message = "Invalid RFC format")
+    @Rfc
     private String rfc;
 
     @Column()
+    @PastOrPresentDate(message = "Establishment date must be in the past or present")
     private LocalDate establishmentDate;
 
     @Column(nullable = false, columnDefinition = "boolean default false")
