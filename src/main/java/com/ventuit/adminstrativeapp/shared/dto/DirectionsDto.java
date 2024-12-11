@@ -1,20 +1,23 @@
 package com.ventuit.adminstrativeapp.shared.dto;
 
+import com.ventuit.adminstrativeapp.core.dto.ExtendedBaseDto;
 import com.ventuit.adminstrativeapp.utils.RegexUtils;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
-@Builder
+@EqualsAndHashCode(callSuper = true)
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class DirectionsDto {
+public class DirectionsDto extends ExtendedBaseDto {
 
     @NotBlank(message = "Latitude is required")
     @Pattern(regexp = RegexUtils.LATITUDE_PATTERN, message = "Invalid latitude")

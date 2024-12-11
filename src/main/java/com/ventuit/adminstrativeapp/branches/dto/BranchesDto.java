@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import com.ventuit.adminstrativeapp.core.dto.ExtendedBaseDto;
-import com.ventuit.adminstrativeapp.shared.models.DirectionsModel;
+import com.ventuit.adminstrativeapp.shared.dto.DirectionsDto;
 import com.ventuit.adminstrativeapp.shared.validations.email.Email;
 import com.ventuit.adminstrativeapp.shared.validations.pastorpresentdate.PastOrPresentDate;
 import com.ventuit.adminstrativeapp.shared.validations.phone.Phone;
@@ -49,5 +49,5 @@ public class BranchesDto extends ExtendedBaseDto {
 
     @NotNull(message = "You must send the direction's branch information")
     @Valid
-    private DirectionsModel direction;
+    private DirectionsDto direction;
 }

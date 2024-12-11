@@ -53,7 +53,7 @@ public class BranchesModel extends ExtendedBaseModel {
     @Column(nullable = true, insertable = false)
     private LocalDateTime activeChangedAt;
 
-    @OneToOne
+    @OneToOne()
     @JoinColumn(name = "direction_id", nullable = false)
     private DirectionsModel direction;
 }

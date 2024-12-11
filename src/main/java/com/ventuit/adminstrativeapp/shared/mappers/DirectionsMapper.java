@@ -1,29 +1,27 @@
-package com.ventuit.adminstrativeapp.branches.mappers;
+package com.ventuit.adminstrativeapp.shared.mappers;
 
 import java.util.List;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-
-import com.ventuit.adminstrativeapp.branches.dto.BranchesDto;
-import com.ventuit.adminstrativeapp.branches.models.BranchesModel;
-import com.ventuit.adminstrativeapp.core.mappers.interfaces.CrudMapperInterface;
-
-import org.mapstruct.MappingConstants.ComponentModel;
 import org.mapstruct.MappingTarget;
 
+import com.ventuit.adminstrativeapp.core.mappers.interfaces.CrudMapperInterface;
+import com.ventuit.adminstrativeapp.shared.dto.DirectionsDto;
+import com.ventuit.adminstrativeapp.shared.models.DirectionsModel;
+import org.mapstruct.MappingConstants.ComponentModel;
+
 @Mapper(componentModel = ComponentModel.SPRING)
-public abstract class BranchesMapper implements CrudMapperInterface<BranchesDto, BranchesModel> {
+public abstract class DirectionsMapper implements CrudMapperInterface<DirectionsDto, DirectionsModel> {
+    @Override
+    public abstract List<DirectionsDto> entitiesToDtos(List<DirectionsModel> listEntities);
 
     @Override
-    public abstract List<BranchesDto> entitiesToDtos(List<BranchesModel> listEntities);
-
-    @Override
-    public abstract BranchesDto toDto(BranchesModel entity);
+    public abstract DirectionsDto toDto(DirectionsModel entity);
 
     @Override
     @Mapping(target = "id", ignore = true)
-    public abstract BranchesModel toEntity(BranchesDto dto);
+    public abstract DirectionsModel toEntity(DirectionsDto dto);
 
     @Override
     @Mapping(target = "id", ignore = true)
@@ -33,6 +31,5 @@ public abstract class BranchesMapper implements CrudMapperInterface<BranchesDto,
     @Mapping(target = "deletedBy", ignore = true)
     @Mapping(target = "updatedBy", ignore = true)
     @Mapping(target = "createdBy", ignore = true)
-    @Mapping(target = "direction", ignore = true)
-    public abstract BranchesModel updateFromDto(BranchesDto dto, @MappingTarget BranchesModel entity);
+    public abstract DirectionsModel updateFromDto(DirectionsDto dto, @MappingTarget DirectionsModel entity);
 }
