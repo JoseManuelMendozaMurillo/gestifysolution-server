@@ -1,6 +1,6 @@
 package com.ventuit.adminstrativeapp.bosses.dto;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.Set;
 
 import com.ventuit.adminstrativeapp.bosses.models.BossesBusinessesModel;
@@ -37,7 +37,7 @@ public class BossesDto extends BaseDto {
     private String phone;
 
     @PastOrPresentDate
-    private Date birthdate;
+    private LocalDate birthdate;
 
     private Set<BossesBusinessesModel> bossesBusinesses;
 }

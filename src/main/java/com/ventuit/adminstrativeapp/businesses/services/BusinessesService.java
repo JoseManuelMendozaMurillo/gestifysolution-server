@@ -10,7 +10,8 @@ import com.ventuit.adminstrativeapp.core.services.implementations.CrudServiceImp
 
 @Service
 public class BusinessesService
-        extends CrudServiceImpl<BusinessesDto, BusinessesModel, Integer, BusinessesMapper, BusinessesRepository> {
+        extends
+        CrudServiceImpl<BusinessesDto, BusinessesDto, BusinessesDto, BusinessesModel, Integer, BusinessesMapper, BusinessesRepository> {
 
     public BusinessesService(BusinessesRepository repository, BusinessesMapper mapper) {
         super(repository, mapper);

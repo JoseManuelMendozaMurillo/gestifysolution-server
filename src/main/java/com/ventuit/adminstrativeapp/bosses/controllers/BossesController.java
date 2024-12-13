@@ -9,7 +9,7 @@ import com.ventuit.adminstrativeapp.core.controllers.implementations.CrudControl
 
 @RestController
 @RequestMapping("bosses")
-public class BossesController extends CrudControllerImpl<BossesDto, Integer, BossesService> {
+public class BossesController extends CrudControllerImpl<BossesDto, BossesDto, BossesDto, Integer, BossesService> {
 
     public BossesController(BossesService crudService) {
         super(crudService);

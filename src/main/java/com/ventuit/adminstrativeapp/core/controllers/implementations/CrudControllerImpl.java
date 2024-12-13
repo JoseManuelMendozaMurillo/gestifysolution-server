@@ -10,8 +10,8 @@ import com.ventuit.adminstrativeapp.core.services.interfaces.CrudServiceInterfac
 import jakarta.transaction.Transactional;
 import jakarta.transaction.Transactional.TxType;
 
-public class CrudControllerImpl<DTO, ID, SERVICE extends CrudServiceInterface<DTO, ID>>
-        implements CrudControllerInterface<DTO, ID> {
+public class CrudControllerImpl<CREATINGDTO, UPDATINGDTO, LISTDTO, ID, SERVICE extends CrudServiceInterface<CREATINGDTO, UPDATINGDTO, LISTDTO, ID>>
+        implements CrudControllerInterface<CREATINGDTO, UPDATINGDTO, LISTDTO, ID> {
 
     protected SERVICE crudService;
 
@@ -20,26 +20,26 @@ public class CrudControllerImpl<DTO, ID, SERVICE extends CrudServiceInterface<DT
     }
 
     @Override
-    public ResponseEntity<List<DTO>> getAll() {
-        List<DTO> data = this.crudService.getAll();
+    public ResponseEntity<List<LISTDTO>> getAll() {
+        List<LISTDTO> data = this.crudService.getAll();
         return ResponseEntity.ok(data);
     }
 
     @Override
-    public ResponseEntity<List<DTO>> getAllActive() {
-        List<DTO> data = this.crudService.getAllActive();
+    public ResponseEntity<List<LISTDTO>> getAllActive() {
+        List<LISTDTO> data = this.crudService.getAllActive();
         return ResponseEntity.ok(data);
     }
 
     @Override
-    public ResponseEntity<List<DTO>> getAllInactive() {
-        List<DTO> data = this.crudService.getAllInactive();
+    public ResponseEntity<List<LISTDTO>> getAllInactive() {
+        List<LISTDTO> data = this.crudService.getAllInactive();
         return ResponseEntity.ok(data);
     }
 
     @Override
     public ResponseEntity<?> getById(ID id) {
-        DTO record = this.crudService.getById(id);
+        LISTDTO record = this.crudService.getById(id);
         if (record == null)
             ResponseEntity.notFound().build();
         return ResponseEntity.ok(record);
@@ -47,7 +47,7 @@ public class CrudControllerImpl<DTO, ID, SERVICE extends CrudServiceInterface<DT
 
     @Override
     public ResponseEntity<?> getByActiveId(ID id) {
-        DTO record = this.crudService.getByActiveId(id);
+        LISTDTO record = this.crudService.getByActiveId(id);
         if (record == null)
             ResponseEntity.notFound().build();
         return ResponseEntity.ok(record);
@@ -55,7 +55,7 @@ public class CrudControllerImpl<DTO, ID, SERVICE extends CrudServiceInterface<DT
 
     @Override
     public ResponseEntity<?> getByInactiveId(ID id) {
-        DTO record = this.crudService.getByInactiveId(id);
+        LISTDTO record = this.crudService.getByInactiveId(id);
         if (record == null)
             ResponseEntity.notFound().build();
         return ResponseEntity.ok(record);
@@ -63,13 +63,13 @@ public class CrudControllerImpl<DTO, ID, SERVICE extends CrudServiceInterface<DT
 
     @Override
     @Transactional(value = TxType.REQUIRED)
-    public ResponseEntity<?> create(DTO model) {
+    public ResponseEntity<?> create(CREATINGDTO model) {
         return this.crudService.create(model);
     }
 
     @Override
     @Transactional(value = TxType.REQUIRED)
-    public ResponseEntity<String> update(ID id, DTO model) {
+    public ResponseEntity<String> update(ID id, UPDATINGDTO model) {
         Boolean isUpdatedEntity = this.crudService.update(id, model);
         if (isUpdatedEntity)
             return ResponseEntity.ok("Entity was updated");

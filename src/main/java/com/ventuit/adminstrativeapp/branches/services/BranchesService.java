@@ -18,7 +18,8 @@ import com.ventuit.adminstrativeapp.shared.repositories.DirectionsRepository;
 
 @Service
 public class BranchesService
-        extends CrudServiceImpl<BranchesDto, BranchesModel, Integer, BranchesMapper, BranchesRepository> {
+        extends
+        CrudServiceImpl<BranchesDto, BranchesDto, BranchesDto, BranchesModel, Integer, BranchesMapper, BranchesRepository> {
 
     public BranchesService(BranchesRepository repository, BranchesMapper mapper) {
         super(repository, mapper);
@@ -47,14 +48,17 @@ public class BranchesService
 
         BranchesModel branch = optionalBranch.get();
 
-        DirectionsModel direction = branch.getDirection();
+        if (dto.getDirection() != null) {
 
-        dto.getDirection().setDeletedAt(direction.getDeletedAt());
+            DirectionsModel direction = branch.getDirection();
 
-        DirectionsModel directionUpdated = this.directionsMapper.updateFromDto(dto.getDirection(), direction);
+            dto.getDirection().setDeletedAt(direction.getDeletedAt());
 
-        if (directionUpdated == null)
-            return false;
+            DirectionsModel directionUpdated = this.directionsMapper.updateFromDto(dto.getDirection(), direction);
+
+            if (directionUpdated == null)
+                return false;
+        }
 
         dto.setDeletedAt(branch.getDeletedAt());
 

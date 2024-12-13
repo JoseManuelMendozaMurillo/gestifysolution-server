@@ -9,7 +9,8 @@ import com.ventuit.adminstrativeapp.bosses.repositories.BossesRepository;
 import com.ventuit.adminstrativeapp.core.services.implementations.CrudServiceImpl;
 
 @Service
-public class BossesService extends CrudServiceImpl<BossesDto, BossesModel, Integer, BossesMapper, BossesRepository> {
+public class BossesService
+        extends CrudServiceImpl<BossesDto, BossesDto, BossesDto, BossesModel, Integer, BossesMapper, BossesRepository> {
 
     public BossesService(BossesRepository repository, BossesMapper mapper) {
         super(repository, mapper);

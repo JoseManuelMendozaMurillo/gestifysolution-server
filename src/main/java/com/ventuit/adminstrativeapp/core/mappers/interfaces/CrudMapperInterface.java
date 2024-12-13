@@ -7,13 +7,17 @@ import org.mapstruct.MappingTarget;
 import com.ventuit.adminstrativeapp.core.dto.BaseDto;
 import com.ventuit.adminstrativeapp.core.models.BaseModel;
 
-public interface CrudMapperInterface<DTO extends BaseDto, ENTITY extends BaseModel> {
+public interface CrudMapperInterface<CREATINGDTO extends BaseDto, UPDATINGDTO extends BaseDto, LISTDTO extends BaseDto, ENTITY extends BaseModel> {
 
-    ENTITY toEntity(DTO dto);
+    ENTITY toEntity(CREATINGDTO dto);
 
-    DTO toDto(ENTITY entity);
+    CREATINGDTO toDto(ENTITY entity);
 
-    List<DTO> entitiesToDtos(List<ENTITY> listEntities);
+    List<CREATINGDTO> entitiesToDtos(List<ENTITY> listEntities);
 
-    ENTITY updateFromDto(DTO dto, @MappingTarget ENTITY entity);
+    List<LISTDTO> entitiesToShowDtos(List<ENTITY> listEntities);
+
+    LISTDTO toShowDto(ENTITY entity);
+
+    ENTITY updateFromDto(UPDATINGDTO dto, @MappingTarget ENTITY entity);
 }

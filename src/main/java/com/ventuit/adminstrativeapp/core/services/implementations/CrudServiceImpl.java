@@ -11,8 +11,8 @@ import com.ventuit.adminstrativeapp.core.models.BaseModel;
 import com.ventuit.adminstrativeapp.core.repositories.BaseRepository;
 import com.ventuit.adminstrativeapp.core.services.interfaces.CrudServiceInterface;
 
-public abstract class CrudServiceImpl<DTO extends BaseDto, ENTITY extends BaseModel, ID, MAPPER extends CrudMapperInterface<DTO, ENTITY>, REPOSITORY extends BaseRepository<ENTITY, ID>>
-        implements CrudServiceInterface<DTO, ID> {
+public abstract class CrudServiceImpl<CREATINGDTO extends BaseDto, UPDATINGDTO extends BaseDto, LISTDTO extends BaseDto, ENTITY extends BaseModel, ID, MAPPER extends CrudMapperInterface<CREATINGDTO, UPDATINGDTO, LISTDTO, ENTITY>, REPOSITORY extends BaseRepository<ENTITY, ID>>
+        implements CrudServiceInterface<CREATINGDTO, UPDATINGDTO, LISTDTO, ID> {
 
     protected REPOSITORY repository;
     protected MAPPER mapper;
@@ -23,53 +23,53 @@ public abstract class CrudServiceImpl<DTO extends BaseDto, ENTITY extends BaseMo
     }
 
     @Override
-    public List<DTO> getAll() {
-        return this.mapper.entitiesToDtos(this.repository.findAll());
+    public List<LISTDTO> getAll() {
+        return this.mapper.entitiesToShowDtos(this.repository.findAll());
     }
 
     @Override
-    public List<DTO> getAllInactive() {
-        return this.mapper.entitiesToDtos(this.repository.findByDeletedAtIsNotNull());
+    public List<LISTDTO> getAllInactive() {
+        return this.mapper.entitiesToShowDtos(this.repository.findByDeletedAtIsNotNull());
     }
 
     @Override
-    public List<DTO> getAllActive() {
-        return this.mapper.entitiesToDtos(this.repository.findByDeletedAtIsNull());
+    public List<LISTDTO> getAllActive() {
+        return this.mapper.entitiesToShowDtos(this.repository.findByDeletedAtIsNull());
     }
 
     @Override
-    public DTO getById(ID id) {
+    public LISTDTO getById(ID id) {
         Optional<ENTITY> optionalEntity = this.repository.findById(id);
 
         if (!optionalEntity.isPresent())
             return null;
 
-        return this.mapper.toDto(optionalEntity.get());
+        return this.mapper.toShowDto(optionalEntity.get());
     }
 
     @Override
-    public DTO getByActiveId(ID id) {
+    public LISTDTO getByActiveId(ID id) {
         Optional<ENTITY> optionalEntity = this.repository.findByIdAndDeletedAtIsNull(id);
 
         if (!optionalEntity.isPresent())
             return null;
 
-        return this.mapper.toDto(optionalEntity.get());
+        return this.mapper.toShowDto(optionalEntity.get());
     }
 
     @Override
-    public DTO getByInactiveId(ID id) {
+    public LISTDTO getByInactiveId(ID id) {
         Optional<ENTITY> optionalEntity = this.repository.findByIdAndDeletedAtIsNotNull(id);
 
         if (!optionalEntity.isPresent())
             return null;
 
-        return this.mapper.toDto(optionalEntity.get());
+        return this.mapper.toShowDto(optionalEntity.get());
     }
 
     @SuppressWarnings("unused")
     @Override
-    public ResponseEntity<?> create(DTO dto) {
+    public ResponseEntity<?> create(CREATINGDTO dto) {
         ENTITY entity = this.mapper.toEntity(dto);
         ENTITY savedEntity = this.repository.save(entity);
         if (savedEntity == null)
@@ -78,7 +78,7 @@ public abstract class CrudServiceImpl<DTO extends BaseDto, ENTITY extends BaseMo
     }
 
     @Override
-    public Boolean update(ID id, DTO dto) {
+    public Boolean update(ID id, UPDATINGDTO dto) {
         Optional<ENTITY> optionalEntity = this.repository.findById(id);
 
         if (!optionalEntity.isPresent())

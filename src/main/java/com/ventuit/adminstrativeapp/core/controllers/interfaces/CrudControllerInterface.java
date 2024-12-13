@@ -12,19 +12,21 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-public interface CrudControllerInterface<DTO, ID> {
+import jakarta.validation.Valid;
+
+public interface CrudControllerInterface<CREATINGDTO, UPDATINGDTO, LISTDTO, ID> {
 
     @GetMapping("/getAll")
     @ResponseBody
-    ResponseEntity<List<DTO>> getAll();
+    ResponseEntity<List<LISTDTO>> getAll();
 
     @GetMapping("/getAllActive")
     @ResponseBody
-    ResponseEntity<List<DTO>> getAllActive();
+    ResponseEntity<List<LISTDTO>> getAllActive();
 
     @GetMapping("/getAllInactive")
     @ResponseBody
-    ResponseEntity<List<DTO>> getAllInactive();
+    ResponseEntity<List<LISTDTO>> getAllInactive();
 
     @GetMapping("/getById/{id}")
     @ResponseBody
@@ -40,11 +42,11 @@ public interface CrudControllerInterface<DTO, ID> {
 
     @PostMapping()
     @ResponseBody
-    ResponseEntity<?> create(@RequestBody DTO dto);
+    ResponseEntity<?> create(@RequestBody @Valid CREATINGDTO dto);
 
     @PutMapping("/{id}")
     @ResponseBody
-    ResponseEntity<String> update(@PathVariable ID id, @RequestBody DTO dto);
+    ResponseEntity<String> update(@PathVariable ID id, @RequestBody @Valid UPDATINGDTO dto);
 
     @DeleteMapping("soft/{id}")
     @ResponseBody

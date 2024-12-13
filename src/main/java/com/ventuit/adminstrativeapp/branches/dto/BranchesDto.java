@@ -26,8 +26,8 @@ import lombok.experimental.SuperBuilder;
 @Data
 public class BranchesDto extends ExtendedBaseDto {
 
-    @NotBlank(message = "You must send the branches's name")
     @Size(max = 60, message = "Name cannot exceed 60 characters")
+    @NotBlank(message = "You must send the branches's name")
     private String name;
 
     @Size(max = 30, message = "Phone cannot exceed 30 characters")

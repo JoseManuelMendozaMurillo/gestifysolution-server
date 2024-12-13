@@ -4,23 +4,23 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 
-public interface CrudServiceInterface<DTO, ID> {
+public interface CrudServiceInterface<CREATINGDTO, UPDATINGDTO, LISTDTO, ID> {
 
-    List<DTO> getAll();
+    List<LISTDTO> getAll();
 
-    List<DTO> getAllInactive();
+    List<LISTDTO> getAllInactive();
 
-    List<DTO> getAllActive();
+    List<LISTDTO> getAllActive();
 
-    DTO getById(ID id);
+    LISTDTO getById(ID id);
 
-    DTO getByActiveId(ID id);
+    LISTDTO getByActiveId(ID id);
 
-    DTO getByInactiveId(ID id);
+    LISTDTO getByInactiveId(ID id);
 
-    ResponseEntity<?> create(DTO dto);
+    ResponseEntity<?> create(CREATINGDTO dto);
 
-    Boolean update(ID id, DTO dto);
+    Boolean update(ID id, UPDATINGDTO dto);
 
     Boolean restoreById(ID id);
 

@@ -1,6 +1,6 @@
 package com.ventuit.adminstrativeapp.core.dto;
 
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -14,7 +14,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 public class ExtendedBaseDto extends BaseDto {
 
-    @NotBlank(message = "createdBy value is required")
+    @NotNull(message = "createdBy value is required")
     private Integer createdBy;
 
     private Integer updatedBy;

@@ -1,6 +1,6 @@
 package com.ventuit.adminstrativeapp.bosses.models;
 
-import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Set;
 
 import com.ventuit.adminstrativeapp.core.models.BaseModel;
@@ -45,7 +45,7 @@ public class BossesModel extends BaseModel {
 
     @Column(nullable = true)
     @PastOrPresentDate
-    private Date birthdate;
+    private LocalDate birthdate;
 
     @OneToMany(mappedBy = "boss", cascade = CascadeType.ALL)
     private Set<BossesBusinessesModel> bossesBusinesses;

@@ -17,6 +17,7 @@ import com.ventuit.adminstrativeapp.shared.validations.pastorpresentdate.PastOrP
 import com.ventuit.adminstrativeapp.shared.validations.rfc.Rfc;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -52,15 +53,15 @@ public class BusinessesDto extends ExtendedBaseDto {
 
     private LocalDateTime activeChangedAt;
 
-    @NotBlank(message = "You must send the business's industry")
+    @NotNull(message = "You must send the business's industry")
     @JsonDeserialize(using = IndustriesModelDeserializer.class)
     private IndustriesModel industry;
 
-    @NotBlank(message = "You must send the business's type")
+    @NotNull(message = "You must send the business's type")
     @JsonDeserialize(using = BusinessesTypeModelDeserializer.class)
     private BusinessesTypeModel businessesType;
 
-    @NotBlank(message = "You must send the business's tax regimen")
+    @NotNull(message = "You must send the business's tax regimen")
     @JsonDeserialize(using = TypesRegimensTaxesModelDeserializer.class)
     private TypesRegimensTaxesModel taxRegimen;
 
