@@ -10,7 +10,7 @@ public class RfcValidator implements ConstraintValidator<Rfc, String> {
     @Override
     public boolean isValid(String rfc, ConstraintValidatorContext context) {
         if (rfc == null)
-            return false;
+            return true;
         return rfc.matches(RegexUtils.RFC_PATTERN);
     }
 

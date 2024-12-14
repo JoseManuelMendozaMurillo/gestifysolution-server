@@ -8,35 +8,37 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants.ComponentModel;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 
-import com.ventuit.adminstrativeapp.businesses.dto.BusinessesDto;
+import com.ventuit.adminstrativeapp.businesses.dto.CreateBusinessesDto;
+import com.ventuit.adminstrativeapp.businesses.dto.UpdateBusinessesDto;
 import com.ventuit.adminstrativeapp.businesses.models.BusinessesModel;
 import com.ventuit.adminstrativeapp.core.mappers.interfaces.CrudMapperInterface;
 
-@Mapper(componentModel = ComponentModel.SPRING)
+@Mapper(componentModel = ComponentModel.SPRING, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public abstract class BusinessesMapper
-        implements CrudMapperInterface<BusinessesDto, BusinessesDto, BusinessesDto, BusinessesModel> {
+        implements CrudMapperInterface<CreateBusinessesDto, UpdateBusinessesDto, CreateBusinessesDto, BusinessesModel> {
 
     @Override
     @Named("toDto")
-    public abstract BusinessesDto toDto(BusinessesModel entity);
+    public abstract CreateBusinessesDto toDto(BusinessesModel entity);
 
     @Override
     @IterableMapping(qualifiedByName = "toDto")
-    public abstract List<BusinessesDto> entitiesToDtos(List<BusinessesModel> listEntities);
+    public abstract List<CreateBusinessesDto> entitiesToDtos(List<BusinessesModel> listEntities);
 
     @Override
     @Named("toShowDto")
-    public abstract BusinessesDto toShowDto(BusinessesModel entity);
+    public abstract CreateBusinessesDto toShowDto(BusinessesModel entity);
 
     @Override
     @IterableMapping(qualifiedByName = "toShowDto")
-    public abstract List<BusinessesDto> entitiesToShowDtos(List<BusinessesModel> listEntities);
+    public abstract List<CreateBusinessesDto> entitiesToShowDtos(List<BusinessesModel> listEntities);
 
     @Override
     @Mapping(target = "bossesBusinesses", ignore = true)
     @Mapping(target = "id", ignore = true)
-    public abstract BusinessesModel toEntity(BusinessesDto dto);
+    public abstract BusinessesModel toEntity(CreateBusinessesDto dto);
 
     @Override
     @Mapping(target = "bossesBusinesses", ignore = true)
@@ -47,5 +49,8 @@ public abstract class BusinessesMapper
     @Mapping(target = "deletedBy", ignore = true)
     @Mapping(target = "updatedBy", ignore = true)
     @Mapping(target = "createdBy", ignore = true)
-    public abstract BusinessesModel updateFromDto(BusinessesDto dto, @MappingTarget BusinessesModel entity);
+    @Mapping(target = "active", ignore = true)
+    @Mapping(target = "activeChangedAt", ignore = true)
+    @Mapping(target = "activeChangedBy", ignore = true)
+    public abstract BusinessesModel updateFromDto(UpdateBusinessesDto dto, @MappingTarget BusinessesModel entity);
 }

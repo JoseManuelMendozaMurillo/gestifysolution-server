@@ -18,6 +18,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -43,6 +44,7 @@ public class BusinessesModel extends ExtendedBaseModel {
     private String description;
 
     @Column(length = 13, nullable = false, unique = true)
+    @NotBlank(message = "RFC cannot be null")
     @Size(min = 12, max = 13, message = "RFC must be 12 or 13 characters long")
     @Rfc
     private String rfc;
