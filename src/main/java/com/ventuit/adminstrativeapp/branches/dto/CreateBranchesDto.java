@@ -24,7 +24,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class BranchesDto extends ExtendedBaseDto {
+public class CreateBranchesDto extends ExtendedBaseDto {
 
     @Size(max = 60, message = "Name cannot exceed 60 characters")
     @NotBlank(message = "You must send the branches's name")

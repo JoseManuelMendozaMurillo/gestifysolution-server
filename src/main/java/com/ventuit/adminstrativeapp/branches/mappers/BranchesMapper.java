@@ -6,37 +6,39 @@ import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-import com.ventuit.adminstrativeapp.branches.dto.BranchesDto;
+import com.ventuit.adminstrativeapp.branches.dto.CreateBranchesDto;
+import com.ventuit.adminstrativeapp.branches.dto.UpdateBranchesDto;
 import com.ventuit.adminstrativeapp.branches.models.BranchesModel;
 import com.ventuit.adminstrativeapp.core.mappers.interfaces.CrudMapperInterface;
 
 import org.mapstruct.MappingConstants.ComponentModel;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 
-@Mapper(componentModel = ComponentModel.SPRING)
+@Mapper(componentModel = ComponentModel.SPRING, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public abstract class BranchesMapper
-        implements CrudMapperInterface<BranchesDto, BranchesDto, BranchesDto, BranchesModel> {
+        implements CrudMapperInterface<CreateBranchesDto, UpdateBranchesDto, CreateBranchesDto, BranchesModel> {
 
     @Override
     @Named("toDto")
-    public abstract BranchesDto toDto(BranchesModel entity);
+    public abstract CreateBranchesDto toDto(BranchesModel entity);
 
     @Override
     @IterableMapping(qualifiedByName = "toDto")
-    public abstract List<BranchesDto> entitiesToDtos(List<BranchesModel> listEntities);
+    public abstract List<CreateBranchesDto> entitiesToDtos(List<BranchesModel> listEntities);
 
     @Override
     @Named("toShowDto")
-    public abstract List<BranchesDto> entitiesToShowDtos(List<BranchesModel> listEntities);
+    public abstract List<CreateBranchesDto> entitiesToShowDtos(List<BranchesModel> listEntities);
 
     @Override
     @IterableMapping(qualifiedByName = "toShowDto")
-    public abstract BranchesDto toShowDto(BranchesModel entity);
+    public abstract CreateBranchesDto toShowDto(BranchesModel entity);
 
     @Override
     @Mapping(target = "id", ignore = true)
-    public abstract BranchesModel toEntity(BranchesDto dto);
+    public abstract BranchesModel toEntity(CreateBranchesDto dto);
 
     @Override
     @Mapping(target = "id", ignore = true)
@@ -47,5 +49,8 @@ public abstract class BranchesMapper
     @Mapping(target = "updatedBy", ignore = true)
     @Mapping(target = "createdBy", ignore = true)
     @Mapping(target = "direction", ignore = true)
-    public abstract BranchesModel updateFromDto(BranchesDto dto, @MappingTarget BranchesModel entity);
+    @Mapping(target = "active", ignore = true)
+    @Mapping(target = "activeChangedAt", ignore = true)
+    @Mapping(target = "activeChangedBy", ignore = true)
+    public abstract BranchesModel updateFromDto(UpdateBranchesDto dto, @MappingTarget BranchesModel entity);
 }

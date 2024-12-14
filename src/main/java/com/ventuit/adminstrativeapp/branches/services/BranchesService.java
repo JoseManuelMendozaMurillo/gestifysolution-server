@@ -6,7 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import com.ventuit.adminstrativeapp.branches.dto.BranchesDto;
+import com.ventuit.adminstrativeapp.branches.dto.CreateBranchesDto;
+import com.ventuit.adminstrativeapp.branches.dto.UpdateBranchesDto;
 import com.ventuit.adminstrativeapp.branches.mappers.BranchesMapper;
 import com.ventuit.adminstrativeapp.branches.models.BranchesModel;
 import com.ventuit.adminstrativeapp.branches.repositories.BranchesRepository;
@@ -19,7 +20,7 @@ import com.ventuit.adminstrativeapp.shared.repositories.DirectionsRepository;
 @Service
 public class BranchesService
         extends
-        CrudServiceImpl<BranchesDto, BranchesDto, BranchesDto, BranchesModel, Integer, BranchesMapper, BranchesRepository> {
+        CrudServiceImpl<CreateBranchesDto, UpdateBranchesDto, CreateBranchesDto, BranchesModel, Integer, BranchesMapper, BranchesRepository> {
 
     public BranchesService(BranchesRepository repository, BranchesMapper mapper) {
         super(repository, mapper);
@@ -31,7 +32,7 @@ public class BranchesService
     DirectionsMapper directionsMapper;
 
     @Override
-    public ResponseEntity<?> create(BranchesDto dto) {
+    public ResponseEntity<?> create(CreateBranchesDto dto) {
         DirectionsModel direction = this.directionsMapper.toEntity(dto.getDirection());
         DirectionsModel directionSaved = this.directionsRepository.save(direction);
         DirectionsDto directionDto = this.directionsMapper.toDto(directionSaved);
@@ -40,7 +41,7 @@ public class BranchesService
     }
 
     @Override
-    public Boolean update(Integer id, BranchesDto dto) {
+    public Boolean update(Integer id, UpdateBranchesDto dto) {
         Optional<BranchesModel> optionalBranch = this.repository.findById(id);
 
         if (!optionalBranch.isPresent())

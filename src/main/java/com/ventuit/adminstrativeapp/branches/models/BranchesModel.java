@@ -9,6 +9,7 @@ import com.ventuit.adminstrativeapp.shared.validations.email.Email;
 import com.ventuit.adminstrativeapp.shared.validations.pastorpresentdate.PastOrPresentDate;
 import com.ventuit.adminstrativeapp.shared.validations.phone.Phone;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -53,7 +54,7 @@ public class BranchesModel extends ExtendedBaseModel {
     @Column(nullable = true, insertable = false)
     private LocalDateTime activeChangedAt;
 
-    @OneToOne()
+    @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "direction_id", nullable = false)
     private DirectionsModel direction;
 }
