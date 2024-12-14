@@ -21,7 +21,7 @@ import lombok.experimental.SuperBuilder;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class BossesDto extends BaseDto {
+public class CreateBossesDto extends BaseDto {
 
     private String keycloakUserId;
 
