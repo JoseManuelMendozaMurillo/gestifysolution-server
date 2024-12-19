@@ -18,7 +18,8 @@ import lombok.experimental.SuperBuilder;
 @Data
 @Entity
 @Table(name = "warehouses_categories")
-public class WarehousesCategories extends ExtendedBaseModel {
+public class WarehousesCategoriesModel extends ExtendedBaseModel {
+
     @Column(nullable = false, unique = true, length = 60)
     private String name;
 
