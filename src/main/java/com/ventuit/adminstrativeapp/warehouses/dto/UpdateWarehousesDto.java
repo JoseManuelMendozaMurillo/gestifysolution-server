@@ -7,7 +7,17 @@ import com.ventuit.adminstrativeapp.warehouses.models.WarehousesCategoriesModel;
 import com.ventuit.adminstrativeapp.warehouses.serialization.WarehousesCategoriesDeserializer;
 
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
+@EqualsAndHashCode(callSuper = true)
+@SuperBuilder
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
 public class UpdateWarehousesDto extends ExtendedBaseDto {
 
     @Size(max = 60, message = "Name cannot exceed 60 characters")

@@ -17,9 +17,6 @@ public abstract class WarehousesCategoriesMapper implements
 
         @Override
         @Mapping(target = "id", ignore = true)
-        @Mapping(target = "createdAt", ignore = true)
-        @Mapping(target = "updatedAt", ignore = true)
-        @Mapping(target = "deletedAt", ignore = true)
         public abstract WarehousesCategoriesModel toEntity(CreateWarehousesCategoriesDto dto);
 
         @Override

@@ -1,5 +1,7 @@
 package com.ventuit.adminstrativeapp.warehouses.dto;
 
+import java.time.LocalDateTime;
+
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.ventuit.adminstrativeapp.core.dto.ExtendedBaseDto;
 import com.ventuit.adminstrativeapp.shared.validations.phone.Phone;
@@ -31,6 +33,10 @@ public class CreateWarehousesDto extends ExtendedBaseDto {
     private String phone;
 
     private boolean active;
+
+    private Integer activeChangedBy;
+
+    private LocalDateTime activeChangedAt;
 
     @NotNull(message = "You must send the warehouse's category")
     @JsonDeserialize(using = WarehousesCategoriesDeserializer.class)
