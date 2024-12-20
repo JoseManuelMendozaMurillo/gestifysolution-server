@@ -21,4 +21,5 @@ public class UpdateWarehousesCategoriesDto extends ExtendedBaseDto {
 
     @Size(max = 100, message = "The description must not exceed 100 characters.")
     private String description;
+
 }
