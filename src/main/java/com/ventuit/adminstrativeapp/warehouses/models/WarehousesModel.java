@@ -7,6 +7,8 @@ import com.ventuit.adminstrativeapp.shared.validations.phone.Phone;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -38,5 +40,9 @@ public class WarehousesModel extends ExtendedBaseModel {
 
     @Column(nullable = true, insertable = false)
     private LocalDateTime activeChangedAt;
+
+    @OneToOne
+    @JoinColumn(name = "category_id", nullable = false)
+    private WarehousesCategoriesModel category;
 
 }
