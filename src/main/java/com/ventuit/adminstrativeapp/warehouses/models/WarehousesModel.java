@@ -1,19 +1,12 @@
-package com.ventuit.adminstrativeapp.branches.models;
+package com.ventuit.adminstrativeapp.warehouses.models;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import com.ventuit.adminstrativeapp.core.models.ExtendedBaseModel;
-import com.ventuit.adminstrativeapp.shared.models.DirectionsModel;
-import com.ventuit.adminstrativeapp.shared.validations.email.Email;
-import com.ventuit.adminstrativeapp.shared.validations.pastorpresentdate.PastOrPresentDate;
 import com.ventuit.adminstrativeapp.shared.validations.phone.Phone;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,12 +16,12 @@ import lombok.experimental.SuperBuilder;
 
 @EqualsAndHashCode(callSuper = true)
 @SuperBuilder
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Data
 @Entity
-@Table(name = "branches")
-public class BranchesModel extends ExtendedBaseModel {
+@Table(name = "warehouses")
+public class WarehousesModel extends ExtendedBaseModel {
 
     @Column(length = 60, nullable = false, unique = true)
     private String name;
@@ -36,14 +29,6 @@ public class BranchesModel extends ExtendedBaseModel {
     @Column(length = 30, nullable = true, unique = true)
     @Phone
     private String phone;
-
-    @Column(length = 60, nullable = true, unique = true)
-    @Email
-    private String email;
-
-    @Column(nullable = true)
-    @PastOrPresentDate(message = "Opening date must be in the past or present")
-    private LocalDate openingDate;
 
     @Column(nullable = false, columnDefinition = "boolean default false")
     private boolean active;
@@ -54,7 +39,4 @@ public class BranchesModel extends ExtendedBaseModel {
     @Column(nullable = true, insertable = false)
     private LocalDateTime activeChangedAt;
 
-    @OneToOne(cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "direction_id", nullable = false)
-    private DirectionsModel direction;
 }
