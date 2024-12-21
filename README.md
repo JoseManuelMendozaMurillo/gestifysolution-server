@@ -1,2 +1,2 @@
-# administrative-app-server
+# gestifysolution server
 Project to manage furniture stores
