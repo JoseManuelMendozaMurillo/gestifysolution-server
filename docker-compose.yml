@@ -2,45 +2,45 @@ version: '3.9'
 
 services:
 
-  administrative-app-api:
+  gestifysolution-server:
     extends:
       file: ./docker/docker-compose.base.yml
-      service: administrative-app-api-base
+      service: gestifysolution-server-base
     build: 
       context: .
       dockerfile: dockerfile
     environment:
-      - DATABASE_URL=jdbc:mysql://administrative-app-db:3306/${MYSQL_DATABASE}
+      - DATABASE_URL=jdbc:mysql://gestifysolution-db:3306/${MYSQL_DATABASE}
     depends_on:
-      - administrative-app-db
+      - gestifysolution-db
     networks:
       - backend
     env_file:
       - ./.env
 
-  administrative-app-db:
+  gestifysolution-db:
     extends:
       file: ./docker/docker-compose.base.yml
-      service: administrative-app-db-base
+      service: gestifysolution-db-base
     volumes:
       - ./docker/provisions/mysql/init:/docker-entrypoint-initdb.d
-      - administrative-app-db-data:/var/lib/mysql
+      - gestifysolution-db-data:/var/lib/mysql
     networks:
       - backend
   
-  administrative-app-keycloak:
+  gestifysolution-keycloak:
     extends:
       file: ./docker/docker-compose.base.yml
-      service: administrative-app-keycloak-base
+      service: gestifysolution-keycloak-base
     environment:
-      - KC_DB_URL=jdbc:mysql://administrative-app-db:3306/${KEYCLOAK_DATABASE_NAME}
+      - KC_DB_URL=jdbc:mysql://gestifysolution-db:3306/${KEYCLOAK_DATABASE_NAME}
     depends_on:
-      - administrative-app-db
+      - gestifysolution-db
     networks:
       - backend
 
 volumes:
-  administrative-app-db-data:
+  gestifysolution-db-data:
 
 networks:
   backend:

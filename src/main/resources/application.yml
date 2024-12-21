@@ -1,6 +1,6 @@
 spring:
     application:
-        name: adminstrativeapp
+        name: gestifysolution
     datasource:
         url: ${DATABASE_URL}
         username: ${DATABASE_USER}
