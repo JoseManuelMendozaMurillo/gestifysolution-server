@@ -2,56 +2,56 @@ version: '3.9'
 
 services:
 
-  administrative-app-api-dev:
+  gestifysolution-server-dev:
     extends:
       file: ../docker/docker-compose.base.yml
-      service: administrative-app-api-base
+      service: gestifysolution-server-base
     build: 
       context: .
       args:
         ROOT_USER_PASSWORD: ${ROOT_USER_PASSWORD}
       dockerfile: dockerfile.devcontainer
-    working_dir: /workspace/administrative-app
+    working_dir: /workspace/gestifysolution-server
     volumes:
-      - ../:/workspace/administrative-app
+      - ../:/workspace/gestifysolution-server
     networks:
       - backend-dev
     environment:
-      - DATABASE_URL=jdbc:mysql://administrative-app-db-dev:3306/${MYSQL_DATABASE}
+      - DATABASE_URL=jdbc:mysql://gestifysolution-db-dev:3306/${MYSQL_DATABASE}
       - DATABASE_USER=root
       - DATABASE_PASSWORD=${MYSQL_ROOT_PASSWORD}
     depends_on:
-      - administrative-app-db-dev
+      - gestifysolution-db-dev
     command: sleep infinity
     
-  administrative-app-db-dev:
+  gestifysolution-db-dev:
     extends:
       file: ../docker/docker-compose.base.yml
-      service: administrative-app-db-base
+      service: gestifysolution-db-base
     volumes:
       - ../docker/provisions/mysql/init:/docker-entrypoint-initdb.d
-      - administrative-app-db-data-dev:/var/lib/mysql
+      - gestifysolution-db-data-dev:/var/lib/mysql
     environment:
       - MYSQL_DATABASE=${MYSQL_DATABASE}
       - KEYCLOAK_DATABASE_NAME=${KEYCLOAK_DATABASE_NAME}
     networks:
       - backend-dev
   
-  administrative-app-keycloak-dev:
+  gestifysolution-keycloak-dev:
     extends:
       file: ../docker/docker-compose.base.yml
-      service: administrative-app-keycloak-base
+      service: gestifysolution-keycloak-base
     environment:
-      - KC_DB_URL=jdbc:mysql://administrative-app-db-dev:3306/${KEYCLOAK_DATABASE_NAME}
+      - KC_DB_URL=jdbc:mysql://gestifysolution-db-dev:3306/${KEYCLOAK_DATABASE_NAME}
     depends_on:
-      - administrative-app-db-dev
+      - gestifysolution-db-dev
     networks:
       - backend-dev
     command:
       - "start-dev"
 
 volumes:
-  administrative-app-db-data-dev:
+  gestifysolution-db-data-dev:
 
 networks:
   backend-dev:

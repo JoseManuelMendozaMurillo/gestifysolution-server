@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.ventuit</groupId>
-	<artifactId>adminstrativeapp</artifactId>
+	<artifactId>gestifysolution</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>adminstrativeapp</name>
+	<name>gestifysolution</name>
 	<description>Project to manage furniture stores</description>
 	<properties>
 		<java.version>21</java.version>
