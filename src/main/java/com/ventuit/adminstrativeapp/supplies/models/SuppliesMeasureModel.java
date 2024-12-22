@@ -17,7 +17,7 @@ import lombok.experimental.SuperBuilder;
 @Data
 @Entity
 @Table(name = "supplies_measure")
-public class SuppliesMeasure extends ExtendedBaseModel {
+public class SuppliesMeasureModel extends ExtendedBaseModel {
 
     private String measure;
 
