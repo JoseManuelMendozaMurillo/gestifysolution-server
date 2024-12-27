@@ -12,6 +12,7 @@ import com.ventuit.adminstrativeapp.shared.mappers.DirectionsMapper;
 import com.ventuit.adminstrativeapp.shared.models.DirectionsModel;
 import com.ventuit.adminstrativeapp.shared.repositories.DirectionsRepository;
 import com.ventuit.adminstrativeapp.supplies.dto.CreateSuppliersDto;
+import com.ventuit.adminstrativeapp.supplies.dto.ListSuppliersDto;
 import com.ventuit.adminstrativeapp.supplies.dto.UpdateSuppliersDto;
 import com.ventuit.adminstrativeapp.supplies.mappers.SuppliersMapper;
 import com.ventuit.adminstrativeapp.supplies.models.SuppliersModel;
@@ -19,7 +20,7 @@ import com.ventuit.adminstrativeapp.supplies.repositories.SuppliersRepository;
 
 @Service
 public class SuppliersService extends
-        CrudServiceImpl<CreateSuppliersDto, UpdateSuppliersDto, CreateSuppliersDto, SuppliersModel, Integer, SuppliersMapper, SuppliersRepository> {
+        CrudServiceImpl<CreateSuppliersDto, UpdateSuppliersDto, ListSuppliersDto, SuppliersModel, Integer, SuppliersMapper, SuppliersRepository> {
 
     public SuppliersService(SuppliersMapper mapper, SuppliersRepository repository) {
         super(repository, mapper);

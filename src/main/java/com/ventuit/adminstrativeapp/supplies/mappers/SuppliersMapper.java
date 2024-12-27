@@ -8,15 +8,17 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 
 import com.ventuit.adminstrativeapp.core.mappers.interfaces.CrudMapperInterface;
 import com.ventuit.adminstrativeapp.supplies.dto.CreateSuppliersDto;
+import com.ventuit.adminstrativeapp.supplies.dto.ListSuppliersDto;
 import com.ventuit.adminstrativeapp.supplies.dto.UpdateSuppliersDto;
 import com.ventuit.adminstrativeapp.supplies.models.SuppliersModel;
 
 @Mapper(componentModel = ComponentModel.SPRING, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public abstract class SuppliersMapper
-        implements CrudMapperInterface<CreateSuppliersDto, UpdateSuppliersDto, CreateSuppliersDto, SuppliersModel> {
+        implements CrudMapperInterface<CreateSuppliersDto, UpdateSuppliersDto, ListSuppliersDto, SuppliersModel> {
 
     @Override
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "supplies", ignore = true)
     public abstract SuppliersModel toEntity(CreateSuppliersDto dto);
 
     @Override
@@ -27,10 +29,11 @@ public abstract class SuppliersMapper
     @Mapping(target = "deletedBy", ignore = true)
     @Mapping(target = "updatedBy", ignore = true)
     @Mapping(target = "createdBy", ignore = true)
-    @Mapping(target = "direction", ignore = true)
     @Mapping(target = "active", ignore = true)
     @Mapping(target = "activeChangedAt", ignore = true)
     @Mapping(target = "activeChangedBy", ignore = true)
+    @Mapping(target = "direction", ignore = true)
+    @Mapping(target = "supplies", ignore = true)
     public abstract SuppliersModel updateFromDto(UpdateSuppliersDto dto, @MappingTarget SuppliersModel entity);
 
 }
