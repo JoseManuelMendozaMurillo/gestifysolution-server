@@ -13,21 +13,21 @@ import com.ventuit.adminstrativeapp.supplies.models.SuppliesCategoriesModel;
 
 @Mapper(componentModel = ComponentModel.SPRING, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public abstract class SuppliesCategoriesMapper implements
-        CrudMapperInterface<CreateSuppliesCategoriesDto, UpdateSuppliesCategoriesDto, CreateSuppliesCategoriesDto, SuppliesCategoriesModel> {
+                CrudMapperInterface<CreateSuppliesCategoriesDto, UpdateSuppliesCategoriesDto, CreateSuppliesCategoriesDto, SuppliesCategoriesModel> {
 
-    @Override
-    @Mapping(target = "id", ignore = true)
-    public abstract SuppliesCategoriesModel toEntity(CreateSuppliesCategoriesDto dto);
+        @Override
+        @Mapping(target = "id", ignore = true)
+        public abstract SuppliesCategoriesModel toEntity(CreateSuppliesCategoriesDto dto);
 
-    @Override
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "updatedAt", ignore = true)
-    @Mapping(target = "deletedAt", ignore = true)
-    @Mapping(target = "deletedBy", ignore = true)
-    @Mapping(target = "updatedBy", ignore = true)
-    @Mapping(target = "createdBy", ignore = true)
-    public abstract SuppliesCategoriesModel updateFromDto(UpdateSuppliesCategoriesDto dto,
-            @MappingTarget SuppliesCategoriesModel entity);
+        @Override
+        @Mapping(target = "id", ignore = true)
+        @Mapping(target = "createdAt", ignore = true)
+        @Mapping(target = "updatedAt", ignore = true)
+        @Mapping(target = "deletedAt", ignore = true)
+        @Mapping(target = "deletedBy", ignore = true)
+        @Mapping(target = "updatedBy", ignore = true)
+        @Mapping(target = "createdBy", ignore = true)
+        public abstract SuppliesCategoriesModel updateFromDto(UpdateSuppliesCategoriesDto dto,
+                        @MappingTarget SuppliesCategoriesModel entity);
 
 }

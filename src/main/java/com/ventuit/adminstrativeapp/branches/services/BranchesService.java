@@ -70,11 +70,15 @@ public class BranchesService
 
     @Override
     public Boolean softDeleteById(Integer id) {
-        Optional<DirectionsModel> optionalDirection = this.directionsRepository.findById(id);
+        Optional<BranchesModel> optionalBranch = this.repository.findById(id);
 
-        if (optionalDirection.isPresent()) {
-            // Deleting the entity
-            Integer directionId = optionalDirection.get().getId();
+        if (!optionalBranch.isPresent())
+            return false;
+
+        BranchesModel branch = optionalBranch.get();
+
+        if (branch.getDirection() != null) {
+            Integer directionId = branch.getDirection().getId();
             this.directionsRepository.softDeleteById(directionId);
         }
 
@@ -83,11 +87,15 @@ public class BranchesService
 
     @Override
     public Boolean restoreById(Integer id) {
-        Optional<DirectionsModel> optionalDirection = this.directionsRepository.findById(id);
+        Optional<BranchesModel> optionalBranch = this.repository.findById(id);
 
-        if (optionalDirection.isPresent()) {
-            // Deleting the entity
-            Integer directionId = optionalDirection.get().getId();
+        if (!optionalBranch.isPresent())
+            return false;
+
+        BranchesModel branch = optionalBranch.get();
+
+        if (branch.getDirection() != null) {
+            Integer directionId = branch.getDirection().getId();
             this.directionsRepository.restoreById(directionId);
         }
 
