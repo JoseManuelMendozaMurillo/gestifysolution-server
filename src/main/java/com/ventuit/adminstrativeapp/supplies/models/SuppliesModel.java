@@ -2,7 +2,7 @@ package com.ventuit.adminstrativeapp.supplies.models;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.List;
 
 import jakarta.persistence.OneToMany;
 
@@ -65,6 +65,6 @@ public class SuppliesModel extends ExtendedBaseModel {
     private SuppliesCategoriesModel category;
 
     @OneToMany(mappedBy = "supplies", cascade = CascadeType.ALL)
-    private Set<SuppliersModel> suppliers;
+    private List<SuppliersModel> suppliers;
 
 }
