@@ -52,14 +52,22 @@ public class SuppliersService extends
 
         if (dto.getDirection() != null) {
 
-            DirectionsModel direction = supplier.getDirection();
+            DirectionsModel directionToUpdate = supplier.getDirection();
 
-            dto.getDirection().setDeletedAt(direction.getDeletedAt());
+            if (directionToUpdate != null) {
+                // In case to update the direction
+                dto.getDirection().setDeletedAt(directionToUpdate.getDeletedAt());
+                DirectionsModel directionUpdated = this.directionsMapper.updateFromDto(dto.getDirection(),
+                        directionToUpdate);
+                if (directionUpdated == null)
+                    return false;
+            } else {
+                // In case to create a new direction
+                DirectionsModel newDirection = this.directionsMapper.toEntity(dto.getDirection());
+                DirectionsModel newDirectionSaved = this.directionsRepository.save(newDirection);
+                supplier.setDirection(newDirectionSaved);
+            }
 
-            DirectionsModel directionUpdated = this.directionsMapper.updateFromDto(dto.getDirection(), direction);
-
-            if (directionUpdated == null)
-                return false;
         }
 
         dto.setDeletedAt(supplier.getDeletedAt());
