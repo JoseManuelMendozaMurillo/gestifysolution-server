@@ -3,11 +3,15 @@ package com.ventuit.adminstrativeapp.supplies.models;
 import java.time.LocalDateTime;
 
 import com.ventuit.adminstrativeapp.core.models.ExtendedBaseModel;
+import com.ventuit.adminstrativeapp.shared.models.DirectionsModel;
 import com.ventuit.adminstrativeapp.shared.validations.email.Email;
 import com.ventuit.adminstrativeapp.shared.validations.phone.Phone;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -43,5 +47,9 @@ public class SuppliersModel extends ExtendedBaseModel {
 
     @Column(nullable = true, insertable = false)
     private LocalDateTime activeChangedAt;
+
+    @OneToOne(cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "direction_id", nullable = true)
+    private DirectionsModel direction;
 
 }

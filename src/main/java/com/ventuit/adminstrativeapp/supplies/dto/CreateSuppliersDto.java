@@ -3,9 +3,11 @@ package com.ventuit.adminstrativeapp.supplies.dto;
 import java.time.LocalDateTime;
 
 import com.ventuit.adminstrativeapp.core.dto.ExtendedBaseDto;
+import com.ventuit.adminstrativeapp.shared.dto.DirectionsDto;
 import com.ventuit.adminstrativeapp.shared.validations.email.Email;
 import com.ventuit.adminstrativeapp.shared.validations.phone.Phone;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -39,4 +41,6 @@ public class CreateSuppliersDto extends ExtendedBaseDto {
 
     private LocalDateTime activeChangedAt;
 
+    @Valid
+    private DirectionsDto direction;
 }
