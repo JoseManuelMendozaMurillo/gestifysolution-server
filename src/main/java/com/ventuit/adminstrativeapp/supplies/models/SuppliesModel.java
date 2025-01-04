@@ -50,7 +50,7 @@ public class SuppliesModel extends ExtendedBaseModel {
     @JoinColumn(name = "category_id")
     private SuppliesCategoriesModel category;
 
-    @OneToMany(mappedBy = "supplies", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "supplies", cascade = CascadeType.REFRESH, orphanRemoval = false)
     private List<SuppliersModel> suppliers;
 
 }
