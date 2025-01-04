@@ -10,7 +10,6 @@ import com.ventuit.adminstrativeapp.shared.validations.phone.Phone;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
@@ -41,6 +40,12 @@ public class SuppliersModel extends ExtendedBaseModel {
     @Email
     private String email;
 
+    @Column(nullable = false, name = "quantity_per_unit")
+    private Integer quantityPerUnit;
+
+    @Column(nullable = false)
+    private Float price;
+
     @Column(nullable = false, columnDefinition = "boolean default false")
     private boolean active;
 
@@ -54,8 +59,8 @@ public class SuppliersModel extends ExtendedBaseModel {
     @JoinColumn(name = "direction_id", nullable = true)
     private DirectionsModel direction;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "supplies_id")
+    @ManyToOne
+    @JoinColumn(name = "supplies_id", nullable = false)
     private SuppliesModel supplies;
 
 }

@@ -31,6 +31,12 @@ public class UpdateSuppliersDto extends ExtendedBaseDto {
     @Size(max = 60, message = "Email cannot exceed 60 characters")
     private String email;
 
+    private Integer quantityPerUnit;
+
+    private Float price;
+
     @Valid
     private DirectionsDto direction;
+
+    // TODO: Adding the supplies record
 }

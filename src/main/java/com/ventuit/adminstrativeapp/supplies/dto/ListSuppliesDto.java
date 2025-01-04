@@ -1,10 +1,12 @@
 package com.ventuit.adminstrativeapp.supplies.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.ventuit.adminstrativeapp.core.dto.ExtendedBaseDto;
-import com.ventuit.adminstrativeapp.shared.dto.DirectionsDto;
-import com.ventuit.adminstrativeapp.supplies.models.SuppliesModel;
+import com.ventuit.adminstrativeapp.supplies.models.SuppliersModel;
+import com.ventuit.adminstrativeapp.supplies.models.SuppliesCategoriesModel;
+import com.ventuit.adminstrativeapp.supplies.models.SuppliesMeasureModel;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,17 +19,11 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class ListSuppliersDto extends ExtendedBaseDto {
+public class ListSuppliesDto extends ExtendedBaseDto {
 
     private String name;
 
-    private String phone;
-
-    private String email;
-
-    private Integer quantityPerUnit;
-
-    private Float price;
+    private String description;
 
     private boolean active;
 
@@ -35,7 +31,9 @@ public class ListSuppliersDto extends ExtendedBaseDto {
 
     private LocalDateTime activeChangedAt;
 
-    private DirectionsDto direction;
+    private SuppliesMeasureModel measure;
 
-    private SuppliesModel supplies;
+    private SuppliesCategoriesModel category;
+
+    private List<SuppliersModel> supplier;
 }

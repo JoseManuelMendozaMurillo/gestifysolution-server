@@ -1,10 +1,7 @@
 package com.ventuit.adminstrativeapp.supplies.models;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-
-import jakarta.persistence.OneToMany;
 
 import com.ventuit.adminstrativeapp.core.models.ExtendedBaseModel;
 
@@ -12,6 +9,7 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -35,18 +33,6 @@ public class SuppliesModel extends ExtendedBaseModel {
     @Column(nullable = true, length = 60)
     private String description;
 
-    @Column(nullable = false, name = "quantity_per_unit")
-    private Integer quantityPerUnit;
-
-    @Column(nullable = false, name = "price_per_unit")
-    private Float pricePerUnit;
-
-    @Column(nullable = true)
-    private LocalDate expirationDate;
-
-    @Column(nullable = true, length = 60)
-    private String sku;
-
     @Column(nullable = false, columnDefinition = "boolean default false")
     private boolean active;
 
@@ -64,7 +50,7 @@ public class SuppliesModel extends ExtendedBaseModel {
     @JoinColumn(name = "category_id")
     private SuppliesCategoriesModel category;
 
-    @OneToMany(mappedBy = "supplies", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "supplies", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SuppliersModel> suppliers;
 
 }

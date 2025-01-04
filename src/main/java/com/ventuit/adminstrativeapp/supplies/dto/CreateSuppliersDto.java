@@ -9,6 +9,7 @@ import com.ventuit.adminstrativeapp.shared.validations.phone.Phone;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -35,6 +36,12 @@ public class CreateSuppliersDto extends ExtendedBaseDto {
     @Size(max = 60, message = "Email cannot exceed 60 characters")
     private String email;
 
+    @NotNull(message = "Quantity per unit cannot be null")
+    private Integer quantityPerUnit;
+
+    @NotNull(message = "Price cannot be null")
+    private Float price;
+
     private boolean active;
 
     private Integer activeChangedBy;
@@ -43,4 +50,6 @@ public class CreateSuppliersDto extends ExtendedBaseDto {
 
     @Valid
     private DirectionsDto direction;
+
+    // TODO: Adding the supplies record
 }
