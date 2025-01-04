@@ -35,5 +35,5 @@ public class ListSuppliesDto extends ExtendedBaseDto {
 
     private SuppliesCategoriesModel category;
 
-    private List<SuppliersModel> supplier;
+    private List<SuppliersModel> suppliers;
 }
