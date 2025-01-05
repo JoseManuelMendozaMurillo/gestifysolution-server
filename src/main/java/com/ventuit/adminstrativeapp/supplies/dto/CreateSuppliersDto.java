@@ -2,10 +2,13 @@ package com.ventuit.adminstrativeapp.supplies.dto;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.ventuit.adminstrativeapp.core.dto.ExtendedBaseDto;
 import com.ventuit.adminstrativeapp.shared.dto.DirectionsDto;
 import com.ventuit.adminstrativeapp.shared.validations.email.Email;
 import com.ventuit.adminstrativeapp.shared.validations.phone.Phone;
+import com.ventuit.adminstrativeapp.supplies.models.SuppliesModel;
+import com.ventuit.adminstrativeapp.supplies.serialization.SuppliesDeserializer;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -51,5 +54,7 @@ public class CreateSuppliersDto extends ExtendedBaseDto {
     @Valid
     private DirectionsDto direction;
 
-    // TODO: Adding the supplies record
+    @NotNull(message = "Supplies cannot be null")
+    @JsonDeserialize(using = SuppliesDeserializer.class)
+    private SuppliesModel supplies;
 }

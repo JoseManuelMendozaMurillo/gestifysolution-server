@@ -1,9 +1,12 @@
 package com.ventuit.adminstrativeapp.supplies.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.ventuit.adminstrativeapp.core.dto.ExtendedBaseDto;
 import com.ventuit.adminstrativeapp.shared.dto.DirectionsDto;
 import com.ventuit.adminstrativeapp.shared.validations.email.Email;
 import com.ventuit.adminstrativeapp.shared.validations.phone.Phone;
+import com.ventuit.adminstrativeapp.supplies.models.SuppliesModel;
+import com.ventuit.adminstrativeapp.supplies.serialization.SuppliesDeserializer;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Size;
@@ -38,5 +41,6 @@ public class UpdateSuppliersDto extends ExtendedBaseDto {
     @Valid
     private DirectionsDto direction;
 
-    // TODO: Adding the supplies record
+    @JsonDeserialize(using = SuppliesDeserializer.class)
+    private SuppliesModel supplies;
 }

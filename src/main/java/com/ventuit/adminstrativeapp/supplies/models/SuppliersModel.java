@@ -2,6 +2,7 @@ package com.ventuit.adminstrativeapp.supplies.models;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.ventuit.adminstrativeapp.core.models.ExtendedBaseModel;
 import com.ventuit.adminstrativeapp.shared.models.DirectionsModel;
 import com.ventuit.adminstrativeapp.shared.validations.email.Email;
@@ -61,6 +62,7 @@ public class SuppliersModel extends ExtendedBaseModel {
 
     @ManyToOne
     @JoinColumn(name = "supplies_id", nullable = false)
+    @JsonBackReference
     private SuppliesModel supplies;
 
 }

@@ -3,6 +3,7 @@ package com.ventuit.adminstrativeapp.supplies.models;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.ventuit.adminstrativeapp.core.models.ExtendedBaseModel;
 
 import jakarta.persistence.CascadeType;
@@ -51,6 +52,7 @@ public class SuppliesModel extends ExtendedBaseModel {
     private SuppliesCategoriesModel category;
 
     @OneToMany(mappedBy = "supplies", cascade = CascadeType.REFRESH, orphanRemoval = false)
+    @JsonManagedReference
     private List<SuppliersModel> suppliers;
 
 }

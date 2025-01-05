@@ -18,7 +18,6 @@ public abstract class SuppliersMapper
 
     @Override
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "supplies", ignore = true)
     public abstract SuppliersModel toEntity(CreateSuppliersDto dto);
 
     @Override
@@ -33,7 +32,6 @@ public abstract class SuppliersMapper
     @Mapping(target = "activeChangedAt", ignore = true)
     @Mapping(target = "activeChangedBy", ignore = true)
     @Mapping(target = "direction", ignore = true)
-    @Mapping(target = "supplies", ignore = true)
     public abstract SuppliersModel updateFromDto(UpdateSuppliersDto dto, @MappingTarget SuppliersModel entity);
 
 }
