@@ -1,15 +1,11 @@
 package com.ventuit.adminstrativeapp.supplies.dto;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import java.time.LocalDateTime;
+
 import com.ventuit.adminstrativeapp.core.dto.ExtendedBaseDto;
 import com.ventuit.adminstrativeapp.shared.dto.DirectionsDto;
-import com.ventuit.adminstrativeapp.shared.validations.email.Email;
-import com.ventuit.adminstrativeapp.shared.validations.phone.Phone;
 import com.ventuit.adminstrativeapp.supplies.models.SuppliesModel;
-import com.ventuit.adminstrativeapp.supplies.serialization.SuppliesDeserializer;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -21,26 +17,25 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class UpdateSuppliersDto extends ExtendedBaseDto {
+public class ListSuppliersDto extends ExtendedBaseDto {
 
-    @Size(max = 60, message = "Name cannot exceed 60 characters")
     private String name;
 
-    @Phone
-    @Size(max = 30, message = "Phone cannot exceed 30 characters")
     private String phone;
 
-    @Email
-    @Size(max = 60, message = "Email cannot exceed 60 characters")
     private String email;
 
     private Integer quantityPerUnit;
 
     private Float price;
 
-    @Valid
+    private boolean active;
+
+    private Integer activeChangedBy;
+
+    private LocalDateTime activeChangedAt;
+
     private DirectionsDto direction;
 
-    @JsonDeserialize(using = SuppliesDeserializer.class)
     private SuppliesModel supplies;
 }
