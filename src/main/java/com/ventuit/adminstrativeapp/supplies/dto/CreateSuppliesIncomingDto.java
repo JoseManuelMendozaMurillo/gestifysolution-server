@@ -2,8 +2,13 @@ package com.ventuit.adminstrativeapp.supplies.dto;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.ventuit.adminstrativeapp.core.dto.ExtendedBaseDto;
 import com.ventuit.adminstrativeapp.shared.validations.pastorpresentdate.PastOrPresentDate;
+import com.ventuit.adminstrativeapp.supplies.models.SuppliersModel;
+import com.ventuit.adminstrativeapp.supplies.models.SuppliesModel;
+import com.ventuit.adminstrativeapp.supplies.serialization.SuppliersDeserializer;
+import com.ventuit.adminstrativeapp.supplies.serialization.SuppliesDeserializer;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -30,4 +35,12 @@ public class CreateSuppliesIncomingDto extends ExtendedBaseDto {
 
     @NotNull(message = "Price cannot be null")
     private Float price;
+
+    @NotNull(message = "Supplies cannot be null")
+    @JsonDeserialize(using = SuppliesDeserializer.class)
+    private SuppliesModel supplies;
+
+    @NotNull(message = "Supplier cannot be null")
+    @JsonDeserialize(using = SuppliersDeserializer.class)
+    private SuppliersModel supplier;
 }

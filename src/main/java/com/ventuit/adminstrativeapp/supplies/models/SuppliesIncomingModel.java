@@ -7,6 +7,7 @@ import com.ventuit.adminstrativeapp.shared.validations.pastorpresentdate.PastOrP
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,8 +15,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-@SuperBuilder
 @EqualsAndHashCode(callSuper = true)
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
@@ -36,4 +37,9 @@ public class SuppliesIncomingModel extends ExtendedBaseModel {
     @Column(nullable = false)
     private Float price;
 
+    @OneToOne()
+    private SuppliesModel supplies;
+
+    @OneToOne()
+    private SuppliersModel supplier;
 }
