@@ -2,8 +2,6 @@ package com.ventuit.adminstrativeapp.supplies.models;
 
 import java.time.LocalDate;
 
-import org.apache.catalina.valves.ExtendedAccessLogValve;
-
 import com.ventuit.adminstrativeapp.core.models.ExtendedBaseModel;
 import com.ventuit.adminstrativeapp.shared.validations.pastorpresentdate.PastOrPresentDate;
 
