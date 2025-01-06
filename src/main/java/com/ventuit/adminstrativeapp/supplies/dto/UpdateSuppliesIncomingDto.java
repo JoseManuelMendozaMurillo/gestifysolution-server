@@ -17,7 +17,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class UpdateSuppliesIncoming extends ExtendedBaseDto {
+public class UpdateSuppliesIncomingDto extends ExtendedBaseDto {
     @PastOrPresentDate()
     private LocalDate expirationDate;
 
