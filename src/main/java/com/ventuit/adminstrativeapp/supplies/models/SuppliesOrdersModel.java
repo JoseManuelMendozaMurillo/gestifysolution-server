@@ -12,7 +12,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "supplies_orders")
-public class SuppliesOrders extends ExtendedBaseModel {
+public class SuppliesOrdersModel extends ExtendedBaseModel {
     @Column(nullable = false)
     private Integer quantity;
 
