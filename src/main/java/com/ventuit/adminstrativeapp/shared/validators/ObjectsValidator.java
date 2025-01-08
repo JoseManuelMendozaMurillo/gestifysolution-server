@@ -5,6 +5,8 @@ import java.util.Set;
 
 import org.springframework.stereotype.Component;
 
+import com.ventuit.adminstrativeapp.shared.exceptions.ObjectNotValidException;
+
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ValidatorFactory;
 import jakarta.validation.Validation;
@@ -16,18 +18,18 @@ public class ObjectsValidator<T> {
     private final ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
     private final Validator validator = validatorFactory.getValidator();
 
-    public void validate(T classToValidate) {
+    public void validate(T classToValidate) throws ObjectNotValidException {
         // Method for validating fields from a class
 
         Set<ConstraintViolation<T>> violations = this.validator.validate(classToValidate);
 
-        // if (!violations.isEmpty()) {
-        // throw ObjectNotValidException
-        // .builder()
-        // .errorMessage("There are some errors in the request's fields")
-        // .fieldsError(getFieldsErrorMap(violations))
-        // .build();
-        // }
+        if (!violations.isEmpty()) {
+            throw ObjectNotValidException
+                    .builder()
+                    .errorMessage("There are some errors in the request's fields")
+                    .fieldsError(getFieldsErrorMap(violations))
+                    .build();
+        }
 
     }
 
