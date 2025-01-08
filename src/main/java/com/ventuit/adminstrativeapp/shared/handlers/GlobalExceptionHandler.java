@@ -53,7 +53,7 @@ public class GlobalExceptionHandler {
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         problemDetail.setTitle("Error in the application");
         problemDetail.setDetail("An unexpected error has occurred in the application");
-        return ResponseEntity.internalServerError().body(null);
+        return ResponseEntity.internalServerError().body(problemDetail);
     }
 
 }

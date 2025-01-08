@@ -10,12 +10,18 @@ import com.ventuit.adminstrativeapp.core.mappers.interfaces.CrudMapperInterface;
 import com.ventuit.adminstrativeapp.core.models.BaseModel;
 import com.ventuit.adminstrativeapp.core.repositories.BaseRepository;
 import com.ventuit.adminstrativeapp.core.services.interfaces.CrudServiceInterface;
+import com.ventuit.adminstrativeapp.shared.validators.ObjectsValidator;
 
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 public abstract class CrudServiceImpl<CREATINGDTO extends BaseDto, UPDATINGDTO extends BaseDto, LISTDTO extends BaseDto, ENTITY extends BaseModel, ID, MAPPER extends CrudMapperInterface<CREATINGDTO, UPDATINGDTO, LISTDTO, ENTITY>, REPOSITORY extends BaseRepository<ENTITY, ID>>
         implements CrudServiceInterface<CREATINGDTO, UPDATINGDTO, LISTDTO, ID> {
 
     protected REPOSITORY repository;
     protected MAPPER mapper;
+    protected ObjectsValidator<CREATINGDTO> creatingDtoValidator = new ObjectsValidator<CREATINGDTO>();
+    protected ObjectsValidator<UPDATINGDTO> updatingDtoValidator = new ObjectsValidator<UPDATINGDTO>();
 
     public CrudServiceImpl(REPOSITORY repository, MAPPER mapper) {
         this.repository = repository;
@@ -70,6 +76,9 @@ public abstract class CrudServiceImpl<CREATINGDTO extends BaseDto, UPDATINGDTO e
     @SuppressWarnings("unused")
     @Override
     public ResponseEntity<?> create(CREATINGDTO dto) {
+        // Validate the dto
+        this.creatingDtoValidator.validate(dto);
+
         ENTITY entity = this.mapper.toEntity(dto);
         ENTITY savedEntity = this.repository.save(entity);
         if (savedEntity == null)
@@ -79,6 +88,9 @@ public abstract class CrudServiceImpl<CREATINGDTO extends BaseDto, UPDATINGDTO e
 
     @Override
     public Boolean update(ID id, UPDATINGDTO dto) {
+        // Validate the dto
+        this.updatingDtoValidator.validate(dto);
+
         Optional<ENTITY> optionalEntity = this.repository.findById(id);
 
         if (!optionalEntity.isPresent())
