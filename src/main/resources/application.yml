@@ -2,9 +2,9 @@ spring:
     application:
         name: gestifysolution
     datasource:
-        url: ${DATABASE_URL}
-        username: ${DATABASE_USER}
-        password: ${DATABASE_PASSWORD}
+        url: jdbc:mysql://${DOCKER_DATABASE_CONTAINER_NAME}:3306/${MYSQL_DATABASE}
+        username: ${MYSQL_USERNAME}
+        password: ${MYSQL_PASSWORD}
         driver-class-name: com.mysql.cj.jdbc.Driver
     jpa:
         hibernate:
@@ -19,8 +19,14 @@ springdoc:
     api-docs:
         enabled: true
         path: /docs/api-docs
-        
+
 server:
     servlet:
         context-path: /api/v1
 
+app:
+    keycloak:
+        base-url: ${DOCKER_KEYCLOAK_CONTAINER_NAME}
+        username: ${KEYCLOAK_ADMIN_USER}
+        password: ${KEYCLOAK_ADMIN_PASSWORD}
+        realm-name: ${KEYCLOAK_REALM_NAME}

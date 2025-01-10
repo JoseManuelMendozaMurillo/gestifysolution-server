@@ -16,10 +16,8 @@ services:
       - ../:/workspace/gestifysolution-server
     networks:
       - backend-dev
-    environment:
-      - DATABASE_URL=jdbc:mysql://gestifysolution-db-dev:3306/${MYSQL_DATABASE}
-      - DATABASE_USER=root
-      - DATABASE_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    env_file:
+      - .env
     depends_on:
       - gestifysolution-db-dev
     command: sleep infinity
