@@ -4,6 +4,7 @@ import org.jboss.resteasy.client.jaxrs.internal.ResteasyClientBuilderImpl;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
+import org.keycloak.admin.client.resource.RealmResource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +19,9 @@ public class KeycloakProvider {
 
     @Value("${app.keycloak.base-url}")
     private String baseUrl;
+
+    @Value("${app.keycloak.realm-name}")
+    private String realmName;
 
     private final String PORT = "8080";
     private final String REALM_NAME = "master";
@@ -44,6 +48,10 @@ public class KeycloakProvider {
 
         }
         return this.keycloak;
+    }
+
+    public RealmResource getRealm() {
+        return this.keycloak.realm(realmName);
     }
 
 }

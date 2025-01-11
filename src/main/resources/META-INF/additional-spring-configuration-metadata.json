@@ -24,6 +24,21 @@
             "name": "app.keycloak.realm-name",
             "type": "java.lang.String",
             "description": "..."
+        },
+        {
+            "name": "app.keycloak.client-name",
+            "type": "java.lang.String",
+            "description": "..."
+        },
+        {
+            "name": "app.domain",
+            "type": "java.lang.String",
+            "description": "..."
+        },
+        {
+            "name": "app.ssl",
+            "type": "java.lang.String",
+            "description": "..."
         }
     ]
 }

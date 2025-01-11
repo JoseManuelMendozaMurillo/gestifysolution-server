@@ -4,6 +4,7 @@ import org.keycloak.admin.client.resource.RealmsResource;
 import org.keycloak.representations.idm.RealmRepresentation;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 
 import com.ventuit.adminstrativeapp.keycloak.KeycloakProvider;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Order(1)
 public class CreateGestifysolutionRealm implements CommandLineRunner {
 
     private final KeycloakProvider keycloakProvider;
