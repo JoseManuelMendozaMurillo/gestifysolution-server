@@ -21,12 +21,17 @@
             "description": "Represents the password associated with the app.keycloak.admin-user."
         },
         {
-            "name": "app.keycloak.realm-name",
+            "name": "app.keycloak.realm",
             "type": "java.lang.String",
             "description": "..."
         },
         {
-            "name": "app.keycloak.client-name",
+            "name": "app.keycloak.admin-client",
+            "type": "java.lang.String",
+            "description": "..."
+        },
+        {
+            "name": "app.keycloak.client",
             "type": "java.lang.String",
             "description": "..."
         },

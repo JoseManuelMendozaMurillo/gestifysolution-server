@@ -29,14 +29,20 @@ public class KeycloakProvider {
     @Value("${app.keycloak.base-url}")
     private String baseUrl;
 
-    @Value("${app.keycloak.realm-name}")
+    @Value("${app.keycloak.realm}")
     private String gestifySolutionRealmName;
 
-    @Value("${app.keycloak.client-name}")
+    @Value("${app.keycloak.client}")
     private String gestifySolutionClientId;
+
+    @Value("${app.keycloak.admin-client}")
+    private String gestifySolutionAdminClientId;
 
     @Value("${server.port}")
     private String gestifySolutionServerPort;
+
+    @Value("${app.ssl}")
+    private String ssl;
 
     private final String realmMasterName = "master";
     private final String adminCliClientId = "admin-cli";
@@ -47,7 +53,13 @@ public class KeycloakProvider {
 
     public Keycloak getKeycloak() {
         if (this.keycloak == null) {
-            String serverUrl = "http://" + this.baseUrl + ":" + this.gestifySolutionServerPort;
+            String serverUrl;
+            if (this.ssl.equals("true")) {
+                serverUrl = "https://";
+            } else {
+                serverUrl = "http://";
+            }
+            serverUrl = serverUrl + this.baseUrl + ":" + this.gestifySolutionServerPort;
             this.keycloak = KeycloakBuilder.builder()
                     .serverUrl(serverUrl)
                     .realm(this.realmMasterName)
@@ -83,16 +95,16 @@ public class KeycloakProvider {
         return realmManagementId;
     }
 
-    public String getClientIdGestifySolutionClient() {
-        String gestifySolutionClientId = getGestifySolutionRealm()
+    public String getClientIdGestifySolutionAdminClient() {
+        String gestifySolutionAdminClientId = getGestifySolutionRealm()
                 .clients()
-                .findByClientId(this.gestifySolutionClientId)
+                .findByClientId(this.gestifySolutionAdminClientId)
                 .stream()
                 .findFirst()
                 .map(ClientRepresentation::getId)
-                .orElseThrow(() -> new KeycloakClientNotFoundException(this.gestifySolutionClientId,
+                .orElseThrow(() -> new KeycloakClientNotFoundException(this.gestifySolutionAdminClientId,
                         gestifySolutionRealmName));
-        return gestifySolutionClientId;
+        return gestifySolutionAdminClientId;
     }
 
     public boolean isGestifySolutionRealmExist() {
@@ -103,6 +115,14 @@ public class KeycloakProvider {
                 .anyMatch(realm -> realm.getRealm().equals(gestifySolutionRealmName));
 
         return realmExists;
+    }
+
+    public boolean isGestifySolutionAdminClientExist() {
+        boolean clientExists = getGestifySolutionRealm().clients()
+                .findByClientId(gestifySolutionAdminClientId)
+                .stream()
+                .anyMatch(client -> client.getClientId().equals(gestifySolutionAdminClientId));
+        return clientExists;
     }
 
     public boolean isGestifySolutionClientExist() {
