@@ -1,4 +1,4 @@
-package com.ventuit.adminstrativeapp.keycloak.settingup;
+package com.ventuit.adminstrativeapp.keycloak.setup;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -86,7 +86,7 @@ public class CreateGestifysolutionAdminClient implements CommandLineRunner {
     private void assignManageUsersRole() {
         String manageUsersRoleName = "manage-users";
         String realmManagementClientId = keycloakProvider.getClientIdRealmManagementClient();
-        String gestifySolutionClientId = keycloakProvider.getClientIdGestifySolutionAdminClient();
+        String gestifySolutionAdminClientId = keycloakProvider.getClientIdGestifySolutionAdminClient();
 
         // Retrieve the 'manage-users' role from 'realm-management'
         RoleRepresentation manageUsersRole = keycloakProvider.getGestifySolutionRealm()
@@ -99,7 +99,7 @@ public class CreateGestifysolutionAdminClient implements CommandLineRunner {
         // Retrieve the service account user ID for the new client
         UserRepresentation serviceAccountUser = keycloakProvider.getGestifySolutionRealm()
                 .clients()
-                .get(gestifySolutionClientId)
+                .get(gestifySolutionAdminClientId)
                 .getServiceAccountUser();
 
         // Assign the 'manage-users' role to the service account user

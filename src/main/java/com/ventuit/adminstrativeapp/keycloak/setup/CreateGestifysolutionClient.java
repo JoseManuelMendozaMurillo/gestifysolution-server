@@ -1,4 +1,4 @@
-package com.ventuit.adminstrativeapp.keycloak.settingup;
+package com.ventuit.adminstrativeapp.keycloak.setup;
 
 import java.util.Collections;
 import java.util.HashMap;

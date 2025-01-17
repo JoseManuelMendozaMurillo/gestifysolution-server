@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.ventuit.adminstrativeapp.keycloak.exceptions.KeycloakUserCreationException;
 import com.ventuit.adminstrativeapp.shared.exceptions.ObjectNotValidException;
 import com.ventuit.adminstrativeapp.utils.GlobalExceptionHandlerUtils;
 
@@ -54,6 +55,18 @@ public class GlobalExceptionHandler {
         problemDetail.setTitle("Error in the application");
         problemDetail.setDetail("An unexpected error has occurred in the application");
         return ResponseEntity.internalServerError().body(problemDetail);
+    }
+
+    @ExceptionHandler(KeycloakUserCreationException.class)
+    public ResponseEntity<String> handleKeycloakUserCreationException(KeycloakUserCreationException ex) {
+        return ResponseEntity.status(ex.getStatusCode())
+                .body(ex.getMessage());
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<String> handleGenericException(Exception ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("An unexpected error occurred: " + ex.getMessage());
     }
 
 }

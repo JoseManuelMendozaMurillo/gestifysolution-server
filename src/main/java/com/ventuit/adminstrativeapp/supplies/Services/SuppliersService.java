@@ -3,7 +3,6 @@ package com.ventuit.adminstrativeapp.supplies.Services;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.ventuit.adminstrativeapp.core.services.implementations.CrudServiceImpl;
@@ -17,6 +16,9 @@ import com.ventuit.adminstrativeapp.supplies.dto.UpdateSuppliersDto;
 import com.ventuit.adminstrativeapp.supplies.mappers.SuppliersMapper;
 import com.ventuit.adminstrativeapp.supplies.models.SuppliersModel;
 import com.ventuit.adminstrativeapp.supplies.repositories.SuppliersRepository;
+
+import jakarta.transaction.Transactional;
+import jakarta.transaction.Transactional.TxType;
 
 @Service
 public class SuppliersService extends
@@ -32,17 +34,19 @@ public class SuppliersService extends
     DirectionsMapper directionsMapper;
 
     @Override
-    public ResponseEntity<?> create(CreateSuppliersDto dto) {
+    @Transactional(value = TxType.REQUIRED)
+    public void create(CreateSuppliersDto dto) {
         if (dto.getDirection() != null) {
             DirectionsModel direction = this.directionsMapper.toEntity(dto.getDirection());
             DirectionsModel directionSaved = this.directionsRepository.save(direction);
             DirectionsDto directionDto = this.directionsMapper.toDto(directionSaved);
             dto.setDirection(directionDto);
         }
-        return super.create(dto);
+        super.create(dto);
     }
 
     @Override
+    @Transactional(value = TxType.REQUIRED)
     public Boolean update(Integer id, UpdateSuppliersDto dto) {
         Optional<SuppliersModel> optionalSupplier = this.repository.findById(id);
 
@@ -79,6 +83,7 @@ public class SuppliersService extends
     }
 
     @Override
+    @Transactional(value = TxType.REQUIRED)
     public Boolean softDeleteById(Integer id) {
         Optional<SuppliersModel> optionalSupplier = this.repository.findById(id);
 
@@ -96,6 +101,7 @@ public class SuppliersService extends
     }
 
     @Override
+    @Transactional(value = TxType.REQUIRED)
     public Boolean restoreById(Integer id) {
         Optional<SuppliersModel> optionalSupplier = this.repository.findById(id);
 

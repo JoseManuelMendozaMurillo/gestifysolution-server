@@ -3,7 +3,6 @@ package com.ventuit.adminstrativeapp.branches.services;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.ventuit.adminstrativeapp.branches.dto.CreateBranchesDto;
@@ -16,6 +15,9 @@ import com.ventuit.adminstrativeapp.shared.dto.DirectionsDto;
 import com.ventuit.adminstrativeapp.shared.mappers.DirectionsMapper;
 import com.ventuit.adminstrativeapp.shared.models.DirectionsModel;
 import com.ventuit.adminstrativeapp.shared.repositories.DirectionsRepository;
+
+import jakarta.transaction.Transactional;
+import jakarta.transaction.Transactional.TxType;
 
 @Service
 public class BranchesService
@@ -32,15 +34,17 @@ public class BranchesService
     DirectionsMapper directionsMapper;
 
     @Override
-    public ResponseEntity<?> create(CreateBranchesDto dto) {
+    @Transactional(value = TxType.REQUIRED)
+    public void create(CreateBranchesDto dto) {
         DirectionsModel direction = this.directionsMapper.toEntity(dto.getDirection());
         DirectionsModel directionSaved = this.directionsRepository.save(direction);
         DirectionsDto directionDto = this.directionsMapper.toDto(directionSaved);
         dto.setDirection(directionDto);
-        return super.create(dto);
+        super.create(dto);
     }
 
     @Override
+    @Transactional(value = TxType.REQUIRED)
     public Boolean update(Integer id, UpdateBranchesDto dto) {
         Optional<BranchesModel> optionalBranch = this.repository.findById(id);
 
@@ -69,6 +73,7 @@ public class BranchesService
     }
 
     @Override
+    @Transactional(value = TxType.REQUIRED)
     public Boolean softDeleteById(Integer id) {
         Optional<BranchesModel> optionalBranch = this.repository.findById(id);
 
@@ -86,6 +91,7 @@ public class BranchesService
     }
 
     @Override
+    @Transactional(value = TxType.REQUIRED)
     public Boolean restoreById(Integer id) {
         Optional<BranchesModel> optionalBranch = this.repository.findById(id);
 

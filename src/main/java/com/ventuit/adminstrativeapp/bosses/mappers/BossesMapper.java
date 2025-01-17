@@ -21,6 +21,7 @@ public abstract class BossesMapper
 
     @Override
     @Named("toDto")
+    @Mapping(target = "user", ignore = true)
     public abstract CreateBossesDto toDto(BossesModel entity);
 
     @Override
@@ -29,6 +30,7 @@ public abstract class BossesMapper
 
     @Override
     @Named("toShowDto")
+    @Mapping(target = "user", ignore = true)
     public abstract CreateBossesDto toShowDto(BossesModel entity);
 
     @Override
@@ -38,6 +40,7 @@ public abstract class BossesMapper
     @Override
     @Mapping(target = "bossesBusinesses", ignore = true)
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "keycloakUserId", ignore = true)
     public abstract BossesModel toEntity(CreateBossesDto dto);
 
     @Override
@@ -46,7 +49,7 @@ public abstract class BossesMapper
     @Mapping(target = "deletedAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "keycloakUserId", ignore = true) // Add this line
+    @Mapping(target = "keycloakUserId", ignore = true)
     public abstract BossesModel updateFromDto(UpdateBossesDto dto, @MappingTarget BossesModel entity);
 
 }

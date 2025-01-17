@@ -62,13 +62,12 @@ public class CrudControllerImpl<CREATINGDTO, UPDATINGDTO, LISTDTO, ID, SERVICE e
     }
 
     @Override
-    @Transactional(value = TxType.REQUIRED)
     public ResponseEntity<?> create(CREATINGDTO model) {
-        return this.crudService.create(model);
+        this.crudService.create(model);
+        return ResponseEntity.ok("The record was created successfully");
     }
 
     @Override
-    @Transactional(value = TxType.REQUIRED)
     public ResponseEntity<String> update(ID id, UPDATINGDTO model) {
         Boolean isUpdatedEntity = this.crudService.update(id, model);
         if (isUpdatedEntity)

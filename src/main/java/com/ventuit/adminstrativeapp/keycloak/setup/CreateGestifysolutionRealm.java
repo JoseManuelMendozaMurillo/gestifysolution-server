@@ -1,4 +1,4 @@
-package com.ventuit.adminstrativeapp.keycloak.settingup;
+package com.ventuit.adminstrativeapp.keycloak.setup;
 
 import org.keycloak.representations.idm.RealmRepresentation;
 import org.springframework.boot.CommandLineRunner;

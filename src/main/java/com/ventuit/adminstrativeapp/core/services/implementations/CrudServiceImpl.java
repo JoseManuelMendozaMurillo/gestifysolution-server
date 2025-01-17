@@ -3,8 +3,6 @@ package com.ventuit.adminstrativeapp.core.services.implementations;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.http.ResponseEntity;
-
 import com.ventuit.adminstrativeapp.core.dto.BaseDto;
 import com.ventuit.adminstrativeapp.core.mappers.interfaces.CrudMapperInterface;
 import com.ventuit.adminstrativeapp.core.models.BaseModel;
@@ -12,6 +10,8 @@ import com.ventuit.adminstrativeapp.core.repositories.BaseRepository;
 import com.ventuit.adminstrativeapp.core.services.interfaces.CrudServiceInterface;
 import com.ventuit.adminstrativeapp.shared.validators.ObjectsValidator;
 
+import jakarta.transaction.Transactional;
+import jakarta.transaction.Transactional.TxType;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -73,20 +73,18 @@ public abstract class CrudServiceImpl<CREATINGDTO extends BaseDto, UPDATINGDTO e
         return this.mapper.toShowDto(optionalEntity.get());
     }
 
-    @SuppressWarnings("unused")
     @Override
-    public ResponseEntity<?> create(CREATINGDTO dto) {
+    @Transactional(value = TxType.REQUIRED)
+    public void create(CREATINGDTO dto) {
         // Validate the dto
         this.creatingDtoValidator.validate(dto);
 
         ENTITY entity = this.mapper.toEntity(dto);
-        ENTITY savedEntity = this.repository.save(entity);
-        if (savedEntity == null)
-            return ResponseEntity.internalServerError().build();
-        return ResponseEntity.ok("The record was created successfully");
+        this.repository.save(entity);
     }
 
     @Override
+    @Transactional(value = TxType.REQUIRED)
     public Boolean update(ID id, UPDATINGDTO dto) {
         // Validate the dto
         this.updatingDtoValidator.validate(dto);
@@ -106,6 +104,7 @@ public abstract class CrudServiceImpl<CREATINGDTO extends BaseDto, UPDATINGDTO e
     }
 
     @Override
+    @Transactional(value = TxType.REQUIRED)
     public Boolean softDeleteById(ID id) {
         Optional<ENTITY> optionalEntity = this.repository.findById(id);
 
@@ -120,6 +119,7 @@ public abstract class CrudServiceImpl<CREATINGDTO extends BaseDto, UPDATINGDTO e
     }
 
     @Override
+    @Transactional(value = TxType.REQUIRED)
     public Boolean deleteById(ID id) {
         Optional<ENTITY> optionalEntity = this.repository.findById(id);
 
@@ -134,6 +134,7 @@ public abstract class CrudServiceImpl<CREATINGDTO extends BaseDto, UPDATINGDTO e
     }
 
     @Override
+    @Transactional(value = TxType.REQUIRED)
     public Boolean restoreById(ID id) {
         Optional<ENTITY> optionalEntity = this.repository.findByIdAndDeletedAtIsNotNull(id);
 

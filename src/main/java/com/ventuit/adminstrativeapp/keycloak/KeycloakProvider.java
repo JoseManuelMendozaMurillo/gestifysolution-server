@@ -9,6 +9,7 @@ import org.keycloak.admin.client.KeycloakBuilder;
 import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.admin.client.resource.RealmsResource;
 import org.keycloak.representations.idm.ClientRepresentation;
+import org.keycloak.representations.idm.CredentialRepresentation;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -51,17 +52,12 @@ public class KeycloakProvider {
 
     private Keycloak keycloak = null;
 
+    private Keycloak adminClient = null;
+
     public Keycloak getKeycloak() {
         if (this.keycloak == null) {
-            String serverUrl;
-            if (this.ssl.equals("true")) {
-                serverUrl = "https://";
-            } else {
-                serverUrl = "http://";
-            }
-            serverUrl = serverUrl + this.baseUrl + ":" + this.gestifySolutionServerPort;
             this.keycloak = KeycloakBuilder.builder()
-                    .serverUrl(serverUrl)
+                    .serverUrl(getServerUrl())
                     .realm(this.realmMasterName)
                     .clientId(this.adminCliClientId)
                     .username(this.user)
@@ -75,6 +71,24 @@ public class KeycloakProvider {
 
         }
         return this.keycloak;
+    }
+
+    public RealmResource getAdminClient() {
+        if (this.adminClient == null) {
+            this.adminClient = KeycloakBuilder.builder()
+                    .serverUrl(getServerUrl())
+                    .realm(this.gestifySolutionRealmName)
+                    .grantType(OAuth2Constants.CLIENT_CREDENTIALS)
+                    .clientId(this.gestifySolutionAdminClientId)
+                    .clientSecret(getCredentialsAdminClient())
+                    .resteasyClient(
+                            new ResteasyClientBuilderImpl()
+                                    .connectionPoolSize(this.poolSize)
+                                    .build())
+                    .build();
+
+        }
+        return this.adminClient.realm(gestifySolutionRealmName);
     }
 
     public RealmResource getGestifySolutionRealm() {
@@ -131,6 +145,31 @@ public class KeycloakProvider {
                 .stream()
                 .anyMatch(client -> client.getClientId().equals(gestifySolutionClientId));
         return clientExists;
+    }
+
+    private String getServerUrl() {
+        String serverUrl;
+        if (this.ssl.equals("true")) {
+            serverUrl = "https://";
+        } else {
+            serverUrl = "http://";
+        }
+        serverUrl = serverUrl + this.baseUrl + ":" + this.gestifySolutionServerPort;
+        return serverUrl;
+    }
+
+    private String getCredentialsAdminClient() {
+        // Ensure the client exists
+        if (!isGestifySolutionAdminClientExist()) {
+            throw new KeycloakClientNotFoundException(this.gestifySolutionAdminClientId, gestifySolutionRealmName);
+        }
+        // Access the client secret
+        CredentialRepresentation clientSecret = getGestifySolutionRealm()
+                .clients()
+                .get(getClientIdGestifySolutionAdminClient())
+                .getSecret();
+
+        return clientSecret.getValue();
     }
 
 }

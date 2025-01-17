@@ -33,12 +33,6 @@ public class BossesModel extends BaseModel {
     @Column(nullable = false, unique = true)
     private String keycloakUserId;
 
-    @Column(length = 50, nullable = false)
-    private String name;
-
-    @Column(length = 50, nullable = true)
-    private String surname;
-
     @Column(length = 30, nullable = true, unique = true)
     @Phone
     private String phone;
