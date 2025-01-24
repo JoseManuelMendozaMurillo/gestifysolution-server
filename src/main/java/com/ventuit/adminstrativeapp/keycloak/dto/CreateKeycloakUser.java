@@ -1,5 +1,6 @@
 package com.ventuit.adminstrativeapp.keycloak.dto;
 
+import com.ventuit.adminstrativeapp.keycloak.validations.uniqueemail.UniqueEmail;
 import com.ventuit.adminstrativeapp.keycloak.validations.uniqueusername.UniqueUsername;
 import com.ventuit.adminstrativeapp.shared.validations.email.Email;
 
@@ -21,6 +22,7 @@ public class CreateKeycloakUser {
 
     @NotBlank(message = "email cannot be empty")
     @Email
+    @UniqueEmail()
     private String email;
 
     @NotBlank(message = "first name cannot be empty")

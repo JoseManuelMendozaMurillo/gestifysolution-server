@@ -19,7 +19,12 @@ public class KeycloakUtils {
     public boolean isUsernameExists(String username) {
         UsersResource usersResource = keycloak.getAdminClient().users();
         List<UserRepresentation> users = usersResource.search(username, true);
-        System.out.println("Juan");
+        return !users.isEmpty();
+    }
+
+    public boolean isEmailExists(String email) {
+        UsersResource usersResource = keycloak.getAdminClient().users();
+        List<UserRepresentation> users = usersResource.searchByEmail(email, true);
         return !users.isEmpty();
     }
 
