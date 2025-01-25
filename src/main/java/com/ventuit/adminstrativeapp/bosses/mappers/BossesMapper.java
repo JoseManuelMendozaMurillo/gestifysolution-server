@@ -2,22 +2,33 @@ package com.ventuit.adminstrativeapp.bosses.mappers;
 
 import java.util.List;
 
+import org.keycloak.representations.idm.UserRepresentation;
 import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants.ComponentModel;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
 import com.ventuit.adminstrativeapp.bosses.dto.CreateBossesDto;
+import com.ventuit.adminstrativeapp.bosses.dto.ListBossesDto;
 import com.ventuit.adminstrativeapp.bosses.dto.UpdateBossesDto;
 import com.ventuit.adminstrativeapp.bosses.models.BossesModel;
 import com.ventuit.adminstrativeapp.core.mappers.interfaces.CrudMapperInterface;
+import com.ventuit.adminstrativeapp.keycloak.dto.ListKeycloakUser;
+import com.ventuit.adminstrativeapp.keycloak.mappers.KeycloakUserMapper;
+import com.ventuit.adminstrativeapp.keycloak.services.implementations.KeycloakUsersServiceImpl;
 
 @Mapper(componentModel = ComponentModel.SPRING, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public abstract class BossesMapper
-        implements CrudMapperInterface<CreateBossesDto, UpdateBossesDto, CreateBossesDto, BossesModel> {
+        implements CrudMapperInterface<CreateBossesDto, UpdateBossesDto, ListBossesDto, BossesModel> {
+
+    @Autowired
+    private KeycloakUsersServiceImpl keycloakUsersService;
+    @Autowired
+    private KeycloakUserMapper keycloakUserMapper;
 
     @Override
     @Named("toDto")
@@ -30,12 +41,18 @@ public abstract class BossesMapper
 
     @Override
     @Named("toShowDto")
-    @Mapping(target = "user", ignore = true)
-    public abstract CreateBossesDto toShowDto(BossesModel entity);
+    @Mapping(target = "user", expression = "java(getKeycloakUser(entity.getKeycloakUserId()))")
+    public abstract ListBossesDto toShowDto(BossesModel entity);
+
+    @Named("getKeycloakUser")
+    public ListKeycloakUser getKeycloakUser(String userId) {
+        UserRepresentation user = keycloakUsersService.getUserById(userId);
+        return keycloakUserMapper.toListKeycloakUser(user);
+    }
 
     @Override
     @IterableMapping(qualifiedByName = "toShowDto")
-    public abstract List<CreateBossesDto> entitiesToShowDtos(List<BossesModel> listEntities);
+    public abstract List<ListBossesDto> entitiesToShowDtos(List<BossesModel> listEntities);
 
     @Override
     @Mapping(target = "bossesBusinesses", ignore = true)

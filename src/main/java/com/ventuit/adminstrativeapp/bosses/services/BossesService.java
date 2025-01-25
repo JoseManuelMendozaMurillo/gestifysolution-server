@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ventuit.adminstrativeapp.bosses.dto.CreateBossesDto;
+import com.ventuit.adminstrativeapp.bosses.dto.ListBossesDto;
 import com.ventuit.adminstrativeapp.bosses.dto.UpdateBossesDto;
 import com.ventuit.adminstrativeapp.bosses.mappers.BossesMapper;
 import com.ventuit.adminstrativeapp.bosses.models.BossesModel;
@@ -18,7 +19,7 @@ import jakarta.transaction.Transactional.TxType;
 @Service
 public class BossesService
         extends
-        CrudServiceImpl<CreateBossesDto, UpdateBossesDto, CreateBossesDto, BossesModel, Integer, BossesMapper, BossesRepository> {
+        CrudServiceImpl<CreateBossesDto, UpdateBossesDto, ListBossesDto, BossesModel, Integer, BossesMapper, BossesRepository> {
 
     @Autowired
     private KeycloakUsersServiceImpl usersService;

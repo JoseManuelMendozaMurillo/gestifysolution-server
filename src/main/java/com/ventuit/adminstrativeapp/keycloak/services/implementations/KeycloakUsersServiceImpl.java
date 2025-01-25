@@ -56,8 +56,7 @@ public class KeycloakUsersServiceImpl implements KeycloakUsersServiceInterface {
 
     @Override
     public UserRepresentation getUserById(String userId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getUserById'");
+        return keycloak.getAdminClient().users().get(userId).toRepresentation();
     }
 
     @Override
