@@ -28,4 +28,14 @@ public class KeycloakUtils {
         return !users.isEmpty();
     }
 
+    public boolean isEmailExistsUpdate(String userId, String email) {
+        UserRepresentation user = keycloak.getAdminClient().users().get(userId).toRepresentation();
+        if (user.getEmail().equals(email))
+            return false;
+
+        UsersResource usersResource = keycloak.getAdminClient().users();
+        List<UserRepresentation> users = usersResource.searchByEmail(email, true);
+        return !users.isEmpty();
+    }
+
 }
