@@ -98,4 +98,67 @@ public class BossesService
         return updatedEntity != null; // Return true if the entity was updated successfully
     }
 
+    @Override
+    @Transactional(value = TxType.REQUIRED)
+    public Boolean deleteById(Integer id) {
+        Optional<BossesModel> optionalEntity = this.repository.findById(id);
+
+        if (!optionalEntity.isPresent())
+            return true;
+
+        // Delete keycloak user
+        boolean isKeycloakUserDeleted = usersService.deleteUserById(optionalEntity.get().getKeycloakUserId());
+
+        if (!isKeycloakUserDeleted)
+            return false;
+
+        // Delete the boss
+        this.repository.deleteById(id);
+
+        // Checking if the boss was deleted
+        return !this.repository.findById(id).isPresent();
+    }
+
+    @Override
+    @Transactional(value = TxType.REQUIRED)
+    public Boolean restoreById(Integer id) {
+        Optional<BossesModel> optionalEntity = this.repository.findByIdAndDeletedAtIsNotNull(id);
+
+        if (!optionalEntity.isPresent())
+            return true;
+
+        // Restore the keycloak user
+        boolean isKeycloakUserRestored = usersService.enabledUser(optionalEntity.get().getKeycloakUserId());
+
+        if (!isKeycloakUserRestored)
+            return false;
+
+        // Restore the entity
+        this.repository.restoreById(id);
+
+        // Checking if the entity was restored
+        return this.repository.findByIdAndDeletedAtIsNull(id).isPresent();
+    }
+
+    @Override
+    @Transactional(value = TxType.REQUIRED)
+    public Boolean softDeleteById(Integer id) {
+        Optional<BossesModel> optionalEntity = this.repository.findById(id);
+
+        if (!optionalEntity.isPresent())
+            return true;
+
+        // Disabled the user
+        boolean isKeycloakUserDisabled = usersService.disabledUser(optionalEntity.get().getKeycloakUserId());
+
+        if (!isKeycloakUserDisabled)
+            return false;
+
+        // Delete the entity
+        this.repository.softDeleteById(id);
+
+        // Checking if the entity was deleted
+        return !this.repository.findByIdAndDeletedAtIsNull(id).isPresent();
+    }
+
 }

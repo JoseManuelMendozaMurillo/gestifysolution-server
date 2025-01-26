@@ -14,5 +14,9 @@ public interface KeycloakUsersServiceInterface {
 
     UserRepresentation getUserById(String userId);
 
+    boolean enabledUser(String userId);
+
+    boolean disabledUser(String userId);
+
     boolean deleteUserById(String id);
 }

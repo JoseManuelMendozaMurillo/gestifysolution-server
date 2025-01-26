@@ -102,4 +102,54 @@ public class KeycloakUsersServiceImpl implements KeycloakUsersServiceInterface {
         }
     }
 
+    @Override
+    public boolean enabledUser(String userId) {
+        try {
+            // Retrieve the UsersResource for the specified realm
+            UsersResource usersResource = keycloak.getAdminClient().users();
+
+            // Retrieve the UserResource for the specified userId
+            UserResource userResource = usersResource.get(userId);
+
+            // Fetch the existing UserRepresentation
+            UserRepresentation userRepresentation = userResource.toRepresentation();
+
+            // Set the enabled attribute to true
+            userRepresentation.setEnabled(true);
+
+            // Update the user in Keycloak
+            userResource.update(userRepresentation);
+
+            return true; // Indicate success
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false; // Indicate failure
+        }
+    }
+
+    @Override
+    public boolean disabledUser(String userId) {
+        try {
+            // Retrieve the UsersResource for the specified realm
+            UsersResource usersResource = keycloak.getAdminClient().users();
+
+            // Retrieve the UserResource for the specified userId
+            UserResource userResource = usersResource.get(userId);
+
+            // Fetch the existing UserRepresentation
+            UserRepresentation userRepresentation = userResource.toRepresentation();
+
+            // Set the enabled attribute to false
+            userRepresentation.setEnabled(false);
+
+            // Update the user in Keycloak
+            userResource.update(userRepresentation);
+
+            return true; // Indicate success
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false; // Indicate failure
+        }
+    }
+
 }
