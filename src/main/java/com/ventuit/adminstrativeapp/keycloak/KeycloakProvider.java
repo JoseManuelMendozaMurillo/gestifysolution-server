@@ -147,7 +147,7 @@ public class KeycloakProvider {
         return clientExists;
     }
 
-    private String getServerUrl() {
+    public String getServerUrl() {
         String serverUrl;
         if (this.ssl.equals("true")) {
             serverUrl = "https://";
