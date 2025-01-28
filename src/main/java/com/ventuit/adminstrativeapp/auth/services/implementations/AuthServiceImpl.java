@@ -18,6 +18,7 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import com.ventuit.adminstrativeapp.auth.dto.LoginDto;
+import com.ventuit.adminstrativeapp.auth.dto.LogoutDto;
 import com.ventuit.adminstrativeapp.auth.exceptions.AuthClientErrorException;
 import com.ventuit.adminstrativeapp.auth.exceptions.AuthServerErrorException;
 import com.ventuit.adminstrativeapp.auth.exceptions.AuthUnauthorizedException;
@@ -33,6 +34,8 @@ public class AuthServiceImpl implements AuthServiceInterface {
     private KeycloakProvider keycloak;
     @Autowired
     private ObjectsValidator<LoginDto> loginDtoValidator;
+    @Autowired
+    private ObjectsValidator<LogoutDto> logoutDtoValidator;
 
     @Override
     public ResponseEntity<Map<String, String>> login(LoginDto login) {
@@ -82,6 +85,49 @@ public class AuthServiceImpl implements AuthServiceInterface {
             throw e;
         }
 
+    }
+
+    @Override
+    public ResponseEntity<Map<String, String>> logout(LogoutDto logout) {
+        try {
+            // Validating the logout dto
+            this.logoutDtoValidator.validate(logout);
+
+            String logoutUrl = keycloak.getServerUrl() + "/realms/" + keycloak.getGestifySolutionRealmName()
+                    + "/protocol/openid-connect/logout";
+
+            RestTemplate restTemplate = new RestTemplate();
+
+            // Set the headers
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+            // Set the form parameters
+            MultiValueMap<String, String> formParams = new LinkedMultiValueMap<>();
+            formParams.add("client_id", keycloak.getGestifySolutionClientId());
+            formParams.add("refresh_token", logout.getRefreshToken());
+
+            // Create the HttpEntity with the headers and form parameters
+            HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(formParams, headers);
+
+            // Make the POST request
+            ResponseEntity<Map<String, String>> response = restTemplate.exchange(
+                    logoutUrl,
+                    HttpMethod.POST,
+                    requestEntity,
+                    new ParameterizedTypeReference<Map<String, String>>() {
+                    });
+
+            return response;
+        } catch (ObjectNotValidException e) {
+            throw e;
+        } catch (HttpClientErrorException e) {
+            throw new AuthClientErrorException(e.getMessage(), e.getStatusCode().value());
+        } catch (HttpServerErrorException e) {
+            throw new AuthServerErrorException(e.getMessage(), e.getStatusCode().value());
+        } catch (Exception e) {
+            throw e;
+        }
     }
 
 }
