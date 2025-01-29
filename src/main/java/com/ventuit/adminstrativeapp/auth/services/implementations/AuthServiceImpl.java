@@ -43,7 +43,7 @@ public class AuthServiceImpl implements AuthServiceInterface {
             // Validating the login dto
             this.loginDtoValidator.validate(login);
 
-            String tokenUrl = keycloak.getServerUrl() + "/realms/" + keycloak.getGestifySolutionRealmName()
+            String tokenUrl = keycloak.getBaseUrl() + "/realms/" + keycloak.getGestifySolutionRealmName()
                     + "/protocol/openid-connect/token";
 
             RestTemplate restTemplate = new RestTemplate();
@@ -93,7 +93,7 @@ public class AuthServiceImpl implements AuthServiceInterface {
             // Validating the logout dto
             this.logoutDtoValidator.validate(logout);
 
-            String logoutUrl = keycloak.getServerUrl() + "/realms/" + keycloak.getGestifySolutionRealmName()
+            String logoutUrl = keycloak.getBaseUrl() + "/realms/" + keycloak.getGestifySolutionRealmName()
                     + "/protocol/openid-connect/logout";
 
             RestTemplate restTemplate = new RestTemplate();

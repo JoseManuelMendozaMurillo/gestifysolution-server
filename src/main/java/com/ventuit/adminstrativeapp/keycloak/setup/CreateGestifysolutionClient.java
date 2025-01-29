@@ -27,6 +27,9 @@ public class CreateGestifysolutionClient implements CommandLineRunner {
     @Value("${app.ssl}")
     private String ssl;
 
+    @Value("${server.port}")
+    private String port;
+
     @Override
     public void run(String... args) throws Exception {
         this.createClient();
@@ -46,7 +49,7 @@ public class CreateGestifysolutionClient implements CommandLineRunner {
         } else {
             rootUrl = "http://";
         }
-        rootUrl = rootUrl + this.domain + ":" + keycloakProvider.getGestifySolutionServerPort();
+        rootUrl = rootUrl + this.domain + ":" + this.port;
 
         // Define the new client
         ClientRepresentation client = new ClientRepresentation();

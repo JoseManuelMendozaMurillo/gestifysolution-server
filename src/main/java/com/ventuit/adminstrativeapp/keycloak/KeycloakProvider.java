@@ -39,12 +39,6 @@ public class KeycloakProvider {
     @Value("${app.keycloak.admin-client}")
     private String gestifySolutionAdminClientId;
 
-    @Value("${server.port}")
-    private String gestifySolutionServerPort;
-
-    @Value("${app.ssl}")
-    private String ssl;
-
     private final String realmMasterName = "master";
     private final String adminCliClientId = "admin-cli";
     private final String realmManagementClientId = "realm-management";
@@ -57,7 +51,7 @@ public class KeycloakProvider {
     public Keycloak getKeycloak() {
         if (this.keycloak == null) {
             this.keycloak = KeycloakBuilder.builder()
-                    .serverUrl(getServerUrl())
+                    .serverUrl(getBaseUrl())
                     .realm(this.realmMasterName)
                     .clientId(this.adminCliClientId)
                     .username(this.user)
@@ -76,7 +70,7 @@ public class KeycloakProvider {
     public RealmResource getAdminClient() {
         if (this.adminClient == null) {
             this.adminClient = KeycloakBuilder.builder()
-                    .serverUrl(getServerUrl())
+                    .serverUrl(getBaseUrl())
                     .realm(this.gestifySolutionRealmName)
                     .grantType(OAuth2Constants.CLIENT_CREDENTIALS)
                     .clientId(this.gestifySolutionAdminClientId)
@@ -145,17 +139,6 @@ public class KeycloakProvider {
                 .stream()
                 .anyMatch(client -> client.getClientId().equals(gestifySolutionClientId));
         return clientExists;
-    }
-
-    public String getServerUrl() {
-        String serverUrl;
-        if (this.ssl.equals("true")) {
-            serverUrl = "https://";
-        } else {
-            serverUrl = "http://";
-        }
-        serverUrl = serverUrl + this.baseUrl + ":" + this.gestifySolutionServerPort;
-        return serverUrl;
     }
 
     private String getCredentialsAdminClient() {
