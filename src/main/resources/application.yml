@@ -11,12 +11,12 @@ spring:
             ddl-auto: create-drop
         database-platform: org.hibernate.dialect.MySQL8Dialect
         show-sql: true
-    security:
-        oauth2:
-            resourceserver:
-                jwt:
-                    issuer-uri: ${KEYCLOAK_BASE_URL}/realms/${KEYCLOAK_REALM_NAME}
-                    jwk-set-uri: ${KEYCLOAK_BASE_URL}/realms/${KEYCLOAK_REALM_NAME}/protocol/openid-connect/certs
+    # security:
+    #     oauth2:
+    #         resourceserver:
+    #             jwt:
+    #                 issuer-uri: ${KEYCLOAK_BASE_URL}/realms/${KEYCLOAK_REALM_NAME}
+    #                 jwk-set-uri: ${KEYCLOAK_BASE_URL}/realms/${KEYCLOAK_REALM_NAME}/protocol/openid-connect/certs
              
 springdoc:
     swagger-ui:

@@ -25,7 +25,6 @@ public abstract class SuppliesIncomingMapper implements
         @Mapping(target = "updatedAt", ignore = true)
         @Mapping(target = "deletedAt", ignore = true)
         @Mapping(target = "deletedBy", ignore = true)
-        @Mapping(target = "updatedBy", ignore = true)
         @Mapping(target = "createdBy", ignore = true)
         public abstract SuppliesIncomingModel updateFromDto(UpdateSuppliesIncomingDto dto,
                         @MappingTarget SuppliesIncomingModel entity);

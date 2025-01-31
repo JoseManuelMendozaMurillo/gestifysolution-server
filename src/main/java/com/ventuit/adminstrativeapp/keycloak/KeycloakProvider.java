@@ -86,6 +86,9 @@ public class KeycloakProvider {
     }
 
     public RealmResource getGestifySolutionRealm() {
+        if (this.keycloak == null) {
+            getKeycloak(); // Initialize keycloak if it's null
+        }
         return this.keycloak.realm(gestifySolutionRealmName);
     }
 
@@ -141,7 +144,7 @@ public class KeycloakProvider {
         return clientExists;
     }
 
-    private String getCredentialsAdminClient() {
+    public String getCredentialsAdminClient() {
         // Ensure the client exists
         if (!isGestifySolutionAdminClientExist()) {
             throw new KeycloakClientNotFoundException(this.gestifySolutionAdminClientId, gestifySolutionRealmName);

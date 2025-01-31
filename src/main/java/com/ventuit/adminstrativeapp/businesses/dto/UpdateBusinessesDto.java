@@ -9,7 +9,7 @@ import com.ventuit.adminstrativeapp.businesses.models.TypesRegimensTaxesModel;
 import com.ventuit.adminstrativeapp.businesses.serialization.BusinessesTypeModelDeserializer;
 import com.ventuit.adminstrativeapp.businesses.serialization.IndustriesModelDeserializer;
 import com.ventuit.adminstrativeapp.businesses.serialization.TypesRegimensTaxesModelDeserializer;
-import com.ventuit.adminstrativeapp.core.dto.BaseDto;
+import com.ventuit.adminstrativeapp.core.dto.ExtendedBaseDto;
 import com.ventuit.adminstrativeapp.shared.validations.pastorpresentdate.PastOrPresentDate;
 import com.ventuit.adminstrativeapp.shared.validations.rfc.Rfc;
 
@@ -25,7 +25,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class UpdateBusinessesDto extends BaseDto {
+public class UpdateBusinessesDto extends ExtendedBaseDto {
 
     @Size(max = 50, message = "Name cannot exceed 50 characters")
     private String name;

@@ -9,24 +9,26 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ventuit.adminstrativeapp.core.models.BaseModel;
+import com.ventuit.adminstrativeapp.core.models.ExtendedBaseModel;
 
 @NoRepositoryBean // Indicates that this is not a concrete repository
-public interface BaseRepository<ENTITY extends BaseModel, ID> extends JpaRepository<ENTITY, ID> {
+public interface BaseRepository<ENTITY extends ExtendedBaseModel, ID> extends JpaRepository<ENTITY, ID> {
 
     @Modifying
     @Transactional
-    default void softDeleteById(ID id) {
+    default void softDeleteById(ID id, String deletedBy) {
         findById(id).ifPresent(entity -> {
             entity.setDeletedAt(LocalDateTime.now());
+            entity.setDeletedBy(deletedBy);
             save(entity);
         });
     }
 
     @Modifying
     @Transactional
-    default void softDelete(ENTITY entity) {
+    default void softDelete(ENTITY entity, String deletedBy) {
         entity.setDeletedAt(LocalDateTime.now());
+        entity.setDeletedBy(deletedBy);
         save(entity); // Save the entity to persist the soft deletion
     }
 
@@ -35,6 +37,7 @@ public interface BaseRepository<ENTITY extends BaseModel, ID> extends JpaReposit
     default void restoreById(ID id) {
         findByIdAndDeletedAtIsNotNull(id).ifPresent(entity -> {
             entity.setDeletedAt(null);
+            entity.setDeletedBy(null);
             save(entity);
         });
     }
@@ -43,6 +46,7 @@ public interface BaseRepository<ENTITY extends BaseModel, ID> extends JpaReposit
     @Transactional
     default void restore(ENTITY entity) {
         entity.setDeletedAt(null);
+        entity.setDeletedBy(null);
         save(entity);
     }
 

@@ -3,7 +3,7 @@ package com.ventuit.adminstrativeapp.bosses.models;
 import java.time.LocalDate;
 import java.util.Set;
 
-import com.ventuit.adminstrativeapp.core.models.BaseModel;
+import com.ventuit.adminstrativeapp.core.models.ExtendedBaseModel;
 import com.ventuit.adminstrativeapp.shared.validations.pastorpresentdate.PastOrPresentDate;
 import com.ventuit.adminstrativeapp.shared.validations.phone.Phone;
 
@@ -28,10 +28,10 @@ import lombok.experimental.SuperBuilder;
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @Table(name = "bosses")
-public class BossesModel extends BaseModel {
+public class BossesModel extends ExtendedBaseModel {
 
     @Column(nullable = false, unique = true)
-    private String keycloakUserId;
+    private String keycloakUsername;
 
     @Column(length = 30, nullable = true, unique = true)
     @Phone

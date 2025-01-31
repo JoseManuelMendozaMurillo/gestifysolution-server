@@ -47,10 +47,11 @@ public class BossesService
         // Create the record in the database
         try {
             BossesModel entity = this.mapper.toEntity(dto);
-            entity.setKeycloakUserId(user.getId());
+            entity.setKeycloakUsername(user.getUsername());
+            entity.setCreatedBy(this.getUsername());
             this.repository.save(entity);
         } catch (Exception e) {
-            usersService.deleteUserById(user.getId());
+            usersService.deleteUserByUsername(user.getUsername());
             throw e;
         }
     }
@@ -68,14 +69,14 @@ public class BossesService
 
         BossesModel existingEntity = optionalEntity.get();
 
-        dto.setDeletedAt(existingEntity.getDeletedAt()); // preserve logical deletion when updating
+        dto.setUpdatedBy(this.getUsername()); // preserve logical deletion when updating
 
         // Update keycloak user
         if (dto.getUser() != null) {
             String newEmail = dto.getUser().getEmail();
 
             // Validate unique email
-            if (newEmail != null && keycloakUtils.isEmailExistsUpdate(existingEntity.getKeycloakUserId(), newEmail)) {
+            if (newEmail != null && keycloakUtils.isEmailExistsUpdate(existingEntity.getKeycloakUsername(), newEmail)) {
                 HashMap<String, String> fieldsError = new HashMap<>() {
                     {
                         put("user/email", "The email already exist");
@@ -87,7 +88,8 @@ public class BossesService
                         .build();
             }
 
-            boolean isKeycloakUserUpdated = usersService.updateUser(existingEntity.getKeycloakUserId(), dto.getUser());
+            boolean isKeycloakUserUpdated = usersService.updateUser(existingEntity.getKeycloakUsername(),
+                    dto.getUser());
 
             if (!isKeycloakUserUpdated)
                 return false;
@@ -107,7 +109,7 @@ public class BossesService
             return true;
 
         // Delete keycloak user
-        boolean isKeycloakUserDeleted = usersService.deleteUserById(optionalEntity.get().getKeycloakUserId());
+        boolean isKeycloakUserDeleted = usersService.deleteUserByUsername(optionalEntity.get().getKeycloakUsername());
 
         if (!isKeycloakUserDeleted)
             return false;
@@ -128,7 +130,7 @@ public class BossesService
             return true;
 
         // Restore the keycloak user
-        boolean isKeycloakUserRestored = usersService.enabledUser(optionalEntity.get().getKeycloakUserId());
+        boolean isKeycloakUserRestored = usersService.enabledUserByUsername(optionalEntity.get().getKeycloakUsername());
 
         if (!isKeycloakUserRestored)
             return false;
@@ -149,13 +151,13 @@ public class BossesService
             return true;
 
         // Disabled the user
-        boolean isKeycloakUserDisabled = usersService.disabledUser(optionalEntity.get().getKeycloakUserId());
+        boolean isKeycloakUserDisabled = usersService
+                .disabledUserByUsername(optionalEntity.get().getKeycloakUsername());
 
         if (!isKeycloakUserDisabled)
             return false;
 
-        // Delete the entity
-        this.repository.softDeleteById(id);
+        this.repository.softDeleteById(id, this.getUsername());
 
         // Checking if the entity was deleted
         return !this.repository.findByIdAndDeletedAtIsNull(id).isPresent();

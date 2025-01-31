@@ -17,6 +17,7 @@ import com.ventuit.adminstrativeapp.auth.exceptions.AuthLogoutException;
 import com.ventuit.adminstrativeapp.auth.exceptions.AuthServerErrorException;
 import com.ventuit.adminstrativeapp.auth.exceptions.AuthUnauthorizedException;
 import com.ventuit.adminstrativeapp.keycloak.exceptions.KeycloakUserCreationException;
+import com.ventuit.adminstrativeapp.keycloak.exceptions.KeycloakUserNotFoundException;
 import com.ventuit.adminstrativeapp.shared.exceptions.ObjectNotValidException;
 import com.ventuit.adminstrativeapp.utils.GlobalExceptionHandlerUtils;
 
@@ -66,6 +67,13 @@ public class GlobalExceptionHandler {
     @ResponseBody
     public ResponseEntity<String> handleKeycloakUserCreationException(KeycloakUserCreationException ex) {
         return ResponseEntity.status(ex.getStatusCode())
+                .body(ex.getMessage());
+    }
+
+    @ExceptionHandler(KeycloakUserNotFoundException.class)
+    @ResponseBody
+    public ResponseEntity<String> handleKeycloakUserNotFoundException(KeycloakUserNotFoundException ex) {
+        return ResponseEntity.status(500)
                 .body(ex.getMessage());
     }
 

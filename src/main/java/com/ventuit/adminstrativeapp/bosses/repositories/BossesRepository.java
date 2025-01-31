@@ -7,5 +7,5 @@ import com.ventuit.adminstrativeapp.core.repositories.BaseRepository;
 
 @Repository
 public interface BossesRepository extends BaseRepository<BossesModel, Integer> {
-    BossesModel findByKeycloakUserId(String keycloakUserId);
+    BossesModel findByKeycloakUsername(String keycloakUsername);
 }

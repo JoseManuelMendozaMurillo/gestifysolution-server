@@ -37,6 +37,7 @@ public class SuppliersService extends
     @Transactional(value = TxType.REQUIRED)
     public void create(CreateSuppliersDto dto) {
         if (dto.getDirection() != null) {
+            dto.getDirection().setCreatedBy(getUsername());
             DirectionsModel direction = this.directionsMapper.toEntity(dto.getDirection());
             DirectionsModel directionSaved = this.directionsRepository.save(direction);
             DirectionsDto directionDto = this.directionsMapper.toDto(directionSaved);
@@ -56,18 +57,18 @@ public class SuppliersService extends
         SuppliersModel supplier = optionalSupplier.get();
 
         if (dto.getDirection() != null) {
-
             DirectionsModel directionToUpdate = supplier.getDirection();
 
             if (directionToUpdate != null) {
                 // In case to update the direction
-                dto.getDirection().setDeletedAt(directionToUpdate.getDeletedAt());
+                dto.getDirection().setUpdatedBy(getUsername());
                 DirectionsModel directionUpdated = this.directionsMapper.updateFromDto(dto.getDirection(),
                         directionToUpdate);
                 if (directionUpdated == null)
                     return false;
             } else {
                 // In case to create a new direction
+                dto.getDirection().setCreatedBy(getUsername());
                 DirectionsModel newDirection = this.directionsMapper.toEntity(dto.getDirection());
                 DirectionsModel newDirectionSaved = this.directionsRepository.save(newDirection);
                 supplier.setDirection(newDirectionSaved);
@@ -94,7 +95,7 @@ public class SuppliersService extends
 
         if (supplier.getDirection() != null) {
             Integer directionId = supplier.getDirection().getId();
-            this.directionsRepository.softDeleteById(directionId);
+            this.directionsRepository.softDeleteById(directionId, getUsername());
         }
 
         return super.softDeleteById(id);

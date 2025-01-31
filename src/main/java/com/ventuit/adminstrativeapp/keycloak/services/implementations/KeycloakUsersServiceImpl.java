@@ -7,6 +7,7 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status.Family;
 
 import java.util.Collections;
+import java.util.List;
 
 import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.admin.client.resource.UsersResource;
@@ -16,6 +17,7 @@ import com.ventuit.adminstrativeapp.keycloak.KeycloakProvider;
 import com.ventuit.adminstrativeapp.keycloak.dto.CreateKeycloakUser;
 import com.ventuit.adminstrativeapp.keycloak.dto.UpdateKeycloakUser;
 import com.ventuit.adminstrativeapp.keycloak.exceptions.KeycloakUserCreationException;
+import com.ventuit.adminstrativeapp.keycloak.exceptions.KeycloakUserNotFoundException;
 import com.ventuit.adminstrativeapp.keycloak.services.interfaces.KeycloakUsersServiceInterface;
 
 import lombok.RequiredArgsConstructor;
@@ -58,27 +60,42 @@ public class KeycloakUsersServiceImpl implements KeycloakUsersServiceInterface {
     }
 
     @Override
-    public UserRepresentation getUserById(String userId) {
-        return keycloak.getAdminClient().users().get(userId).toRepresentation();
+    public UserRepresentation getUserByUsername(String username) {
+        return keycloak.getAdminClient().users().searchByUsername(username, true).getFirst();
     }
 
     @Override
-    public boolean deleteUserById(String id) {
-        Response response = keycloak.getAdminClient().users().delete(id);
+    public boolean deleteUserByUsername(String username) {
+        // Search for users with the specified username
+        List<UserRepresentation> users = keycloak.getAdminClient().users().searchByUsername(username, true);
+
+        if (users.isEmpty()) {
+            throw new KeycloakUserNotFoundException(username);
+        }
+
+        Response response = keycloak.getAdminClient().users().delete(users.getFirst().getId());
         return response.getStatusInfo().getFamily() == Family.SUCCESSFUL;
     }
 
     @Override
-    public boolean updateUser(String userId, UpdateKeycloakUser user) {
+    public boolean updateUser(String username, UpdateKeycloakUser user) {
         try {
             // Retrieve the UsersResource for the specified realm
             UsersResource usersResource = keycloak.getAdminClient().users();
 
-            // Retrieve the UserResource for the specified userId
-            UserResource userResource = usersResource.get(userId);
+            // Search for users with the specified username
+            List<UserRepresentation> users = usersResource.searchByUsername(username, true);
 
-            // Fetch the existing UserRepresentation
-            UserRepresentation userRepresentation = userResource.toRepresentation();
+            // Check if the user exists
+            if (users.isEmpty()) {
+                throw new KeycloakUserNotFoundException(username);
+            }
+
+            // Assuming usernames are unique, get the first user from the list
+            UserRepresentation userRepresentation = users.getFirst();
+
+            // Retrieve the UserResource for the specified user
+            UserResource userResource = usersResource.get(userRepresentation.getId());
 
             // Update fields if they are provided in the UpdateKeycloakUser DTO
             if (user.getEmail() != null) {
@@ -103,16 +120,24 @@ public class KeycloakUsersServiceImpl implements KeycloakUsersServiceInterface {
     }
 
     @Override
-    public boolean enabledUser(String userId) {
+    public boolean enabledUserByUsername(String username) {
         try {
             // Retrieve the UsersResource for the specified realm
             UsersResource usersResource = keycloak.getAdminClient().users();
 
-            // Retrieve the UserResource for the specified userId
-            UserResource userResource = usersResource.get(userId);
+            // Search for users with the specified username
+            List<UserRepresentation> users = usersResource.searchByUsername(username, true);
 
-            // Fetch the existing UserRepresentation
-            UserRepresentation userRepresentation = userResource.toRepresentation();
+            // Check if the user exists
+            if (users.isEmpty()) {
+                throw new KeycloakUserNotFoundException(username);
+            }
+
+            // Assuming usernames are unique, get the first user from the list
+            UserRepresentation userRepresentation = users.getFirst();
+
+            // Retrieve the UserResource for the specified user
+            UserResource userResource = usersResource.get(userRepresentation.getId());
 
             // Set the enabled attribute to true
             userRepresentation.setEnabled(true);
@@ -128,16 +153,24 @@ public class KeycloakUsersServiceImpl implements KeycloakUsersServiceInterface {
     }
 
     @Override
-    public boolean disabledUser(String userId) {
+    public boolean disabledUserByUsername(String username) {
         try {
             // Retrieve the UsersResource for the specified realm
             UsersResource usersResource = keycloak.getAdminClient().users();
 
-            // Retrieve the UserResource for the specified userId
-            UserResource userResource = usersResource.get(userId);
+            // Search for users with the specified username
+            List<UserRepresentation> users = usersResource.searchByUsername(username, true);
 
-            // Fetch the existing UserRepresentation
-            UserRepresentation userRepresentation = userResource.toRepresentation();
+            // Check if the user exists
+            if (users.isEmpty()) {
+                throw new KeycloakUserNotFoundException(username);
+            }
+
+            // Assuming usernames are unique, get the first user from the list
+            UserRepresentation userRepresentation = users.getFirst();
+
+            // Retrieve the UserResource for the specified user
+            UserResource userResource = usersResource.get(userRepresentation.getId());
 
             // Set the enabled attribute to false
             userRepresentation.setEnabled(false);

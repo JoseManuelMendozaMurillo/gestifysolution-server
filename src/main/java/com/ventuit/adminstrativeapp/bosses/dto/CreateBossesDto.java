@@ -1,10 +1,8 @@
 package com.ventuit.adminstrativeapp.bosses.dto;
 
 import java.time.LocalDate;
-import java.util.Set;
 
-import com.ventuit.adminstrativeapp.bosses.models.BossesBusinessesModel;
-import com.ventuit.adminstrativeapp.core.dto.BaseDto;
+import com.ventuit.adminstrativeapp.core.dto.ExtendedBaseDto;
 import com.ventuit.adminstrativeapp.keycloak.dto.CreateKeycloakUser;
 import com.ventuit.adminstrativeapp.shared.validations.pastorpresentdate.PastOrPresentDate;
 import com.ventuit.adminstrativeapp.shared.validations.phone.Phone;
@@ -22,7 +20,7 @@ import lombok.experimental.SuperBuilder;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateBossesDto extends BaseDto {
+public class CreateBossesDto extends ExtendedBaseDto {
 
     @NotNull(message = "User information cannot be null")
     @Valid
@@ -33,6 +31,4 @@ public class CreateBossesDto extends BaseDto {
 
     @PastOrPresentDate
     private LocalDate birthdate;
-
-    private Set<BossesBusinessesModel> bossesBusinesses;
 }

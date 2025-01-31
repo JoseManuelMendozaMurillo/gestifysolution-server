@@ -36,6 +36,7 @@ public class BranchesService
     @Override
     @Transactional(value = TxType.REQUIRED)
     public void create(CreateBranchesDto dto) {
+        dto.getDirection().setCreatedBy(getUsername());
         DirectionsModel direction = this.directionsMapper.toEntity(dto.getDirection());
         DirectionsModel directionSaved = this.directionsRepository.save(direction);
         DirectionsDto directionDto = this.directionsMapper.toDto(directionSaved);
@@ -57,7 +58,7 @@ public class BranchesService
 
             DirectionsModel direction = branch.getDirection();
 
-            dto.getDirection().setDeletedAt(direction.getDeletedAt());
+            dto.getDirection().setUpdatedBy(getUsername());
 
             DirectionsModel directionUpdated = this.directionsMapper.updateFromDto(dto.getDirection(), direction);
 
@@ -65,7 +66,7 @@ public class BranchesService
                 return false;
         }
 
-        dto.setDeletedAt(branch.getDeletedAt());
+        dto.setUpdatedBy(getUsername());
 
         BranchesModel branchUpdated = this.mapper.updateFromDto(dto, branch);
 
@@ -84,7 +85,7 @@ public class BranchesService
 
         if (branch.getDirection() != null) {
             Integer directionId = branch.getDirection().getId();
-            this.directionsRepository.softDeleteById(directionId);
+            this.directionsRepository.softDeleteById(directionId, getUsername());
         }
 
         return super.softDeleteById(id);

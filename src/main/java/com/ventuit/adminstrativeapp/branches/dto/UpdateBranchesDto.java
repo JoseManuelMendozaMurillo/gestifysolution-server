@@ -2,7 +2,7 @@ package com.ventuit.adminstrativeapp.branches.dto;
 
 import java.time.LocalDate;
 
-import com.ventuit.adminstrativeapp.core.dto.BaseDto;
+import com.ventuit.adminstrativeapp.core.dto.ExtendedBaseDto;
 import com.ventuit.adminstrativeapp.shared.dto.DirectionsDto;
 import com.ventuit.adminstrativeapp.shared.validations.email.Email;
 import com.ventuit.adminstrativeapp.shared.validations.pastorpresentdate.PastOrPresentDate;
@@ -21,7 +21,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class UpdateBranchesDto extends BaseDto {
+public class UpdateBranchesDto extends ExtendedBaseDto {
 
     @Size(max = 60, message = "Name cannot exceed 60 characters")
     private String name;

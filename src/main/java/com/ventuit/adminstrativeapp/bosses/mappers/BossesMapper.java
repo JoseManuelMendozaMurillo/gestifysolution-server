@@ -41,12 +41,12 @@ public abstract class BossesMapper
 
     @Override
     @Named("toShowDto")
-    @Mapping(target = "user", expression = "java(getKeycloakUser(entity.getKeycloakUserId()))")
+    @Mapping(target = "user", expression = "java(getKeycloakUser(entity.getKeycloakUsername()))")
     public abstract ListBossesDto toShowDto(BossesModel entity);
 
     @Named("getKeycloakUser")
-    public ListKeycloakUser getKeycloakUser(String userId) {
-        UserRepresentation user = keycloakUsersService.getUserById(userId);
+    public ListKeycloakUser getKeycloakUser(String username) {
+        UserRepresentation user = keycloakUsersService.getUserByUsername(username);
         return keycloakUserMapper.toListKeycloakUser(user);
     }
 
@@ -57,7 +57,13 @@ public abstract class BossesMapper
     @Override
     @Mapping(target = "bossesBusinesses", ignore = true)
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "keycloakUserId", ignore = true)
+    @Mapping(target = "keycloakUsername", ignore = true)
+    @Mapping(target = "deletedAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "deletedBy", ignore = true)
+    @Mapping(target = "updatedBy", ignore = true)
+    @Mapping(target = "createdBy", ignore = true)
     public abstract BossesModel toEntity(CreateBossesDto dto);
 
     @Override
@@ -66,7 +72,9 @@ public abstract class BossesMapper
     @Mapping(target = "deletedAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "keycloakUserId", ignore = true)
+    @Mapping(target = "deletedBy", ignore = true)
+    @Mapping(target = "createdBy", ignore = true)
+    @Mapping(target = "keycloakUsername", ignore = true)
     public abstract BossesModel updateFromDto(UpdateBossesDto dto, @MappingTarget BossesModel entity);
 
 }

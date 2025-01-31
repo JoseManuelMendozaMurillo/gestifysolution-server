@@ -10,13 +10,13 @@ public interface KeycloakUsersServiceInterface {
 
     UserRepresentation createUser(CreateKeycloakUser newUser) throws KeycloakUserCreationException;
 
-    boolean updateUser(String userId, UpdateKeycloakUser user);
+    boolean updateUser(String username, UpdateKeycloakUser user);
 
-    UserRepresentation getUserById(String userId);
+    UserRepresentation getUserByUsername(String username);
 
-    boolean enabledUser(String userId);
+    boolean enabledUserByUsername(String username);
 
-    boolean disabledUser(String userId);
+    boolean disabledUserByUsername(String username);
 
-    boolean deleteUserById(String id);
+    boolean deleteUserByUsername(String username);
 }

@@ -17,11 +17,11 @@ import lombok.experimental.SuperBuilder;
 public class ExtendedBaseModel extends BaseModel {
 
     @Column(updatable = false, nullable = false)
-    private Integer createdBy;
+    private String createdBy;
 
     @Column(insertable = false, nullable = true)
-    private Integer updatedBy;
+    private String updatedBy;
 
     @Column(insertable = false, nullable = true)
-    private Integer deletedBy;
+    private String deletedBy;
 }

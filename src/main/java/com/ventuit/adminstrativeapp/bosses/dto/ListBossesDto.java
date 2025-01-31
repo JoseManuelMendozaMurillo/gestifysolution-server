@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.util.Set;
 
 import com.ventuit.adminstrativeapp.bosses.models.BossesBusinessesModel;
-import com.ventuit.adminstrativeapp.core.dto.BaseDto;
+import com.ventuit.adminstrativeapp.core.dto.ExtendedBaseDto;
 import com.ventuit.adminstrativeapp.keycloak.dto.ListKeycloakUser;
 
 import lombok.AllArgsConstructor;
@@ -18,7 +18,7 @@ import lombok.experimental.SuperBuilder;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ListBossesDto extends BaseDto {
+public class ListBossesDto extends ExtendedBaseDto {
 
     private ListKeycloakUser user;
 
