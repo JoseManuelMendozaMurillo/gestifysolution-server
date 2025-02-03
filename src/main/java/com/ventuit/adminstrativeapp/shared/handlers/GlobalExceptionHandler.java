@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.ventuit.adminstrativeapp.auth.exceptions.AuthClientErrorException;
 import com.ventuit.adminstrativeapp.auth.exceptions.AuthLogoutException;
+import com.ventuit.adminstrativeapp.auth.exceptions.AuthRefreshTokenException;
 import com.ventuit.adminstrativeapp.auth.exceptions.AuthServerErrorException;
 import com.ventuit.adminstrativeapp.auth.exceptions.AuthUnauthorizedException;
 import com.ventuit.adminstrativeapp.keycloak.exceptions.KeycloakUserCreationException;
@@ -94,6 +95,12 @@ public class GlobalExceptionHandler {
     @ResponseBody
     public ResponseEntity<String> handleAuthServerErrorException(AuthServerErrorException ex) {
         return ResponseEntity.status(ex.getStatusCode()).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(AuthRefreshTokenException.class)
+    @ResponseBody
+    public ResponseEntity<String> handleAuthRefreshTokenException(AuthRefreshTokenException ex) {
+        return ResponseEntity.status(401).body(ex.getMessage());
     }
 
     @ExceptionHandler(AuthLogoutException.class)

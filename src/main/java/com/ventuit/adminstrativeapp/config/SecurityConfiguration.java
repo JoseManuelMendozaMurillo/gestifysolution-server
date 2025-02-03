@@ -22,6 +22,11 @@ public class SecurityConfiguration {
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+        String introspectionUri = keycloak.getBaseUrl() + "/realms/" + keycloak.getGestifySolutionRealmName()
+                + "/protocol/openid-connect/token/introspect";
+        String clientId = keycloak.getGestifySolutionAdminClientId();
+        String clientSecret = keycloak.getCredentialsAdminClient();
+
         return httpSecurity
                 .csrf(csrf -> {
                     csrf.disable();
@@ -32,20 +37,17 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers(HttpMethod.POST, "/auth/login").permitAll();
                     auth.requestMatchers(HttpMethod.POST, "/auth/logout").permitAll();
+                    auth.requestMatchers(HttpMethod.POST, "/auth/refresh-token").permitAll();
                     auth.requestMatchers(HttpMethod.POST, "/bosses").permitAll();
                     auth.requestMatchers("/docs/**").permitAll();
                     auth.anyRequest().authenticated();
                 })
                 .oauth2ResourceServer(authResourceServer -> {
-                    // TODO: Enhance this code
                     authResourceServer
                             .opaqueToken(token -> token
                                     .authenticationConverter(new KeycloakOpaqueTokenAuthenticationConverter())
-                                    .introspectionUri(
-                                            keycloak.getBaseUrl() + "/realms/" + keycloak.getGestifySolutionRealmName()
-                                                    + "/protocol/openid-connect/token/introspect")
-                                    .introspectionClientCredentials(keycloak.getGestifySolutionAdminClientId(),
-                                            keycloak.getCredentialsAdminClient()));
+                                    .introspectionUri(introspectionUri)
+                                    .introspectionClientCredentials(clientId, clientSecret));
                 })
                 .sessionManagement(session -> {
                     session.sessionCreationPolicy(SessionCreationPolicy.STATELESS);

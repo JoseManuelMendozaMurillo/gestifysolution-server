@@ -19,7 +19,10 @@ import org.springframework.web.client.RestTemplate;
 
 import com.ventuit.adminstrativeapp.auth.dto.LoginDto;
 import com.ventuit.adminstrativeapp.auth.dto.LogoutDto;
+import com.ventuit.adminstrativeapp.auth.dto.RefreshTokenDto;
+import com.ventuit.adminstrativeapp.auth.dto.TokenResponseDto;
 import com.ventuit.adminstrativeapp.auth.exceptions.AuthClientErrorException;
+import com.ventuit.adminstrativeapp.auth.exceptions.AuthRefreshTokenException;
 import com.ventuit.adminstrativeapp.auth.exceptions.AuthServerErrorException;
 import com.ventuit.adminstrativeapp.auth.exceptions.AuthUnauthorizedException;
 import com.ventuit.adminstrativeapp.auth.services.interfaces.AuthServiceInterface;
@@ -38,7 +41,7 @@ public class AuthServiceImpl implements AuthServiceInterface {
     private ObjectsValidator<LogoutDto> logoutDtoValidator;
 
     @Override
-    public ResponseEntity<Map<String, String>> login(LoginDto login) {
+    public TokenResponseDto login(LoginDto login) {
         try {
             // Validating the login dto
             this.loginDtoValidator.validate(login);
@@ -62,15 +65,10 @@ public class AuthServiceImpl implements AuthServiceInterface {
             // Create the HttpEntity with the headers and form parameters
             HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(formParams, headers);
 
-            // Make the POST request
-            ResponseEntity<Map<String, String>> response = restTemplate.exchange(
-                    tokenUrl,
-                    HttpMethod.POST,
-                    requestEntity,
-                    new ParameterizedTypeReference<Map<String, String>>() {
-                    });
+            ResponseEntity<TokenResponseDto> response = restTemplate.postForEntity(tokenUrl, requestEntity,
+                    TokenResponseDto.class);
 
-            return response;
+            return response.getBody();
         } catch (ObjectNotValidException e) {
             throw e;
         } catch (HttpClientErrorException e) {
@@ -123,6 +121,37 @@ public class AuthServiceImpl implements AuthServiceInterface {
             throw e;
         } catch (HttpClientErrorException e) {
             throw new AuthClientErrorException(e.getMessage(), e.getStatusCode().value());
+        } catch (HttpServerErrorException e) {
+            throw new AuthServerErrorException(e.getMessage(), e.getStatusCode().value());
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
+    @Override
+    public TokenResponseDto refreshToken(RefreshTokenDto refreshToken) {
+        try {
+            String tokenUrl = keycloak.getBaseUrl() + "/realms/" + keycloak.getGestifySolutionRealmName()
+                    + "/protocol/openid-connect/token";
+
+            RestTemplate restTemplate = new RestTemplate();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+            MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
+            formData.add("grant_type", "refresh_token");
+            formData.add("client_id", keycloak.getGestifySolutionClientId());
+            formData.add("refresh_token", refreshToken.getRefreshToken());
+
+            HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(formData, headers);
+
+            ResponseEntity<TokenResponseDto> response = restTemplate.postForEntity(tokenUrl, requestEntity,
+                    TokenResponseDto.class);
+
+            return response.getBody();
+        } catch (HttpClientErrorException e) {
+            throw new AuthRefreshTokenException("Invalid refresh token");
         } catch (HttpServerErrorException e) {
             throw new AuthServerErrorException(e.getMessage(), e.getStatusCode().value());
         } catch (Exception e) {

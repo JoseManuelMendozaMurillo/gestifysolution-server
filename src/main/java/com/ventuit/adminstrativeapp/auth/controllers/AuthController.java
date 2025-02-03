@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ventuit.adminstrativeapp.auth.dto.LoginDto;
 import com.ventuit.adminstrativeapp.auth.dto.LogoutDto;
+import com.ventuit.adminstrativeapp.auth.dto.RefreshTokenDto;
+import com.ventuit.adminstrativeapp.auth.dto.TokenResponseDto;
 import com.ventuit.adminstrativeapp.auth.exceptions.AuthLogoutException;
 import com.ventuit.adminstrativeapp.auth.services.implementations.AuthServiceImpl;
 
@@ -22,9 +24,9 @@ public class AuthController {
     private AuthServiceImpl authService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginDto login) {
-        ResponseEntity<Map<String, String>> response = authService.login(login);
-        return ResponseEntity.ok(response.getBody());
+    public ResponseEntity<TokenResponseDto> login(@RequestBody LoginDto login) {
+        TokenResponseDto tokenResponse = authService.login(login);
+        return ResponseEntity.ok(tokenResponse);
     }
 
     @PostMapping("/logout")
@@ -37,6 +39,12 @@ public class AuthController {
                     "Logout failed: Unable to terminate the user's session. Please check the provided token and try again.",
                     response.getStatusCode().value());
         }
+    }
+
+    @PostMapping("/refresh-token")
+    public ResponseEntity<TokenResponseDto> refreshToken(@RequestBody RefreshTokenDto refreshToken) {
+        TokenResponseDto tokenResponse = authService.refreshToken(refreshToken);
+        return ResponseEntity.ok(tokenResponse);
     }
 
 }

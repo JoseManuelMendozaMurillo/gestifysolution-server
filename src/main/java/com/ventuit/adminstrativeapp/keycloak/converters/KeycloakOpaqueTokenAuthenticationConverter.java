@@ -20,19 +20,20 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class KeycloakOpaqueTokenAuthenticationConverter implements OpaqueTokenAuthenticationConverter {
 
-    // TODO: Fix warnings
-
     private Collection<GrantedAuthority> extractAuthorities(Map<String, Object> attributes) {
+        @SuppressWarnings("unchecked")
         Map<String, Object> resourceAccess = (Map<String, Object>) attributes.get("resource_access");
         if (resourceAccess == null) {
             return Collections.emptySet();
         }
 
+        @SuppressWarnings("unchecked")
         Map<String, Object> clientAccess = (Map<String, Object>) resourceAccess.get("account");
         if (clientAccess == null) {
             return Collections.emptySet();
         }
 
+        @SuppressWarnings("unchecked")
         List<String> roles = (List<String>) clientAccess.get("roles");
         if (roles == null) {
             return Collections.emptySet();
