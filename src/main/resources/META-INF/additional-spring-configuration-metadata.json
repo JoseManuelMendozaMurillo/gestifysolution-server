@@ -1,0 +1,49 @@
+{
+    "properties": [
+        {
+            "name": "app.keycloak.port",
+            "type": "java.lang.String",
+            "description": "Specifies the port number on which the Keycloak server is running.'"
+        },
+        {
+            "name": "app.keycloak.base-url",
+            "type": "java.lang.String",
+            "description": "Defines the base URL of the Keycloak server, excluding the port."
+        },
+        {
+            "name": "app.keycloak.username",
+            "type": "java.lang.String",
+            "description": "Indicates the username of an administrative user in Keycloak."
+        },
+        {
+            "name": "app.keycloak.password",
+            "type": "java.lang.String",
+            "description": "Represents the password associated with the app.keycloak.admin-user."
+        },
+        {
+            "name": "app.keycloak.realm",
+            "type": "java.lang.String",
+            "description": "..."
+        },
+        {
+            "name": "app.keycloak.admin-client",
+            "type": "java.lang.String",
+            "description": "..."
+        },
+        {
+            "name": "app.keycloak.client",
+            "type": "java.lang.String",
+            "description": "..."
+        },
+        {
+            "name": "app.domain",
+            "type": "java.lang.String",
+            "description": "..."
+        },
+        {
+            "name": "app.ssl",
+            "type": "java.lang.String",
+            "description": "..."
+        }
+    ]
+}

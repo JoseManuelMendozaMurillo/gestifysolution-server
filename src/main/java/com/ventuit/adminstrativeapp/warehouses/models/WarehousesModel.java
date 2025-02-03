@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import com.ventuit.adminstrativeapp.core.models.ExtendedBaseModel;
 import com.ventuit.adminstrativeapp.shared.validations.phone.Phone;
+import com.ventuit.adminstrativeapp.shared.validations.unique.Unique;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -26,10 +27,12 @@ import lombok.experimental.SuperBuilder;
 public class WarehousesModel extends ExtendedBaseModel {
 
     @Column(length = 60, nullable = false, unique = true)
+    @Unique(model = WarehousesModel.class, fieldName = "name", message = "This warehouse is already registered")
     private String name;
 
     @Column(length = 30, nullable = true, unique = true)
     @Phone
+    @Unique(model = WarehousesModel.class, fieldName = "phone", message = "This phone is already registered")
     private String phone;
 
     @Column(nullable = false, columnDefinition = "boolean default false")

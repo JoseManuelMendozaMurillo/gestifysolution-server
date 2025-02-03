@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 public class BusinessesTypeSeeder implements CommandLineRunner {
 
         private static final Logger log = LoggerFactory.getLogger(BusinessesTypeSeeder.class);
-        private static final int DEFAULT_CREATED_BY = 1;
+        private static final String DEFAULT_CREATED_BY = "Gestify solution server";
 
         private final BusinessesTypeRepository businessesTypeRepository;
 

@@ -9,8 +9,8 @@ services:
     build: 
       context: .
       dockerfile: dockerfile
-    environment:
-      - DATABASE_URL=jdbc:mysql://gestifysolution-db:3306/${MYSQL_DATABASE}
+    env_file:
+      - .env
     depends_on:
       - gestifysolution-db
     networks:

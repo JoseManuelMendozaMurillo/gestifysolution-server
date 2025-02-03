@@ -3,9 +3,10 @@ package com.ventuit.adminstrativeapp.bosses.models;
 import java.time.LocalDate;
 import java.util.Set;
 
-import com.ventuit.adminstrativeapp.core.models.BaseModel;
+import com.ventuit.adminstrativeapp.core.models.ExtendedBaseModel;
 import com.ventuit.adminstrativeapp.shared.validations.pastorpresentdate.PastOrPresentDate;
 import com.ventuit.adminstrativeapp.shared.validations.phone.Phone;
+import com.ventuit.adminstrativeapp.shared.validations.unique.Unique;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -28,19 +29,14 @@ import lombok.experimental.SuperBuilder;
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @Table(name = "bosses")
-public class BossesModel extends BaseModel {
+public class BossesModel extends ExtendedBaseModel {
 
     @Column(nullable = false, unique = true)
-    private String keycloakUserId;
-
-    @Column(length = 50, nullable = false)
-    private String name;
-
-    @Column(length = 50, nullable = true)
-    private String surname;
+    private String keycloakUsername;
 
     @Column(length = 30, nullable = true, unique = true)
     @Phone
+    @Unique(model = BossesModel.class, fieldName = "phone", message = "This phone is already registered")
     private String phone;
 
     @Column(nullable = true)

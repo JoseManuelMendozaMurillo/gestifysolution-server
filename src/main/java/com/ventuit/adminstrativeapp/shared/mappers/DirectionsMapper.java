@@ -43,7 +43,6 @@ public abstract class DirectionsMapper
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "deletedAt", ignore = true)
     @Mapping(target = "deletedBy", ignore = true)
-    @Mapping(target = "updatedBy", ignore = true)
     @Mapping(target = "createdBy", ignore = true)
     public abstract DirectionsModel updateFromDto(DirectionsDto dto, @MappingTarget DirectionsModel entity);
 }

@@ -1,15 +1,16 @@
 package com.ventuit.adminstrativeapp.bosses.dto;
 
 import java.time.LocalDate;
-import java.util.Set;
 
-import com.ventuit.adminstrativeapp.bosses.models.BossesBusinessesModel;
-import com.ventuit.adminstrativeapp.core.dto.BaseDto;
+import com.ventuit.adminstrativeapp.bosses.models.BossesModel;
+import com.ventuit.adminstrativeapp.core.dto.ExtendedBaseDto;
+import com.ventuit.adminstrativeapp.keycloak.dto.CreateKeycloakUser;
 import com.ventuit.adminstrativeapp.shared.validations.pastorpresentdate.PastOrPresentDate;
 import com.ventuit.adminstrativeapp.shared.validations.phone.Phone;
+import com.ventuit.adminstrativeapp.shared.validations.unique.Unique;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -21,23 +22,16 @@ import lombok.experimental.SuperBuilder;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateBossesDto extends BaseDto {
+public class CreateBossesDto extends ExtendedBaseDto {
 
-    private String keycloakUserId;
-
-    @NotBlank(message = "You must send the bosses's name")
-    @Size(max = 50, message = "Name cannot exceed 50 characters")
-    private String name;
-
-    @NotBlank(message = "You must send the bosses's surname")
-    @Size(max = 50, message = "Surname cannot exceed 50 characters")
-    private String surname;
+    @NotNull(message = "User information cannot be null")
+    @Valid
+    private CreateKeycloakUser user;
 
     @Phone
+    @Unique(model = BossesModel.class, fieldName = "phone", message = "This phone is already registered")
     private String phone;
 
     @PastOrPresentDate
     private LocalDate birthdate;
-
-    private Set<BossesBusinessesModel> bossesBusinesses;
 }

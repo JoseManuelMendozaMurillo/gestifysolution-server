@@ -2,8 +2,6 @@ package com.ventuit.adminstrativeapp.core.services.interfaces;
 
 import java.util.List;
 
-import org.springframework.http.ResponseEntity;
-
 public interface CrudServiceInterface<CREATINGDTO, UPDATINGDTO, LISTDTO, ID> {
 
     List<LISTDTO> getAll();
@@ -18,7 +16,7 @@ public interface CrudServiceInterface<CREATINGDTO, UPDATINGDTO, LISTDTO, ID> {
 
     LISTDTO getByInactiveId(ID id);
 
-    ResponseEntity<?> create(CREATINGDTO dto);
+    void create(CREATINGDTO dto);
 
     Boolean update(ID id, UPDATINGDTO dto);
 

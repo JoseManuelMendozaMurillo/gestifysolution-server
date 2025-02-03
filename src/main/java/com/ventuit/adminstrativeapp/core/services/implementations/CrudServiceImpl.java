@@ -3,19 +3,24 @@ package com.ventuit.adminstrativeapp.core.services.implementations;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.core.OAuth2AuthenticatedPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 
-import com.ventuit.adminstrativeapp.core.dto.BaseDto;
+import com.ventuit.adminstrativeapp.core.dto.ExtendedBaseDto;
 import com.ventuit.adminstrativeapp.core.mappers.interfaces.CrudMapperInterface;
-import com.ventuit.adminstrativeapp.core.models.BaseModel;
+import com.ventuit.adminstrativeapp.core.models.ExtendedBaseModel;
 import com.ventuit.adminstrativeapp.core.repositories.BaseRepository;
 import com.ventuit.adminstrativeapp.core.services.interfaces.CrudServiceInterface;
 import com.ventuit.adminstrativeapp.shared.validators.ObjectsValidator;
 
+import jakarta.transaction.Transactional;
+import jakarta.transaction.Transactional.TxType;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public abstract class CrudServiceImpl<CREATINGDTO extends BaseDto, UPDATINGDTO extends BaseDto, LISTDTO extends BaseDto, ENTITY extends BaseModel, ID, MAPPER extends CrudMapperInterface<CREATINGDTO, UPDATINGDTO, LISTDTO, ENTITY>, REPOSITORY extends BaseRepository<ENTITY, ID>>
+public abstract class CrudServiceImpl<CREATINGDTO extends ExtendedBaseDto, UPDATINGDTO extends ExtendedBaseDto, LISTDTO extends ExtendedBaseDto, ENTITY extends ExtendedBaseModel, ID, MAPPER extends CrudMapperInterface<CREATINGDTO, UPDATINGDTO, LISTDTO, ENTITY>, REPOSITORY extends BaseRepository<ENTITY, ID>>
         implements CrudServiceInterface<CREATINGDTO, UPDATINGDTO, LISTDTO, ID> {
 
     protected REPOSITORY repository;
@@ -73,20 +78,21 @@ public abstract class CrudServiceImpl<CREATINGDTO extends BaseDto, UPDATINGDTO e
         return this.mapper.toShowDto(optionalEntity.get());
     }
 
-    @SuppressWarnings("unused")
     @Override
-    public ResponseEntity<?> create(CREATINGDTO dto) {
+    @Transactional(value = TxType.REQUIRED)
+    public void create(CREATINGDTO dto) {
         // Validate the dto
         this.creatingDtoValidator.validate(dto);
 
         ENTITY entity = this.mapper.toEntity(dto);
-        ENTITY savedEntity = this.repository.save(entity);
-        if (savedEntity == null)
-            return ResponseEntity.internalServerError().build();
-        return ResponseEntity.ok("The record was created successfully");
+
+        entity.setCreatedBy(this.getUsername());
+
+        this.repository.save(entity);
     }
 
     @Override
+    @Transactional(value = TxType.REQUIRED)
     public Boolean update(ID id, UPDATINGDTO dto) {
         // Validate the dto
         this.updatingDtoValidator.validate(dto);
@@ -98,7 +104,7 @@ public abstract class CrudServiceImpl<CREATINGDTO extends BaseDto, UPDATINGDTO e
 
         ENTITY existingEntity = optionalEntity.get();
 
-        dto.setDeletedAt(existingEntity.getDeletedAt()); // preserve logical deletion when updating
+        dto.setUpdatedBy(this.getUsername());
 
         ENTITY updatedEntity = this.mapper.updateFromDto(dto, existingEntity);
 
@@ -106,6 +112,7 @@ public abstract class CrudServiceImpl<CREATINGDTO extends BaseDto, UPDATINGDTO e
     }
 
     @Override
+    @Transactional(value = TxType.REQUIRED)
     public Boolean softDeleteById(ID id) {
         Optional<ENTITY> optionalEntity = this.repository.findById(id);
 
@@ -113,13 +120,14 @@ public abstract class CrudServiceImpl<CREATINGDTO extends BaseDto, UPDATINGDTO e
             return true;
 
         // Deleting the entity
-        this.repository.softDeleteById(id);
+        this.repository.softDeleteById(id, this.getUsername());
 
         // Checking if the entity was deleted
         return !this.repository.findByIdAndDeletedAtIsNull(id).isPresent();
     }
 
     @Override
+    @Transactional(value = TxType.REQUIRED)
     public Boolean deleteById(ID id) {
         Optional<ENTITY> optionalEntity = this.repository.findById(id);
 
@@ -134,6 +142,7 @@ public abstract class CrudServiceImpl<CREATINGDTO extends BaseDto, UPDATINGDTO e
     }
 
     @Override
+    @Transactional(value = TxType.REQUIRED)
     public Boolean restoreById(ID id) {
         Optional<ENTITY> optionalEntity = this.repository.findByIdAndDeletedAtIsNotNull(id);
 
@@ -145,6 +154,24 @@ public abstract class CrudServiceImpl<CREATINGDTO extends BaseDto, UPDATINGDTO e
 
         // Checking if the entity was restored
         return this.repository.findByIdAndDeletedAtIsNull(id).isPresent();
+    }
+
+    protected Jwt getToken() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof Jwt) {
+            Jwt jwt = (Jwt) authentication.getPrincipal();
+            return jwt;
+        } else
+            return null;
+    }
+
+    protected String getUsername() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof OAuth2AuthenticatedPrincipal) {
+            OAuth2AuthenticatedPrincipal principal = (OAuth2AuthenticatedPrincipal) authentication.getPrincipal();
+            return principal.getAttribute("preferred_username");
+        }
+        return "Gestify solution server"; // or a default value
     }
 
 }

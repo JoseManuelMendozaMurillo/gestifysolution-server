@@ -7,6 +7,7 @@ import com.ventuit.adminstrativeapp.core.models.ExtendedBaseModel;
 import com.ventuit.adminstrativeapp.shared.models.DirectionsModel;
 import com.ventuit.adminstrativeapp.shared.validations.email.Email;
 import com.ventuit.adminstrativeapp.shared.validations.phone.Phone;
+import com.ventuit.adminstrativeapp.shared.validations.unique.Unique;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -31,14 +32,17 @@ import lombok.experimental.SuperBuilder;
 public class SuppliersModel extends ExtendedBaseModel {
 
     @Column(nullable = false, unique = true, length = 60)
+    @Unique(model = SuppliersModel.class, fieldName = "name", message = "This supplier is already registered")
     private String name;
 
     @Column(nullable = true, unique = true, length = 30)
     @Phone
+    @Unique(model = SuppliersModel.class, fieldName = "phone", message = "This phone is already registered")
     private String phone;
 
     @Column(nullable = true, unique = true, length = 60)
     @Email
+    @Unique(model = SuppliersModel.class, fieldName = "email", message = "This email is already registered")
     private String email;
 
     @Column(nullable = false, name = "quantity_per_unit")

@@ -9,5 +9,7 @@ public class RegexUtils {
     public static final String POSTAL_CODE_PATTERN = "^\\d{5}$";
     public static final String PHONE_NUMBER_PATTERN = "^\\+\\d{2} \\d{10}$";
     public static final String EMAIL_PATTERN = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
+    public static final String USERNAME_PATTERN = "^[a-zA-Z0-9_.@-]+$";
+    public static final String NAME_PATTERN = "^[a-zA-ZñÑ ]+$";
 
 }

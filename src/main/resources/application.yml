@@ -2,16 +2,22 @@ spring:
     application:
         name: gestifysolution
     datasource:
-        url: ${DATABASE_URL}
-        username: ${DATABASE_USER}
-        password: ${DATABASE_PASSWORD}
+        url: jdbc:mysql://${DOCKER_DATABASE_CONTAINER_NAME}:3306/${MYSQL_DATABASE}
+        username: ${MYSQL_USERNAME}
+        password: ${MYSQL_PASSWORD}
         driver-class-name: com.mysql.cj.jdbc.Driver
     jpa:
         hibernate:
             ddl-auto: create-drop
         database-platform: org.hibernate.dialect.MySQL8Dialect
         show-sql: true
-
+    # security:
+    #     oauth2:
+    #         resourceserver:
+    #             jwt:
+    #                 issuer-uri: ${KEYCLOAK_BASE_URL}/realms/${KEYCLOAK_REALM_NAME}
+    #                 jwk-set-uri: ${KEYCLOAK_BASE_URL}/realms/${KEYCLOAK_REALM_NAME}/protocol/openid-connect/certs
+             
 springdoc:
     swagger-ui:
         enabled: true
@@ -19,8 +25,19 @@ springdoc:
     api-docs:
         enabled: true
         path: /docs/api-docs
-        
+
 server:
+    port: ${SERVER_PORT}
     servlet:
         context-path: /api/v1
 
+app:
+    keycloak:
+        base-url: ${KEYCLOAK_BASE_URL}
+        username: ${KEYCLOAK_ADMIN_USER}
+        password: ${KEYCLOAK_ADMIN_PASSWORD}
+        realm: ${KEYCLOAK_REALM_NAME}
+        admin-client: ${KEYCLOAK_ADMIN_CLIENT_NAME}
+        client: ${KEYCLOAK_CLIENT_NAME}
+    domain: ${DOMAIN}
+    ssl: ${SSL}

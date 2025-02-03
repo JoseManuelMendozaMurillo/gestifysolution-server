@@ -3,7 +3,6 @@ package com.ventuit.adminstrativeapp.branches.services;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.ventuit.adminstrativeapp.branches.dto.CreateBranchesDto;
@@ -16,6 +15,9 @@ import com.ventuit.adminstrativeapp.shared.dto.DirectionsDto;
 import com.ventuit.adminstrativeapp.shared.mappers.DirectionsMapper;
 import com.ventuit.adminstrativeapp.shared.models.DirectionsModel;
 import com.ventuit.adminstrativeapp.shared.repositories.DirectionsRepository;
+
+import jakarta.transaction.Transactional;
+import jakarta.transaction.Transactional.TxType;
 
 @Service
 public class BranchesService
@@ -32,15 +34,18 @@ public class BranchesService
     DirectionsMapper directionsMapper;
 
     @Override
-    public ResponseEntity<?> create(CreateBranchesDto dto) {
+    @Transactional(value = TxType.REQUIRED)
+    public void create(CreateBranchesDto dto) {
+        dto.getDirection().setCreatedBy(getUsername());
         DirectionsModel direction = this.directionsMapper.toEntity(dto.getDirection());
         DirectionsModel directionSaved = this.directionsRepository.save(direction);
         DirectionsDto directionDto = this.directionsMapper.toDto(directionSaved);
         dto.setDirection(directionDto);
-        return super.create(dto);
+        super.create(dto);
     }
 
     @Override
+    @Transactional(value = TxType.REQUIRED)
     public Boolean update(Integer id, UpdateBranchesDto dto) {
         Optional<BranchesModel> optionalBranch = this.repository.findById(id);
 
@@ -53,7 +58,7 @@ public class BranchesService
 
             DirectionsModel direction = branch.getDirection();
 
-            dto.getDirection().setDeletedAt(direction.getDeletedAt());
+            dto.getDirection().setUpdatedBy(getUsername());
 
             DirectionsModel directionUpdated = this.directionsMapper.updateFromDto(dto.getDirection(), direction);
 
@@ -61,7 +66,7 @@ public class BranchesService
                 return false;
         }
 
-        dto.setDeletedAt(branch.getDeletedAt());
+        dto.setUpdatedBy(getUsername());
 
         BranchesModel branchUpdated = this.mapper.updateFromDto(dto, branch);
 
@@ -69,6 +74,7 @@ public class BranchesService
     }
 
     @Override
+    @Transactional(value = TxType.REQUIRED)
     public Boolean softDeleteById(Integer id) {
         Optional<BranchesModel> optionalBranch = this.repository.findById(id);
 
@@ -79,13 +85,14 @@ public class BranchesService
 
         if (branch.getDirection() != null) {
             Integer directionId = branch.getDirection().getId();
-            this.directionsRepository.softDeleteById(directionId);
+            this.directionsRepository.softDeleteById(directionId, getUsername());
         }
 
         return super.softDeleteById(id);
     }
 
     @Override
+    @Transactional(value = TxType.REQUIRED)
     public Boolean restoreById(Integer id) {
         Optional<BranchesModel> optionalBranch = this.repository.findById(id);
 
