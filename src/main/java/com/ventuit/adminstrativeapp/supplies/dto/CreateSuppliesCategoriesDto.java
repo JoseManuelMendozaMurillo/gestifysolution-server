@@ -1,6 +1,8 @@
 package com.ventuit.adminstrativeapp.supplies.dto;
 
 import com.ventuit.adminstrativeapp.core.dto.ExtendedBaseDto;
+import com.ventuit.adminstrativeapp.shared.validations.unique.Unique;
+import com.ventuit.adminstrativeapp.supplies.models.SuppliesCategoriesModel;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -19,6 +21,7 @@ public class CreateSuppliesCategoriesDto extends ExtendedBaseDto {
 
     @NotBlank(message = "You must send the supplies category's name")
     @Size(max = 60, message = "Category cannot exceed 60 characters")
+    @Unique(model = SuppliesCategoriesModel.class, fieldName = "name", message = "This category is already registered")
     private String category;
 
     @Size(max = 60, message = "Description cannot exceed 60 characters")

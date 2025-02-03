@@ -6,6 +6,7 @@ import java.util.Set;
 import com.ventuit.adminstrativeapp.core.models.ExtendedBaseModel;
 import com.ventuit.adminstrativeapp.shared.validations.pastorpresentdate.PastOrPresentDate;
 import com.ventuit.adminstrativeapp.shared.validations.phone.Phone;
+import com.ventuit.adminstrativeapp.shared.validations.unique.Unique;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -35,6 +36,7 @@ public class BossesModel extends ExtendedBaseModel {
 
     @Column(length = 30, nullable = true, unique = true)
     @Phone
+    @Unique(model = BossesModel.class, fieldName = "phone", message = "This phone is already registered")
     private String phone;
 
     @Column(nullable = true)

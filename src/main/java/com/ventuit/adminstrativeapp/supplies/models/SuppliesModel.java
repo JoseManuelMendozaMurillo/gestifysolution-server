@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.ventuit.adminstrativeapp.core.models.ExtendedBaseModel;
+import com.ventuit.adminstrativeapp.shared.validations.unique.Unique;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -29,6 +30,7 @@ import lombok.experimental.SuperBuilder;
 public class SuppliesModel extends ExtendedBaseModel {
 
     @Column(nullable = false, unique = true, length = 60)
+    @Unique(model = SuppliesModel.class, fieldName = "name", message = "This supplies is already registered")
     private String name;
 
     @Column(nullable = true, length = 60)

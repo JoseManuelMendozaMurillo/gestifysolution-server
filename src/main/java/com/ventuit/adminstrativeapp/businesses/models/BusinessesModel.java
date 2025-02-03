@@ -10,13 +10,14 @@ import com.ventuit.adminstrativeapp.bosses.models.BossesBusinessesModel;
 import com.ventuit.adminstrativeapp.core.models.ExtendedBaseModel;
 import com.ventuit.adminstrativeapp.shared.validations.pastorpresentdate.PastOrPresentDate;
 import com.ventuit.adminstrativeapp.shared.validations.rfc.Rfc;
+import com.ventuit.adminstrativeapp.shared.validations.unique.Unique;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -37,7 +38,7 @@ import lombok.experimental.SuperBuilder;
 public class BusinessesModel extends ExtendedBaseModel {
     // TODO: Check relationships of this table
 
-    @Column(length = 50, nullable = false)
+    @Column(length = 50, nullable = false, unique = true)
     private String name;
 
     @Column(length = 200, nullable = true)
@@ -47,6 +48,7 @@ public class BusinessesModel extends ExtendedBaseModel {
     @NotBlank(message = "RFC cannot be null")
     @Size(min = 12, max = 13, message = "RFC must be 12 or 13 characters long")
     @Rfc
+    @Unique(model = BusinessesModel.class, fieldName = "rfc", message = "This rfc is already registered")
     private String rfc;
 
     @Column()
@@ -62,16 +64,16 @@ public class BusinessesModel extends ExtendedBaseModel {
     @Column(nullable = true, insertable = false)
     private LocalDateTime activeChangedAt;
 
-    @OneToOne()
-    @JoinColumn(name = "industry_id", nullable = false)
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "industry_id", nullable = false, unique = false)
     private IndustriesModel industry;
 
-    @OneToOne()
-    @JoinColumn(name = "business_type_id", nullable = false)
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "business_type_id", nullable = false, unique = false)
     private BusinessesTypeModel businessesType;
 
-    @OneToOne()
-    @JoinColumn(name = "tax_regimen_id", nullable = false)
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "tax_regimen_id", nullable = false, unique = false)
     private TypesRegimensTaxesModel taxRegimen;
 
     @OneToMany(mappedBy = "businesses", cascade = CascadeType.ALL)

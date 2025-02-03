@@ -19,6 +19,7 @@ import com.ventuit.adminstrativeapp.auth.exceptions.AuthServerErrorException;
 import com.ventuit.adminstrativeapp.auth.exceptions.AuthUnauthorizedException;
 import com.ventuit.adminstrativeapp.keycloak.exceptions.KeycloakUserCreationException;
 import com.ventuit.adminstrativeapp.keycloak.exceptions.KeycloakUserNotFoundException;
+import com.ventuit.adminstrativeapp.shared.exceptions.EntityNotFoundException;
 import com.ventuit.adminstrativeapp.shared.exceptions.ObjectNotValidException;
 import com.ventuit.adminstrativeapp.utils.GlobalExceptionHandlerUtils;
 
@@ -61,6 +62,13 @@ public class GlobalExceptionHandler {
         problemDetail.setTitle("Error in the application");
         problemDetail.setDetail("An unexpected error has occurred in the application");
         return ResponseEntity.internalServerError().body(problemDetail);
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    @ResponseBody
+    public ResponseEntity<String> handleEntityNotFoundException(EntityNotFoundException ex) {
+        return ResponseEntity.status(400)
+                .body(ex.getMessage());
     }
 
     // Handling keycloak errors
