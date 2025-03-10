@@ -8,7 +8,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.OAuth2AuthenticatedPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 
-import com.ventuit.adminstrativeapp.core.dto.ExtendedBaseDto;
 import com.ventuit.adminstrativeapp.core.mappers.interfaces.CrudMapperInterface;
 import com.ventuit.adminstrativeapp.core.models.ExtendedBaseModel;
 import com.ventuit.adminstrativeapp.core.repositories.BaseRepository;
@@ -20,7 +19,7 @@ import jakarta.transaction.Transactional.TxType;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public abstract class CrudServiceImpl<CREATINGDTO extends ExtendedBaseDto, UPDATINGDTO extends ExtendedBaseDto, LISTDTO extends ExtendedBaseDto, ENTITY extends ExtendedBaseModel, ID, MAPPER extends CrudMapperInterface<CREATINGDTO, UPDATINGDTO, LISTDTO, ENTITY>, REPOSITORY extends BaseRepository<ENTITY, ID>>
+public abstract class CrudServiceImpl<CREATINGDTO, UPDATINGDTO, LISTDTO, ENTITY extends ExtendedBaseModel, ID, MAPPER extends CrudMapperInterface<CREATINGDTO, UPDATINGDTO, LISTDTO, ENTITY>, REPOSITORY extends BaseRepository<ENTITY, ID>>
         implements CrudServiceInterface<CREATINGDTO, UPDATINGDTO, LISTDTO, ID> {
 
     protected REPOSITORY repository;
@@ -86,8 +85,6 @@ public abstract class CrudServiceImpl<CREATINGDTO extends ExtendedBaseDto, UPDAT
 
         ENTITY entity = this.mapper.toEntity(dto);
 
-        entity.setCreatedBy(this.getUsername());
-
         this.repository.save(entity);
     }
 
@@ -103,8 +100,6 @@ public abstract class CrudServiceImpl<CREATINGDTO extends ExtendedBaseDto, UPDAT
             return false;
 
         ENTITY existingEntity = optionalEntity.get();
-
-        dto.setUpdatedBy(this.getUsername());
 
         ENTITY updatedEntity = this.mapper.updateFromDto(dto, existingEntity);
 

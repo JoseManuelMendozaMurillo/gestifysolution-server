@@ -6,25 +6,26 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.springframework.stereotype.Component;
-
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
+@Documented
+@Constraint(validatedBy = UniqueValidator.class)
 @Target({ ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = UniqueValidator.class)
-@Documented
-@Component
 public @interface Unique {
-
-    String message() default "The field is not unique";
-
-    String fieldName();
-
-    Class<?> model();
+    String message() default "Value must be unique";
 
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
+
+    // The entity class to check against.
+    Class<?> model();
+
+    // The name of the unique field (e.g. "phone").
+    String fieldName();
+
+    // The name of the id field (defaults to "id").
+    String idField() default "id";
 }

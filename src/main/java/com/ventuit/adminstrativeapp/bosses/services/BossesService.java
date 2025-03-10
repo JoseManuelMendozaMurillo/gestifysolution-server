@@ -48,7 +48,6 @@ public class BossesService
         try {
             BossesModel entity = this.mapper.toEntity(dto);
             entity.setKeycloakUsername(user.getUsername());
-            entity.setCreatedBy(this.getUsername());
             this.repository.save(entity);
         } catch (Exception e) {
             usersService.deleteUserByUsername(user.getUsername());
@@ -68,8 +67,6 @@ public class BossesService
             return false;
 
         BossesModel existingEntity = optionalEntity.get();
-
-        dto.setUpdatedBy(this.getUsername()); // preserve logical deletion when updating
 
         // Update keycloak user
         if (dto.getUser() != null) {
