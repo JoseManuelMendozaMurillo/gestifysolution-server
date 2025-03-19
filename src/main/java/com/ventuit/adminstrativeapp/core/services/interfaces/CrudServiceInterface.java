@@ -16,9 +16,9 @@ public interface CrudServiceInterface<CREATINGDTO, UPDATINGDTO, LISTDTO, ID> {
 
     LISTDTO getByInactiveId(ID id);
 
-    void create(CREATINGDTO dto);
+    LISTDTO create(CREATINGDTO dto);
 
-    Boolean update(ID id, UPDATINGDTO dto);
+    LISTDTO update(ID id, UPDATINGDTO dto);
 
     Boolean restoreById(ID id);
 

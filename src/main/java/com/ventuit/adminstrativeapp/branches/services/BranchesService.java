@@ -35,22 +35,22 @@ public class BranchesService
 
     @Override
     @Transactional(value = TxType.REQUIRED)
-    public void create(CreateBranchesDto dto) {
+    public CreateBranchesDto create(CreateBranchesDto dto) {
         dto.getDirection().setCreatedBy(getUsername());
         DirectionsModel direction = this.directionsMapper.toEntity(dto.getDirection());
         DirectionsModel directionSaved = this.directionsRepository.save(direction);
         DirectionsDto directionDto = this.directionsMapper.toDto(directionSaved);
         dto.setDirection(directionDto);
-        super.create(dto);
+        return super.create(dto);
     }
 
     @Override
     @Transactional(value = TxType.REQUIRED)
-    public Boolean update(Integer id, UpdateBranchesDto dto) {
+    public CreateBranchesDto update(Integer id, UpdateBranchesDto dto) {
         Optional<BranchesModel> optionalBranch = this.repository.findById(id);
 
         if (!optionalBranch.isPresent())
-            return false;
+            return null;
 
         BranchesModel branch = optionalBranch.get();
 
@@ -63,14 +63,14 @@ public class BranchesService
             DirectionsModel directionUpdated = this.directionsMapper.updateFromDto(dto.getDirection(), direction);
 
             if (directionUpdated == null)
-                return false;
+                return null;
         }
 
         dto.setUpdatedBy(getUsername());
 
         BranchesModel branchUpdated = this.mapper.updateFromDto(dto, branch);
 
-        return branchUpdated != null;
+        return this.mapper.toShowDto(branchUpdated);
     }
 
     @Override

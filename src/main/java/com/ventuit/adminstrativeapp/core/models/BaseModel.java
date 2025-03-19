@@ -27,7 +27,6 @@ import lombok.experimental.SuperBuilder;
 @EntityListeners(AuditingEntityListener.class)
 @FilterDef(name = "deletedFilter")
 @Filter(name = "deletedFilter", condition = "deleted_at IS NULL")
-
 public class BaseModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

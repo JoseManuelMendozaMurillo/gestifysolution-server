@@ -37,7 +37,7 @@ public class BossesService
 
     @Override
     @Transactional(value = TxType.REQUIRED)
-    public void create(CreateBossesDto dto) {
+    public ListBossesDto create(CreateBossesDto dto) {
         // Validate the dto
         this.creatingDtoValidator.validate(dto);
 
@@ -48,7 +48,9 @@ public class BossesService
         try {
             BossesModel entity = this.mapper.toEntity(dto);
             entity.setKeycloakUsername(user.getUsername());
-            this.repository.save(entity);
+            BossesModel entitySaved = this.repository.save(entity);
+            entityManager.refresh(entitySaved);
+            return this.mapper.toShowDto(entitySaved);
         } catch (Exception e) {
             usersService.deleteUserByUsername(user.getUsername());
             throw e;
@@ -57,14 +59,14 @@ public class BossesService
 
     @Override
     @Transactional(value = TxType.REQUIRED)
-    public Boolean update(Integer id, UpdateBossesDto dto) {
+    public ListBossesDto update(Integer id, UpdateBossesDto dto) {
         // Validate the dto
         this.updatingDtoValidator.validate(dto);
 
         Optional<BossesModel> optionalEntity = this.repository.findById(id);
 
         if (!optionalEntity.isPresent())
-            return false;
+            return null;
 
         BossesModel existingEntity = optionalEntity.get();
 
@@ -89,12 +91,12 @@ public class BossesService
                     dto.getUser());
 
             if (!isKeycloakUserUpdated)
-                return false;
+                return null;
         }
 
         BossesModel updatedEntity = this.mapper.updateFromDto(dto, existingEntity);
-
-        return updatedEntity != null; // Return true if the entity was updated successfully
+        updatedEntity = this.repository.saveAndFlush(updatedEntity);
+        return this.mapper.toShowDto(updatedEntity);
     }
 
     @Override
