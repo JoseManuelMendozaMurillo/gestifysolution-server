@@ -38,6 +38,7 @@ public class SecurityConfiguration {
                     auth.requestMatchers(HttpMethod.POST, "/auth/login").permitAll();
                     auth.requestMatchers(HttpMethod.POST, "/auth/logout").permitAll();
                     auth.requestMatchers(HttpMethod.POST, "/auth/refresh-token").permitAll();
+                    auth.requestMatchers(HttpMethod.POST, "/auth/check-username").permitAll();
                     auth.requestMatchers(HttpMethod.POST, "/bosses").permitAll();
                     auth.requestMatchers("/docs/**").permitAll();
                     auth.anyRequest().authenticated();

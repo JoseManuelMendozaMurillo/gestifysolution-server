@@ -17,4 +17,6 @@ public interface AuthServiceInterface {
 
     public TokenResponseDto refreshToken(RefreshTokenDto refreshToken);
 
+    public Boolean isUsernameExists(String username);
+
 }

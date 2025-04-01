@@ -27,6 +27,7 @@ import com.ventuit.adminstrativeapp.auth.exceptions.AuthServerErrorException;
 import com.ventuit.adminstrativeapp.auth.exceptions.AuthUnauthorizedException;
 import com.ventuit.adminstrativeapp.auth.services.interfaces.AuthServiceInterface;
 import com.ventuit.adminstrativeapp.keycloak.KeycloakProvider;
+import com.ventuit.adminstrativeapp.keycloak.utils.KeycloakUtils;
 import com.ventuit.adminstrativeapp.shared.exceptions.ObjectNotValidException;
 import com.ventuit.adminstrativeapp.shared.validators.ObjectsValidator;
 
@@ -35,6 +36,8 @@ public class AuthServiceImpl implements AuthServiceInterface {
 
     @Autowired
     private KeycloakProvider keycloak;
+    @Autowired
+    private KeycloakUtils keycloakUtils;
     @Autowired
     private ObjectsValidator<LoginDto> loginDtoValidator;
     @Autowired
@@ -154,6 +157,15 @@ public class AuthServiceImpl implements AuthServiceInterface {
             throw new AuthRefreshTokenException("Invalid refresh token");
         } catch (HttpServerErrorException e) {
             throw new AuthServerErrorException(e.getMessage(), e.getStatusCode().value());
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
+    @Override
+    public Boolean isUsernameExists(String username) {
+        try {
+            return this.keycloakUtils.isUsernameExists(username);
         } catch (Exception e) {
             throw e;
         }
