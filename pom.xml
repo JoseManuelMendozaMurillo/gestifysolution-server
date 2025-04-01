@@ -105,6 +105,12 @@
     		<version>1.9.4</version>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/com.googlecode.libphonenumber/libphonenumber -->
+		<dependency>
+			<groupId>com.googlecode.libphonenumber</groupId>
+			<artifactId>libphonenumber</artifactId>
+			<version>9.0.2</version>
+		</dependency>
 
 	</dependencies>
 
