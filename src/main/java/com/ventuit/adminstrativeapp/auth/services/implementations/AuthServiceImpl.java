@@ -171,4 +171,13 @@ public class AuthServiceImpl implements AuthServiceInterface {
         }
     }
 
+    @Override
+    public Boolean isEmailExists(String email) {
+        try {
+            return this.keycloakUtils.isEmailExists(email);
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
 }

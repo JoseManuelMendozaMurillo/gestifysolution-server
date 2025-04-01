@@ -19,4 +19,6 @@ public interface AuthServiceInterface {
 
     public Boolean isUsernameExists(String username);
 
+    public Boolean isEmailExists(String username);
+
 }

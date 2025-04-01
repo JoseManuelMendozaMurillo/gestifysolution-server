@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ventuit.adminstrativeapp.auth.dto.CheckEmailExistDto;
 import com.ventuit.adminstrativeapp.auth.dto.CheckUsernameExistDto;
 import com.ventuit.adminstrativeapp.auth.dto.LoginDto;
 import com.ventuit.adminstrativeapp.auth.dto.LogoutDto;
@@ -50,10 +51,19 @@ public class AuthController {
     }
 
     @PostMapping("/check-username")
-    public ResponseEntity<Map<String, Boolean>> postMethodName(@RequestBody CheckUsernameExistDto usernameExistDto) {
+    public ResponseEntity<Map<String, Boolean>> checkUsernameExist(
+            @RequestBody CheckUsernameExistDto usernameExistDto) {
         Boolean isUsernameExist = authService.isUsernameExists(usernameExistDto.getUsername());
         Map<String, Boolean> response = new HashMap<>();
         response.put("exists", isUsernameExist);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/check-email")
+    public ResponseEntity<Map<String, Boolean>> checkEmailExist(@RequestBody CheckEmailExistDto emailExistDto) {
+        Boolean isEmailExist = authService.isEmailExists(emailExistDto.getEmail());
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("exists", isEmailExist);
         return ResponseEntity.ok(response);
     }
 
