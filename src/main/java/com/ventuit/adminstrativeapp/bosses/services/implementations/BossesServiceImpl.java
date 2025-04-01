@@ -1,4 +1,4 @@
-package com.ventuit.adminstrativeapp.bosses.services;
+package com.ventuit.adminstrativeapp.bosses.services.implementations;
 
 import java.util.HashMap;
 import java.util.Optional;
@@ -13,6 +13,7 @@ import com.ventuit.adminstrativeapp.bosses.dto.UpdateBossesDto;
 import com.ventuit.adminstrativeapp.bosses.mappers.BossesMapper;
 import com.ventuit.adminstrativeapp.bosses.models.BossesModel;
 import com.ventuit.adminstrativeapp.bosses.repositories.BossesRepository;
+import com.ventuit.adminstrativeapp.bosses.services.interfaces.BossesServiceInterface;
 import com.ventuit.adminstrativeapp.core.services.implementations.CrudServiceImpl;
 import com.ventuit.adminstrativeapp.keycloak.services.implementations.KeycloakUsersServiceImpl;
 import com.ventuit.adminstrativeapp.keycloak.utils.KeycloakUtils;
@@ -22,16 +23,17 @@ import jakarta.transaction.Transactional;
 import jakarta.transaction.Transactional.TxType;
 
 @Service
-public class BossesService
+public class BossesServiceImpl
         extends
-        CrudServiceImpl<CreateBossesDto, UpdateBossesDto, ListBossesDto, BossesModel, Integer, BossesMapper, BossesRepository> {
+        CrudServiceImpl<CreateBossesDto, UpdateBossesDto, ListBossesDto, BossesModel, Integer, BossesMapper, BossesRepository>
+        implements BossesServiceInterface {
 
     @Autowired
     private KeycloakUsersServiceImpl usersService;
     @Autowired
     private KeycloakUtils keycloakUtils;
 
-    public BossesService(BossesRepository repository, BossesMapper mapper) {
+    public BossesServiceImpl(BossesRepository repository, BossesMapper mapper) {
         super(repository, mapper);
     }
 
@@ -160,6 +162,15 @@ public class BossesService
 
         // Checking if the entity was deleted
         return !this.repository.findByIdAndDeletedAtIsNull(id).isPresent();
+    }
+
+    @Override
+    public Boolean isPhoneExists(String phone) {
+        try {
+            return this.repository.countByPhone(phone) > 0;
+        } catch (Exception e) {
+            throw e;
+        }
     }
 
 }
