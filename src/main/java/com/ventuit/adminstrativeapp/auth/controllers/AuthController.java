@@ -16,6 +16,7 @@ import com.ventuit.adminstrativeapp.auth.dto.LoginDto;
 import com.ventuit.adminstrativeapp.auth.dto.LogoutDto;
 import com.ventuit.adminstrativeapp.auth.dto.RefreshTokenDto;
 import com.ventuit.adminstrativeapp.auth.dto.TokenResponseDto;
+import com.ventuit.adminstrativeapp.auth.dto.TokenValidationDto;
 import com.ventuit.adminstrativeapp.auth.exceptions.AuthLogoutException;
 import com.ventuit.adminstrativeapp.auth.services.implementations.AuthServiceImpl;
 
@@ -25,6 +26,14 @@ public class AuthController {
 
     @Autowired
     private AuthServiceImpl authService;
+
+    @PostMapping("/validate-token")
+    public ResponseEntity<Map<String, Boolean>> validateToken(@RequestBody TokenValidationDto tokenDto) {
+        Boolean isValid = authService.validateToken(tokenDto.getToken());
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("isValid", isValid);
+        return ResponseEntity.ok(response);
+    }
 
     @PostMapping("/login")
     public ResponseEntity<TokenResponseDto> login(@RequestBody LoginDto login) {

@@ -11,6 +11,8 @@ import com.ventuit.adminstrativeapp.auth.dto.TokenResponseDto;
 
 public interface AuthServiceInterface {
 
+    public Boolean validateToken(String token);
+
     public TokenResponseDto login(LoginDto login);
 
     public ResponseEntity<Map<String, String>> logout(LogoutDto logout);

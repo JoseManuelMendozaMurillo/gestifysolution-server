@@ -163,6 +163,46 @@ public class AuthServiceImpl implements AuthServiceInterface {
     }
 
     @Override
+    public Boolean validateToken(String token) {
+        try {
+            String introspectUrl = keycloak.getBaseUrl() + "/realms/" + keycloak.getGestifySolutionRealmName()
+                    + "/protocol/openid-connect/token/introspect";
+            String clientId = keycloak.getGestifySolutionAdminClientId();
+            String clientSecret = keycloak.getCredentialsAdminClient();
+
+            RestTemplate restTemplate = new RestTemplate();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+            MultiValueMap<String, String> formParams = new LinkedMultiValueMap<>();
+            formParams.add("client_id", clientId);
+            formParams.add("client_secret", clientSecret); // Ensure client secret is available
+            formParams.add("token", token);
+
+            HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(formParams, headers);
+
+            ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
+                    introspectUrl,
+                    HttpMethod.POST,
+                    requestEntity,
+                    new ParameterizedTypeReference<Map<String, Object>>() {
+                    });
+
+            Map<String, Object> responseBody = response.getBody();
+            if (responseBody == null) {
+                return false;
+            }
+            Object activeObj = responseBody.get("active");
+            return (activeObj instanceof Boolean) ? (Boolean) activeObj : false;
+        } catch (HttpClientErrorException e) {
+            throw new AuthClientErrorException(e.getMessage(), e.getStatusCode().value());
+        } catch (HttpServerErrorException e) {
+            throw new AuthServerErrorException(e.getMessage(), e.getStatusCode().value());
+        }
+    }
+
+    @Override
     public Boolean isUsernameExists(String username) {
         try {
             return this.keycloakUtils.isUsernameExists(username);
