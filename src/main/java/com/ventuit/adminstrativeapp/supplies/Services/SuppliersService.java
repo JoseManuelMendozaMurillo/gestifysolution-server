@@ -35,7 +35,7 @@ public class SuppliersService extends
 
     @Override
     @Transactional(value = TxType.REQUIRED)
-    public void create(CreateSuppliersDto dto) {
+    public ListSuppliersDto create(CreateSuppliersDto dto) {
         if (dto.getDirection() != null) {
             dto.getDirection().setCreatedBy(getUsername());
             DirectionsModel direction = this.directionsMapper.toEntity(dto.getDirection());
@@ -43,16 +43,16 @@ public class SuppliersService extends
             DirectionsDto directionDto = this.directionsMapper.toDto(directionSaved);
             dto.setDirection(directionDto);
         }
-        super.create(dto);
+        return super.create(dto);
     }
 
     @Override
     @Transactional(value = TxType.REQUIRED)
-    public Boolean update(Integer id, UpdateSuppliersDto dto) {
+    public ListSuppliersDto update(Integer id, UpdateSuppliersDto dto) {
         Optional<SuppliersModel> optionalSupplier = this.repository.findById(id);
 
         if (!optionalSupplier.isPresent())
-            return false;
+            return null;
 
         SuppliersModel supplier = optionalSupplier.get();
 
@@ -65,7 +65,7 @@ public class SuppliersService extends
                 DirectionsModel directionUpdated = this.directionsMapper.updateFromDto(dto.getDirection(),
                         directionToUpdate);
                 if (directionUpdated == null)
-                    return false;
+                    return null;
             } else {
                 // In case to create a new direction
                 dto.getDirection().setCreatedBy(getUsername());
@@ -80,7 +80,7 @@ public class SuppliersService extends
 
         SuppliersModel branchUpdated = this.mapper.updateFromDto(dto, supplier);
 
-        return branchUpdated != null;
+        return this.mapper.toShowDto(branchUpdated);
     }
 
     @Override

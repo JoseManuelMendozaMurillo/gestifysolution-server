@@ -74,6 +74,7 @@ public abstract class BossesMapper
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "deletedBy", ignore = true)
     @Mapping(target = "createdBy", ignore = true)
+    @Mapping(target = "updatedBy", ignore = true)
     @Mapping(target = "keycloakUsername", ignore = true)
     public abstract BossesModel updateFromDto(UpdateBossesDto dto, @MappingTarget BossesModel entity);
 

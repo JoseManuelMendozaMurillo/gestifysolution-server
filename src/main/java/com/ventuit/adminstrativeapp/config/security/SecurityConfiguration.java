@@ -1,4 +1,4 @@
-package com.ventuit.adminstrativeapp.config;
+package com.ventuit.adminstrativeapp.config.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -38,6 +38,10 @@ public class SecurityConfiguration {
                     auth.requestMatchers(HttpMethod.POST, "/auth/login").permitAll();
                     auth.requestMatchers(HttpMethod.POST, "/auth/logout").permitAll();
                     auth.requestMatchers(HttpMethod.POST, "/auth/refresh-token").permitAll();
+                    auth.requestMatchers(HttpMethod.POST, "/auth/validate-token").permitAll();
+                    auth.requestMatchers(HttpMethod.POST, "/auth/check-username").permitAll();
+                    auth.requestMatchers(HttpMethod.POST, "/auth/check-email").permitAll();
+                    auth.requestMatchers(HttpMethod.POST, "/bosses/check-phone").permitAll();
                     auth.requestMatchers(HttpMethod.POST, "/bosses").permitAll();
                     auth.requestMatchers("/docs/**").permitAll();
                     auth.anyRequest().authenticated();

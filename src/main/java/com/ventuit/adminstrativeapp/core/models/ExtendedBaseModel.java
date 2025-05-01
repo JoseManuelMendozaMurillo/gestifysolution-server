@@ -1,5 +1,8 @@
 package com.ventuit.adminstrativeapp.core.models;
 
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.LastModifiedBy;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 import lombok.AllArgsConstructor;
@@ -16,9 +19,11 @@ import lombok.experimental.SuperBuilder;
 @MappedSuperclass
 public class ExtendedBaseModel extends BaseModel {
 
+    @CreatedBy
     @Column(updatable = false, nullable = false)
     private String createdBy;
 
+    @LastModifiedBy
     @Column(insertable = false, nullable = true)
     private String updatedBy;
 

@@ -63,17 +63,17 @@ public class CrudControllerImpl<CREATINGDTO, UPDATINGDTO, LISTDTO, ID, SERVICE e
 
     @Override
     public ResponseEntity<?> create(CREATINGDTO model) {
-        this.crudService.create(model);
-        return ResponseEntity.ok("The record was created successfully");
+        LISTDTO entityCreated = this.crudService.create(model);
+        return ResponseEntity.ok(entityCreated);
     }
 
     @Override
-    public ResponseEntity<String> update(ID id, UPDATINGDTO model) {
-        Boolean isUpdatedEntity = this.crudService.update(id, model);
-        if (isUpdatedEntity)
-            return ResponseEntity.ok("Entity was updated");
+    public ResponseEntity<?> update(ID id, UPDATINGDTO model) {
+        LISTDTO entityUpdated = this.crudService.update(id, model);
+        if (entityUpdated != null)
+            return ResponseEntity.ok(entityUpdated);
         else
-            return ResponseEntity.internalServerError().build();
+            return ResponseEntity.notFound().build();
     }
 
     @Override

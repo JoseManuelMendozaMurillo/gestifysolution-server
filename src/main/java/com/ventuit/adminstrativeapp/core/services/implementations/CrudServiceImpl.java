@@ -3,30 +3,34 @@ package com.ventuit.adminstrativeapp.core.services.implementations;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.OAuth2AuthenticatedPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 
-import com.ventuit.adminstrativeapp.core.dto.ExtendedBaseDto;
 import com.ventuit.adminstrativeapp.core.mappers.interfaces.CrudMapperInterface;
 import com.ventuit.adminstrativeapp.core.models.ExtendedBaseModel;
 import com.ventuit.adminstrativeapp.core.repositories.BaseRepository;
 import com.ventuit.adminstrativeapp.core.services.interfaces.CrudServiceInterface;
 import com.ventuit.adminstrativeapp.shared.validators.ObjectsValidator;
 
+import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import jakarta.transaction.Transactional.TxType;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public abstract class CrudServiceImpl<CREATINGDTO extends ExtendedBaseDto, UPDATINGDTO extends ExtendedBaseDto, LISTDTO extends ExtendedBaseDto, ENTITY extends ExtendedBaseModel, ID, MAPPER extends CrudMapperInterface<CREATINGDTO, UPDATINGDTO, LISTDTO, ENTITY>, REPOSITORY extends BaseRepository<ENTITY, ID>>
+public abstract class CrudServiceImpl<CREATINGDTO, UPDATINGDTO, LISTDTO, ENTITY extends ExtendedBaseModel, ID, MAPPER extends CrudMapperInterface<CREATINGDTO, UPDATINGDTO, LISTDTO, ENTITY>, REPOSITORY extends BaseRepository<ENTITY, ID>>
         implements CrudServiceInterface<CREATINGDTO, UPDATINGDTO, LISTDTO, ID> {
 
     protected REPOSITORY repository;
     protected MAPPER mapper;
     protected ObjectsValidator<CREATINGDTO> creatingDtoValidator = new ObjectsValidator<CREATINGDTO>();
     protected ObjectsValidator<UPDATINGDTO> updatingDtoValidator = new ObjectsValidator<UPDATINGDTO>();
+
+    @Autowired
+    protected EntityManager entityManager;
 
     public CrudServiceImpl(REPOSITORY repository, MAPPER mapper) {
         this.repository = repository;
@@ -80,35 +84,37 @@ public abstract class CrudServiceImpl<CREATINGDTO extends ExtendedBaseDto, UPDAT
 
     @Override
     @Transactional(value = TxType.REQUIRED)
-    public void create(CREATINGDTO dto) {
+    public LISTDTO create(CREATINGDTO dto) {
         // Validate the dto
         this.creatingDtoValidator.validate(dto);
 
         ENTITY entity = this.mapper.toEntity(dto);
 
-        entity.setCreatedBy(this.getUsername());
+        ENTITY entitySaved = this.repository.save(entity);
 
-        this.repository.save(entity);
+        entityManager.refresh(entitySaved);
+
+        return this.mapper.toShowDto(entitySaved);
     }
 
     @Override
     @Transactional(value = TxType.REQUIRED)
-    public Boolean update(ID id, UPDATINGDTO dto) {
+    public LISTDTO update(ID id, UPDATINGDTO dto) {
         // Validate the dto
         this.updatingDtoValidator.validate(dto);
 
         Optional<ENTITY> optionalEntity = this.repository.findById(id);
 
         if (!optionalEntity.isPresent())
-            return false;
+            return null;
 
         ENTITY existingEntity = optionalEntity.get();
 
-        dto.setUpdatedBy(this.getUsername());
-
         ENTITY updatedEntity = this.mapper.updateFromDto(dto, existingEntity);
 
-        return updatedEntity != null; // Return true if the entity was updated successfully
+        updatedEntity = this.repository.saveAndFlush(updatedEntity);
+
+        return this.mapper.toShowDto(updatedEntity); // Return true if the entity was updated successfully
     }
 
     @Override

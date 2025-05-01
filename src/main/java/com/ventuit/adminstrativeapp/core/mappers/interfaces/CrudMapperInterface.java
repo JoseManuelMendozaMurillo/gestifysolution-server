@@ -6,10 +6,9 @@ import org.mapstruct.IterableMapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 
-import com.ventuit.adminstrativeapp.core.dto.BaseDto;
 import com.ventuit.adminstrativeapp.core.models.BaseModel;
 
-public interface CrudMapperInterface<CREATINGDTO extends BaseDto, UPDATINGDTO extends BaseDto, LISTDTO extends BaseDto, ENTITY extends BaseModel> {
+public interface CrudMapperInterface<CREATINGDTO, UPDATINGDTO, LISTDTO, ENTITY extends BaseModel> {
 
     ENTITY toEntity(CREATINGDTO dto);
 

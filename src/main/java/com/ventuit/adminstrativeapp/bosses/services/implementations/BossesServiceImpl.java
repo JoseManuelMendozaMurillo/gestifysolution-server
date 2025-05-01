@@ -1,4 +1,4 @@
-package com.ventuit.adminstrativeapp.bosses.services;
+package com.ventuit.adminstrativeapp.bosses.services.implementations;
 
 import java.util.HashMap;
 import java.util.Optional;
@@ -13,6 +13,7 @@ import com.ventuit.adminstrativeapp.bosses.dto.UpdateBossesDto;
 import com.ventuit.adminstrativeapp.bosses.mappers.BossesMapper;
 import com.ventuit.adminstrativeapp.bosses.models.BossesModel;
 import com.ventuit.adminstrativeapp.bosses.repositories.BossesRepository;
+import com.ventuit.adminstrativeapp.bosses.services.interfaces.BossesServiceInterface;
 import com.ventuit.adminstrativeapp.core.services.implementations.CrudServiceImpl;
 import com.ventuit.adminstrativeapp.keycloak.services.implementations.KeycloakUsersServiceImpl;
 import com.ventuit.adminstrativeapp.keycloak.utils.KeycloakUtils;
@@ -22,22 +23,23 @@ import jakarta.transaction.Transactional;
 import jakarta.transaction.Transactional.TxType;
 
 @Service
-public class BossesService
+public class BossesServiceImpl
         extends
-        CrudServiceImpl<CreateBossesDto, UpdateBossesDto, ListBossesDto, BossesModel, Integer, BossesMapper, BossesRepository> {
+        CrudServiceImpl<CreateBossesDto, UpdateBossesDto, ListBossesDto, BossesModel, Integer, BossesMapper, BossesRepository>
+        implements BossesServiceInterface {
 
     @Autowired
     private KeycloakUsersServiceImpl usersService;
     @Autowired
     private KeycloakUtils keycloakUtils;
 
-    public BossesService(BossesRepository repository, BossesMapper mapper) {
+    public BossesServiceImpl(BossesRepository repository, BossesMapper mapper) {
         super(repository, mapper);
     }
 
     @Override
     @Transactional(value = TxType.REQUIRED)
-    public void create(CreateBossesDto dto) {
+    public ListBossesDto create(CreateBossesDto dto) {
         // Validate the dto
         this.creatingDtoValidator.validate(dto);
 
@@ -48,8 +50,9 @@ public class BossesService
         try {
             BossesModel entity = this.mapper.toEntity(dto);
             entity.setKeycloakUsername(user.getUsername());
-            entity.setCreatedBy(this.getUsername());
-            this.repository.save(entity);
+            BossesModel entitySaved = this.repository.save(entity);
+            entityManager.refresh(entitySaved);
+            return this.mapper.toShowDto(entitySaved);
         } catch (Exception e) {
             usersService.deleteUserByUsername(user.getUsername());
             throw e;
@@ -58,18 +61,16 @@ public class BossesService
 
     @Override
     @Transactional(value = TxType.REQUIRED)
-    public Boolean update(Integer id, UpdateBossesDto dto) {
+    public ListBossesDto update(Integer id, UpdateBossesDto dto) {
         // Validate the dto
         this.updatingDtoValidator.validate(dto);
 
         Optional<BossesModel> optionalEntity = this.repository.findById(id);
 
         if (!optionalEntity.isPresent())
-            return false;
+            return null;
 
         BossesModel existingEntity = optionalEntity.get();
-
-        dto.setUpdatedBy(this.getUsername()); // preserve logical deletion when updating
 
         // Update keycloak user
         if (dto.getUser() != null) {
@@ -92,12 +93,12 @@ public class BossesService
                     dto.getUser());
 
             if (!isKeycloakUserUpdated)
-                return false;
+                return null;
         }
 
         BossesModel updatedEntity = this.mapper.updateFromDto(dto, existingEntity);
-
-        return updatedEntity != null; // Return true if the entity was updated successfully
+        updatedEntity = this.repository.saveAndFlush(updatedEntity);
+        return this.mapper.toShowDto(updatedEntity);
     }
 
     @Override
@@ -161,6 +162,15 @@ public class BossesService
 
         // Checking if the entity was deleted
         return !this.repository.findByIdAndDeletedAtIsNull(id).isPresent();
+    }
+
+    @Override
+    public Boolean isPhoneExists(String phone) {
+        try {
+            return this.repository.countByPhone(phone) > 0;
+        } catch (Exception e) {
+            throw e;
+        }
     }
 
 }

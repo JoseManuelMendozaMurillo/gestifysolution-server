@@ -8,4 +8,6 @@ import com.ventuit.adminstrativeapp.core.repositories.BaseRepository;
 @Repository
 public interface BossesRepository extends BaseRepository<BossesModel, Integer> {
     BossesModel findByKeycloakUsername(String keycloakUsername);
+
+    long countByPhone(String phone);
 }

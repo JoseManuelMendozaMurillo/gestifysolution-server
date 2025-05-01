@@ -44,7 +44,7 @@ public interface CrudControllerInterface<CREATINGDTO, UPDATINGDTO, LISTDTO, ID> 
 
     @PutMapping("/{id}")
     @ResponseBody
-    ResponseEntity<String> update(@PathVariable ID id, @RequestBody UPDATINGDTO dto);
+    ResponseEntity<?> update(@PathVariable ID id, @RequestBody UPDATINGDTO dto);
 
     @DeleteMapping("soft/{id}")
     @ResponseBody
