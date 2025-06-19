@@ -9,12 +9,14 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.context.annotation.DependsOn;
 
 import com.ventuit.adminstrativeapp.keycloak.KeycloakProvider;
 import com.ventuit.adminstrativeapp.keycloak.converters.KeycloakOpaqueTokenAuthenticationConverter;
 
 @Configuration
 @EnableWebSecurity
+@DependsOn("keycloakSetup")
 public class SecurityConfiguration {
 
     @Autowired

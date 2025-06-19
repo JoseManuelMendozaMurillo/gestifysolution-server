@@ -1,8 +1,6 @@
 package com.ventuit.adminstrativeapp.keycloak.setup;
 
 import org.keycloak.representations.idm.RealmRepresentation;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 
 import com.ventuit.adminstrativeapp.keycloak.KeycloakProvider;
@@ -11,15 +9,9 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-@Order(1)
-public class CreateGestifysolutionRealm implements CommandLineRunner {
+public class CreateGestifysolutionRealm {
 
     private final KeycloakProvider keycloakProvider;
-
-    @Override
-    public void run(String... args) throws Exception {
-        this.createRealm();
-    }
 
     public void createRealm() {
         if (keycloakProvider.isGestifySolutionRealmExist()) {

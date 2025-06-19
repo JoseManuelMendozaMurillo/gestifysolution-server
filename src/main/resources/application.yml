@@ -2,21 +2,15 @@ spring:
     application:
         name: gestifysolution
     datasource:
-        url: jdbc:mysql://${DOCKER_DATABASE_CONTAINER_NAME}:3306/${MYSQL_DATABASE}
-        username: ${MYSQL_USERNAME}
-        password: ${MYSQL_PASSWORD}
+        url: jdbc:mysql://${DATABASE_SERVICE_NAME}:${DATABASE_INTERNAL_PORT}/${DATABASE_NAME}
+        username: ${DATABASE_USERNAME}
+        password: ${DATABASE_PASSWORD}
         driver-class-name: com.mysql.cj.jdbc.Driver
     jpa:
         hibernate:
             ddl-auto: create-drop
         database-platform: org.hibernate.dialect.MySQL8Dialect
         show-sql: true
-    # security:
-    #     oauth2:
-    #         resourceserver:
-    #             jwt:
-    #                 issuer-uri: ${KEYCLOAK_BASE_URL}/realms/${KEYCLOAK_REALM_NAME}
-    #                 jwk-set-uri: ${KEYCLOAK_BASE_URL}/realms/${KEYCLOAK_REALM_NAME}/protocol/openid-connect/certs
              
 springdoc:
     swagger-ui:
@@ -27,7 +21,7 @@ springdoc:
         path: /docs/api-docs
 
 server:
-    port: ${SERVER_PORT}
+    port: ${SERVER_INTERNAL_PORT}
     servlet:
         context-path: /api/v1
 

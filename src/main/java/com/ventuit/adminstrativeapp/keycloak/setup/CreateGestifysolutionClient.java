@@ -6,8 +6,6 @@ import java.util.Map;
 
 import org.keycloak.representations.idm.ClientRepresentation;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 
 import com.ventuit.adminstrativeapp.keycloak.KeycloakProvider;
@@ -16,8 +14,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-@Order(3)
-public class CreateGestifysolutionClient implements CommandLineRunner {
+public class CreateGestifysolutionClient {
 
     private final KeycloakProvider keycloakProvider;
 
@@ -30,12 +27,7 @@ public class CreateGestifysolutionClient implements CommandLineRunner {
     @Value("${server.port}")
     private String port;
 
-    @Override
-    public void run(String... args) throws Exception {
-        this.createClient();
-    }
-
-    private void createClient() {
+    public void createClient() {
         if (keycloakProvider.isGestifySolutionClientExist()) {
             System.out.println("Client " + keycloakProvider.getGestifySolutionClientId() + " already exists in realm "
                     + keycloakProvider.getGestifySolutionRealmName());
