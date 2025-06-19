@@ -1,7 +1,6 @@
-version: '3.9'
+version: '3.8'
 
 services:
-
   gestifysolution-server:
     extends:
       file: ./docker/docker-compose.base.yml
@@ -9,36 +8,65 @@ services:
     build: 
       context: .
       dockerfile: dockerfile
+    working_dir: /app
+    networks:
+      - backend
     env_file:
       - ./.env
     depends_on:
-      - gestifysolution-db
-    networks:
-      - backend
+      gestifysolution-db:
+        condition: service_healthy
+      gestifysolution-keycloak-db:
+        condition: service_healthy
+      gestifysolution-keycloak:
+        condition: service_started
+    restart: unless-stopped
 
   gestifysolution-db:
     extends:
       file: ./docker/docker-compose.base.yml
       service: gestifysolution-db-base
     volumes:
-      - ./docker/provisions/mysql/init:/docker-entrypoint-initdb.d
       - gestifysolution-db-data:/var/lib/mysql
     networks:
       - backend
-  
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DATABASE_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  gestifysolution-keycloak-db:
+    extends:
+      file: ./docker/docker-compose.base.yml
+      service: gestifysolution-keycloak-db-base
+    volumes:
+      - gestifysolution-keycloak-db-data:/var/lib/mysql
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${KEYCLOAK_DATABASE_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
   gestifysolution-keycloak:
     extends:
       file: ./docker/docker-compose.base.yml
       service: gestifysolution-keycloak-base
-    environment:
-      - KC_DB_URL=jdbc:mysql://gestifysolution-db:3306/${KEYCLOAK_DATABASE_NAME}
     depends_on:
-      - gestifysolution-db
+      gestifysolution-keycloak-db:
+        condition: service_healthy
     networks:
       - backend
+    command:
+      - "start-dev" # TODO: change to start when ready, this is for development purposes, start requires https and keycloak is not configured for it
 
 volumes:
   gestifysolution-db-data:
+  gestifysolution-keycloak-db-data:
 
 networks:
   backend:
