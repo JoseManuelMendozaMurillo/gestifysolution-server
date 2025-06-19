@@ -17,10 +17,16 @@ GestifySolution Server is a backend project to manage furniture stores, includin
 
 ### 2. Run with DevContainers (VS Code or Cursor)
 
-1. Open the project folder in VS Code or Cursor.
-2. If prompted, reopen in a Dev Container.
-3. The development environment will be set up automatically, including all dependencies and services.
-4. The server and services will be available at the same ports as above.
+1. Before opening the project, copy the `env.template` file into the `.devcontainer` folder and rename it to `.env`:
+   ```sh
+   cp env.template .devcontainer/.env
+   ```
+2. Open `.devcontainer/.env` and fill in the required environment variables.
+   - **Important:** Make sure that the values you set for the variables (such as container names, ports, and service names) match the corresponding service names and settings defined in the `docker-compose.yml` file in this folder. This ensures that Docker Compose can correctly link the services and that everything works as expected.
+3. Open the project folder in VS Code or Cursor.
+4. If prompted, reopen in a Dev Container.
+5. The development environment will be set up automatically, including all dependencies and services.
+6. The server and services will be available at the same ports as above.
 
 ## API Documentation
 
