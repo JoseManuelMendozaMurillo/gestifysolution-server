@@ -3,29 +3,40 @@ version: '3.9'
 services:
 
   gestifysolution-server-base:
-    image: ${DOCKER_SERVER_IMAGE_NAME}:${DOCKER_SERVER_IMAGE_VERSION}  
-    container_name: ${DOCKER_SERVER_CONTAINER_NAME}
+    image: ${SERVER_IMAGE_NAME}:${SERVER_IMAGE_VERSION}  
+    container_name: ${SERVER_CONTAINER_NAME}
     ports:
-      - ${SERVER_PORT}:8080
+      - ${SERVER_EXPOSED_PORT}:${SERVER_INTERNAL_PORT}
   
   gestifysolution-db-base:
     image: mysql:8.4.0
-    container_name: ${DOCKER_DATABASE_CONTAINER_NAME}
+    container_name: ${DATABASE_CONTAINER_NAME}
     ports:
-      - ${MYSQL_PORT}:3306
+      - ${DATABASE_EXPOSED_PORT}:${DATABASE_INTERNAL_PORT}
     environment:
-      - MYSQL_ROOT_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${DATABASE_PASSWORD}
+      - MYSQL_DATABASE=${DATABASE_NAME}
   
+  gestifysolution-keycloak-db-base:
+    image: mysql:8.4.0
+    container_name: ${KEYCLOAK_DATABASE_CONTAINER_NAME}
+    ports:
+      - ${KEYCLOAK_DATABASE_EXPOSED_PORT}:${KEYCLOAK_DATABASE_INTERNAL_PORT}
+    environment:
+      - MYSQL_ROOT_PASSWORD=${KEYCLOAK_DATABASE_PASSWORD}
+      - MYSQL_DATABASE=${KEYCLOAK_DATABASE_NAME}
+
   gestifysolution-keycloak-base:
     image: quay.io/keycloak/keycloak:25.0.2
-    container_name: ${DOCKER_KEYCLOAK_CONTAINER_NAME}
+    container_name: ${KEYCLOAK_CONTAINER_NAME}
     ports:
-      - ${KEYCLOAK_PORT}:8080
+      - ${KEYCLOAK_EXPOSED_PORT}:${KEYCLOAK_INTERNAL_PORT}
     environment:
       - KC_HEALTH_ENABLED=${KEYCLOAK_HEALTH_CHECK}
       - KC_METRICS_ENABLED=${KEYCLOAK_METRICS}
       - KC_DB=${KEYCLOAK_DATABASE_PROVIDER}
-      - KC_DB_USERNAME=root
-      - KC_DB_PASSWORD=${MYSQL_PASSWORD}
+      - KC_DB_PASSWORD=${KEYCLOAK_DATABASE_PASSWORD}
+      - KC_DB_USERNAME=${KEYCLOAK_DATABASE_USERNAME}
+      - KC_DB_URL=jdbc:${KEYCLOAK_DATABASE_PROVIDER}://${KEYCLOAK_DATABASE_SERVICE_NAME}:${KEYCLOAK_DATABASE_INTERNAL_PORT}/${KEYCLOAK_DATABASE_NAME}
       - KEYCLOAK_ADMIN=${KEYCLOAK_ADMIN_USER}
       - KEYCLOAK_ADMIN_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD}

@@ -10,13 +10,11 @@ services:
       context: .
       dockerfile: dockerfile
     env_file:
-      - .env
+      - ./.env
     depends_on:
       - gestifysolution-db
     networks:
       - backend
-    env_file:
-      - ./.env
 
   gestifysolution-db:
     extends:

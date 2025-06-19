@@ -1,0 +1,75 @@
+version: '3.8'
+
+services:
+  gestifysolution-server-dev:
+    extends:
+      file: ../docker/docker-compose.base.yml
+      service: gestifysolution-server-base
+    build: 
+      context: .
+      dockerfile: dockerfile
+    working_dir: /workspace/gestifysolution-server
+    volumes:
+      - ../:/workspace/gestifysolution-server
+    networks:
+      - backend-dev
+    env_file:
+      - ./.env
+    depends_on:
+      gestifysolution-db-dev:
+        condition: service_healthy
+      gestifysolution-keycloak-db-dev:
+        condition: service_healthy
+      gestifysolution-keycloak-dev:
+        condition: service_started  
+    command: sleep infinity
+    
+  gestifysolution-db-dev:
+    extends:
+      file: ../docker/docker-compose.base.yml
+      service: gestifysolution-db-base
+    volumes:
+      - gestifysolution-db-data-dev:/var/lib/mysql
+    networks:
+      - backend-dev
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DATABASE_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  gestifysolution-keycloak-db-dev:
+    extends:
+      file: ../docker/docker-compose.base.yml
+      service: gestifysolution-keycloak-db-base
+    volumes:
+      - gestifysolution-keycloak-db-data-dev:/var/lib/mysql
+    networks:
+      - backend-dev
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${KEYCLOAK_DATABASE_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  gestifysolution-keycloak-dev:
+    extends:
+      file: ../docker/docker-compose.base.yml
+      service: gestifysolution-keycloak-base
+    depends_on:
+      gestifysolution-keycloak-db-dev:
+        condition: service_healthy
+    networks:
+      - backend-dev
+    command:
+      - "start-dev"
+
+volumes:
+  gestifysolution-db-data-dev:
+  gestifysolution-keycloak-db-data-dev:
+
+networks:
+  backend-dev:
+    driver: bridge
