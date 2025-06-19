@@ -21,7 +21,9 @@ services:
       gestifysolution-keycloak-db-dev:
         condition: service_healthy
       gestifysolution-keycloak-dev:
-        condition: service_started  
+        condition: service_started 
+      gestifysolution-minio-dev:
+        condition: service_started
     command: sleep infinity
     
   gestifysolution-db-dev:
@@ -66,9 +68,19 @@ services:
     command:
       - "start-dev"
 
+  gestifysolution-minio-dev:
+    extends:
+      file: ../docker/docker-compose.base.yml
+      service: gestifysolution-minio-base
+    volumes:
+      - gestifysolution-minio-data-dev:/data
+    networks:
+      - backend-dev
+
 volumes:
   gestifysolution-db-data-dev:
   gestifysolution-keycloak-db-data-dev:
+  gestifysolution-minio-data-dev:
 
 networks:
   backend-dev:

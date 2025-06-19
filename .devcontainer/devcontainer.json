@@ -10,7 +10,8 @@
 	"runServices": [
 		"gestifysolution-db-dev",
 		"gestifysolution-keycloak-db-dev",
-		"gestifysolution-keycloak-dev"
+		"gestifysolution-keycloak-dev",
+		"gestifysolution-minio-dev"
 	],
 	"shutdownAction": "stopCompose",
 	"workspaceFolder": "/workspace/gestifysolution-server",

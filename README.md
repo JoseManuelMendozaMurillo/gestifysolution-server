@@ -2,6 +2,19 @@
 
 GestifySolution Server is a backend project to manage furniture stores, including inventory, suppliers, orders, warehouses, and user authentication with Keycloak. The project is built with Spring Boot and provides a RESTful API for all management operations.
 
+## Storage with MinIO
+
+This project uses [MinIO](https://min.io/) as an S3-compatible object storage service for file and asset management. MinIO is included as a service in both the Docker Compose and DevContainer setups.
+
+- **MinIO Console:** [http://localhost:9001](http://localhost:9001) (the port can be configured in your `.env` file)
+- **MinIO S3 API:** [http://localhost:9000](http://localhost:9000) (the port can be configured in your `.env` file)
+- **Credentials:**  
+  The MinIO username and password are set in your `.env` file using the `MINIO_ROOT_USER` and `MINIO_ROOT_PASSWORD` variables.  
+  By default, these are:
+  - User: `admin`
+  - Password: `minioadmin`
+  You can change these values in the `.env` file to suit your needs.
+
 ## How to Run the Project
 
 ### 1. Run with Docker Compose (Recommended)
@@ -14,6 +27,7 @@ GestifySolution Server is a backend project to manage furniture stores, includin
    ```
 4. The server will be available at [http://localhost:8080](http://localhost:8080) (or the port you set in your `.env` as `SERVER_EXPOSED_PORT`).
 5. Keycloak will be available at [http://localhost:9090](http://localhost:9090) (or the port you set in your `.env`).
+6. MinIO will be available at [http://localhost:9001](http://localhost:9001) (console) and [http://localhost:9000](http://localhost:9000) (S3 API).
 
 ### 2. Run with DevContainers (VS Code or Cursor)
 

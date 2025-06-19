@@ -20,6 +20,8 @@ services:
         condition: service_healthy
       gestifysolution-keycloak:
         condition: service_started
+      gestifysolution-minio:
+        condition: service_started
     restart: unless-stopped
 
   gestifysolution-db:
@@ -64,9 +66,19 @@ services:
     command:
       - "start-dev" # TODO: change to start when ready, this is for development purposes, start requires https and keycloak is not configured for it
 
+  gestifysolution-minio:
+    extends:
+      file: ./docker/docker-compose.base.yml
+      service: gestifysolution-minio-base
+    networks:
+      - backend
+    volumes:
+      - gestifysolution-minio-data:/data
+
 volumes:
   gestifysolution-db-data:
   gestifysolution-keycloak-db-data:
+  gestifysolution-minio-data:
 
 networks:
   backend:
