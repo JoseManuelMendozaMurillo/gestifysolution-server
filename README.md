@@ -15,6 +15,20 @@ This project uses [MinIO](https://min.io/) as an S3-compatible object storage se
   - Password: `minioadmin`
   You can change these values in the `.env` file to suit your needs.
 
+### MinIO Bucket Initialization
+
+When the application starts, it automatically creates a MinIO bucket if it doesn't exist. The bucket name is configured via the `MINIO_BUCKET_NAME` environment variable (default: `gestifysolution`).
+
+### MinIO API Endpoints
+
+The application provides REST endpoints for MinIO operations:
+
+- `POST /api/v1/minio/upload` - Upload a file
+- `GET /api/v1/minio/download/{fileName}` - Download a file
+- `DELETE /api/v1/minio/delete/{fileName}` - Delete a file
+- `GET /api/v1/minio/exists/{fileName}` - Check if a file exists
+- `GET /api/v1/minio/bucket-info` - Get bucket information
+
 ## How to Run the Project
 
 ### 1. Run with Docker Compose (Recommended)

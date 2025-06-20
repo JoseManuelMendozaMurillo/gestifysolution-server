@@ -112,6 +112,13 @@
 			<version>9.0.2</version>
 		</dependency>
 
+		<!-- MinIO Client for S3-compatible storage -->
+		<dependency>
+			<groupId>io.minio</groupId>
+			<artifactId>minio</artifactId>
+			<version>8.5.7</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>

@@ -35,3 +35,9 @@ app:
         client: ${KEYCLOAK_CLIENT_NAME}
     domain: ${DOMAIN}
     ssl: ${SSL}
+    minio:
+        endpoint: http://${MINIO_SERVICE_NAME}:${MINIO_INTERNAL_PORT_API}
+        access-key: ${MINIO_ROOT_USER}
+        secret-key: ${MINIO_ROOT_PASSWORD}
+        bucket-name: ${MINIO_BUCKET_NAME}
+    
