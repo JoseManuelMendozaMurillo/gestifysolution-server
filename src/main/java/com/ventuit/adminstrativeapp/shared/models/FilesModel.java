@@ -32,7 +32,7 @@ public class FilesModel extends ExtendedBaseModel {
     @Column(nullable = false)
     private Double size;
 
-    @Column(name = "blur_hash", nullable = false)
+    @Column(name = "blur_hash", nullable = true)
     private String blurHash;
 
     @ManyToOne(fetch = FetchType.LAZY)

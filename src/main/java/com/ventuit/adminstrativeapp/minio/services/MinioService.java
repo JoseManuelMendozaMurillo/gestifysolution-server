@@ -3,22 +3,43 @@ package com.ventuit.adminstrativeapp.minio.services;
 import io.minio.*;
 import io.minio.errors.*;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class MinioService {
 
-    @Autowired
-    private MinioClient minioClient;
+    private final MinioClient minioClient;
 
     @Value("${app.minio.bucket-name}")
-    private String bucketName;
+    private final String bucketName;
+
+    /**
+     * Upload a file to MinIO using InputStream
+     */
+    public String uploadFile(String objectName, InputStream inputStream, long size, String contentType) {
+        try {
+            minioClient.putObject(
+                    PutObjectArgs.builder()
+                            .bucket(bucketName)
+                            .object(objectName)
+                            .stream(inputStream, size, -1)
+                            .contentType(contentType)
+                            .build());
+            log.info("File uploaded successfully: {}", objectName);
+            return objectName;
+        } catch (Exception e) {
+            log.error("Error uploading file: {}", e.getMessage(), e);
+            throw new RuntimeException("Failed to upload file", e);
+        }
+    }
 
     /**
      * Upload a file to MinIO
