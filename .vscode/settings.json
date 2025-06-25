@@ -21,18 +21,23 @@
         "JPQL",
         "libphonenumber",
         "LISTDTO",
+        "mapstruct",
         "minioadmin",
         "NOPASSWD",
         "pastorpresentdate",
+        "projectlombok",
         "Resteasy",
         "runtimes",
         "settingup",
+        "springdoc",
         "springframework",
         "uniqueemail",
         "UPDATINGDTO",
         "usernamehw",
         "Ventuit",
-        "vscjava"
+        "vscjava",
+        "webflux",
+        "webmvc"
     ],
     "java.configuration.updateBuildConfiguration": "interactive"
 }

@@ -79,6 +79,7 @@ public class TypesRegimensTaxesSeeder implements CommandLineRunner {
                         regimens.add(newRegimen);
                 });
                 typesRegimensTaxesRepository.saveAll(regimens);
+                log.info("Successfully inserted {} tax regimens into the tax_regimens table", regimens.size());
         }
 
 }

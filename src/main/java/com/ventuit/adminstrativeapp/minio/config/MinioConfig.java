@@ -8,9 +8,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 
 @Configuration
 @Slf4j
+@Order(1)
 public class MinioConfig implements CommandLineRunner {
 
     @Value("${app.minio.endpoint}")
@@ -37,10 +39,10 @@ public class MinioConfig implements CommandLineRunner {
     public void run(String... args) throws Exception {
         try {
             MinioClient minioClient = minioClient();
-            
+
             // Check if bucket exists
             boolean bucketExists = minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
-            
+
             if (!bucketExists) {
                 // Create bucket if it doesn't exist
                 minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketName).build());
@@ -50,7 +52,8 @@ public class MinioConfig implements CommandLineRunner {
             }
         } catch (Exception e) {
             log.error("Error initializing MinIO bucket: {}", e.getMessage(), e);
-            // Don't throw the exception to allow the application to start even if MinIO is not available
+            // Don't throw the exception to allow the application to start even if MinIO is
+            // not available
         }
     }
-} 
+}
