@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ventuit.adminstrativeapp.minio.services.MinioService;
 import com.ventuit.adminstrativeapp.shared.dto.FileResponseDto;
 import com.ventuit.adminstrativeapp.shared.dto.FileUploadDto;
 import com.ventuit.adminstrativeapp.shared.models.BucketsModel;
@@ -19,7 +18,11 @@ import com.ventuit.adminstrativeapp.shared.repositories.BucketsRepository;
 import com.ventuit.adminstrativeapp.shared.repositories.FilesBucketsRepository;
 import com.ventuit.adminstrativeapp.shared.repositories.FilesPathsRepository;
 import com.ventuit.adminstrativeapp.shared.repositories.FilesRepository;
+import com.ventuit.adminstrativeapp.storage.minio.services.MinioService;
 import com.ventuit.adminstrativeapp.core.services.BlurHashService;
+import com.ventuit.adminstrativeapp.shared.exceptions.FileDeleteException;
+import com.ventuit.adminstrativeapp.shared.exceptions.FileGetException;
+import com.ventuit.adminstrativeapp.shared.exceptions.FileUploadException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -44,20 +47,20 @@ public class FilesService {
     @Value("${app.domain}")
     private String domain;
 
-    @Value("${app.minio.exposed-port-api}")
-    private String minioPort;
+    @Value("${server.port}")
+    private String serverPort;
 
     /**
      * Upload a file to storage and register it in the database
      * 
      * @param uploadDto File upload data
-     * @return File response with metadata and URL
+     * @return File model
      */
-    public FileResponseDto uploadFile(FileUploadDto uploadDto) {
+    public FilesModel uploadFile(FileUploadDto uploadDto) {
         String fileKey = null;
         String bucketName = null;
         try {
-            // Generate unique file key
+            // Generate unique file key (without path)
             fileKey = generateFileKey(uploadDto.getOriginalFileName());
 
             // Get file extension
@@ -70,8 +73,17 @@ public class FilesService {
             BucketsModel bucket = getBucketFromStorage(uploadDto.getBucket(), uploadDto.getProvider());
             bucketName = bucket.getName();
 
+            // Compose the object name for MinIO (path + fileKey)
+            String objectName;
+            if (uploadDto.getPath() != null && !uploadDto.getPath().trim().isEmpty()) {
+                String normalizedPath = uploadDto.getPath().replaceAll("^/+", "").replaceAll("/+$", "");
+                objectName = normalizedPath + "/" + fileKey;
+            } else {
+                objectName = fileKey;
+            }
+
             // Upload file to MinIO using MinioService
-            uploadToMinIO(uploadDto, fileKey, bucketName);
+            uploadToMinIO(uploadDto, objectName, bucketName);
 
             // Always generate blurhash if image
             String blurHash = null;
@@ -80,14 +92,14 @@ public class FilesService {
                 blurHash = blurHashService.generateBlurHash(uploadDto.getFileInputStream(), 4, 3);
             }
 
-            // Create file record in database
+            // Create file record in database (save only fileKey, not path)
             FilesModel fileRecord = createFileRecord(uploadDto, fileKey, extension, filePath, blurHash);
 
             // Create file-bucket association
             createFileBucketAssociation(fileRecord, bucket);
 
-            // Generate response
-            return buildFileResponse(fileRecord, filePath, bucket);
+            // Return the file record
+            return fileRecord;
 
         } catch (Exception e) {
             // If fileKey and bucketName are set, try to delete the file from MinIO
@@ -100,7 +112,7 @@ public class FilesService {
                 }
             }
             log.error("Error uploading file: {}", uploadDto.getOriginalFileName(), e);
-            throw new RuntimeException("Failed to upload file: " + uploadDto.getOriginalFileName(), e);
+            throw new FileUploadException("Failed to upload file: " + uploadDto.getOriginalFileName(), e);
         }
     }
 
@@ -132,7 +144,7 @@ public class FilesService {
             return true;
         } catch (Exception e) {
             log.error("Error deleting file with ID: {}", fileId, e);
-            throw new RuntimeException("Failed to delete file with ID: " + fileId, e);
+            throw new FileDeleteException("Failed to delete file with ID: " + fileId, e);
         }
     }
 
@@ -158,7 +170,7 @@ public class FilesService {
 
         } catch (Exception e) {
             log.error("Error getting file with ID: {}", fileId, e);
-            throw new RuntimeException("Failed to get file with ID: " + fileId, e);
+            throw new FileGetException("Failed to get file with ID: " + fileId, e);
         }
     }
 
@@ -183,7 +195,7 @@ public class FilesService {
 
         } catch (Exception e) {
             log.error("Error getting file with key: {}", key, e);
-            throw new RuntimeException("Failed to get file with key: " + key, e);
+            throw new FileGetException("Failed to get file with key: " + key, e);
         }
     }
 
@@ -193,7 +205,8 @@ public class FilesService {
         String timestamp = String.valueOf(System.currentTimeMillis());
         String uuid = UUID.randomUUID().toString().replace("-", "");
         String extension = getFileExtension(originalFileName);
-        return timestamp + "_" + uuid + extension;
+        String fileName = getFileName(originalFileName);
+        return fileName + "_" + timestamp + "_" + uuid + extension;
     }
 
     private String getFileExtension(String fileName) {
@@ -201,6 +214,14 @@ public class FilesService {
             return "";
         }
         return fileName.substring(fileName.lastIndexOf("."));
+    }
+
+    private String getFileName(String fileName) {
+        if (fileName == null || !fileName.contains(".")) {
+            return fileName == null ? null : fileName.replace(" ", "-");
+        }
+        // Return the name without the extension and replace spaces with dashes
+        return fileName.substring(0, fileName.lastIndexOf(".")).replace(" ", "-");
     }
 
     private FilesPathsModel getOrCreateFilePath(String path) {
@@ -234,12 +255,12 @@ public class FilesService {
                         () -> new RuntimeException("Bucket not found: " + bucketName + " with provider: " + provider));
     }
 
-    private void uploadToMinIO(FileUploadDto uploadDto, String fileKey, String bucketName) {
+    private void uploadToMinIO(FileUploadDto uploadDto, String objectName, String bucketName) {
         try {
             // Use MinioService to upload the file with InputStream
-            minioService.uploadFile(fileKey, uploadDto.getFileInputStream(), uploadDto.getFileSize(),
+            minioService.uploadFile(objectName, uploadDto.getFileInputStream(), uploadDto.getFileSize(),
                     uploadDto.getContentType());
-            log.info("Successfully uploaded file to MinIO: {} in bucket: {}", fileKey, bucketName);
+            log.info("Successfully uploaded file to MinIO: {} in bucket: {}", objectName, bucketName);
         } catch (Exception e) {
             log.error("Error uploading file to MinIO: {}", e.getMessage(), e);
             throw new RuntimeException("Failed to upload file to MinIO", e);
@@ -250,8 +271,8 @@ public class FilesService {
             FilesPathsModel filePath, String blurHash) {
         FilesModel fileRecord = FilesModel.builder()
                 .fileKey(fileKey)
-                .name(uploadDto.getOriginalFileName())
-                .extension(extension)
+                .name(getFileName(uploadDto.getOriginalFileName()))
+                .extension(extension.substring(1))
                 .size(uploadDto.getFileSize().doubleValue())
                 .blurHash(blurHash)
                 .filesPaths(filePath)
@@ -274,7 +295,7 @@ public class FilesService {
     }
 
     private FileResponseDto buildFileResponse(FilesModel file, FilesPathsModel filePath, BucketsModel bucket) {
-        String fileUrl = generateFileUrl(file.getFileKey(), bucket);
+        String fileUrl = generateFileUrl(file.getFileKey(), filePath.getPath());
 
         return FileResponseDto.builder()
                 .id(file.getId())
@@ -285,14 +306,28 @@ public class FilesService {
                 .blurHash(file.getBlurHash())
                 .path(filePath != null ? filePath.getPath() : null)
                 .url(fileUrl)
-                .contentType(getContentTypeFromExtension(file.getExtension()))
+                .contentType(getContentTypeFromExtension("." + file.getExtension()))
                 .bucket(bucket.getName())
                 .createdAt(file.getCreatedAt())
                 .build();
     }
 
-    private String generateFileUrl(String fileKey, BucketsModel bucket) {
-        return String.format("http://%s:%s/%s/%s", domain, minioPort, bucket.getName(), fileKey);
+    private String generateFileUrl(String fileKey, String filePath) {
+        // Determine if this is an image based on the file key extension
+        String endpoint = isImageFile(fileKey) ? "images" : "files";
+        return String.format("http://%s:%s/api/v1/minio/%s%s", domain, serverPort, endpoint, filePath + "/" + fileKey);
+    }
+
+    /**
+     * Check if a file is an image based on its extension
+     */
+    private boolean isImageFile(String fileKey) {
+        if (fileKey == null || !fileKey.contains(".")) {
+            return false;
+        }
+
+        String extension = fileKey.substring(fileKey.lastIndexOf(".")).toLowerCase();
+        return extension.matches("\\.(jpg|jpeg|png|gif|bmp|webp|svg|ico)$");
     }
 
     private String getContentTypeFromExtension(String extension) {

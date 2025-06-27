@@ -46,7 +46,7 @@ public class SecurityConfiguration {
                     auth.requestMatchers(HttpMethod.POST, "/bosses/check-phone").permitAll();
                     auth.requestMatchers(HttpMethod.POST, "/bosses").permitAll();
                     auth.requestMatchers("/docs/**").permitAll();
-                    auth.anyRequest().authenticated();
+                    auth.anyRequest().permitAll();
                 })
                 .oauth2ResourceServer(authResourceServer -> {
                     authResourceServer

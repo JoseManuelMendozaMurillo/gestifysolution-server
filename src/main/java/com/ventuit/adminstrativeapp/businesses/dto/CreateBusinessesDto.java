@@ -1,11 +1,10 @@
 package com.ventuit.adminstrativeapp.businesses.dto;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Set;
+
+import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.ventuit.adminstrativeapp.bosses.models.BossesBusinessesModel;
 import com.ventuit.adminstrativeapp.businesses.models.BusinessesModel;
 import com.ventuit.adminstrativeapp.businesses.models.BusinessesTypeModel;
 import com.ventuit.adminstrativeapp.businesses.models.IndustriesModel;
@@ -14,6 +13,9 @@ import com.ventuit.adminstrativeapp.businesses.serialization.BusinessesTypeModel
 import com.ventuit.adminstrativeapp.businesses.serialization.IndustriesModelDeserializer;
 import com.ventuit.adminstrativeapp.businesses.serialization.TypesRegimensTaxesModelDeserializer;
 import com.ventuit.adminstrativeapp.core.dto.ExtendedBaseDto;
+import com.ventuit.adminstrativeapp.shared.validations.aspectratio.AspectRatio;
+import com.ventuit.adminstrativeapp.shared.validations.imagefile.ImageFile;
+import com.ventuit.adminstrativeapp.shared.validations.maxfilesize.MaxFileSize;
 import com.ventuit.adminstrativeapp.shared.validations.pastorpresentdate.PastOrPresentDate;
 import com.ventuit.adminstrativeapp.shared.validations.rfc.Rfc;
 import com.ventuit.adminstrativeapp.shared.validations.unique.Unique;
@@ -51,12 +53,6 @@ public class CreateBusinessesDto extends ExtendedBaseDto {
     @PastOrPresentDate(message = "Establishment date must be in the past or present")
     private LocalDate establishmentDate;
 
-    private boolean active;
-
-    private Integer activeChangedBy;
-
-    private LocalDateTime activeChangedAt;
-
     @NotNull(message = "You must send the business's industry")
     @JsonDeserialize(using = IndustriesModelDeserializer.class)
     private IndustriesModel industry;
@@ -69,5 +65,12 @@ public class CreateBusinessesDto extends ExtendedBaseDto {
     @JsonDeserialize(using = TypesRegimensTaxesModelDeserializer.class)
     private TypesRegimensTaxesModel taxRegimen;
 
-    private Set<BossesBusinessesModel> bossesBusinesses;
+    /**
+     * Logo image file for the business
+     */
+    @ImageFile(message = "Logo must be an image file")
+    @MaxFileSize(value = 2097152, message = "Logo file size must not exceed 2MB") // 2MB
+    @AspectRatio(value = "1:1", tolerance = 10.0, message = "Logo must be square (1:1 aspect ratio) with 10% tolerance")
+    private MultipartFile logo;
+
 }

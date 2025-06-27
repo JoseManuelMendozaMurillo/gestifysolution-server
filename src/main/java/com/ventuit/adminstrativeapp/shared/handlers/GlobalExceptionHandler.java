@@ -20,6 +20,9 @@ import com.ventuit.adminstrativeapp.auth.exceptions.AuthUnauthorizedException;
 import com.ventuit.adminstrativeapp.keycloak.exceptions.KeycloakUserCreationException;
 import com.ventuit.adminstrativeapp.keycloak.exceptions.KeycloakUserNotFoundException;
 import com.ventuit.adminstrativeapp.shared.exceptions.EntityNotFoundException;
+import com.ventuit.adminstrativeapp.shared.exceptions.FileGetException;
+import com.ventuit.adminstrativeapp.shared.exceptions.FileDeleteException;
+import com.ventuit.adminstrativeapp.shared.exceptions.FileUploadException;
 import com.ventuit.adminstrativeapp.shared.exceptions.ObjectNotValidException;
 import com.ventuit.adminstrativeapp.utils.GlobalExceptionHandlerUtils;
 
@@ -115,6 +118,25 @@ public class GlobalExceptionHandler {
     @ResponseBody
     public ResponseEntity<String> handleAuthLogoutException(AuthLogoutException ex) {
         return ResponseEntity.status(ex.getStatusCode()).body(ex.getMessage());
+    }
+
+    // Handling file errors
+    @ExceptionHandler(FileUploadException.class)
+    @ResponseBody
+    public ResponseEntity<String> handleFileUploadException(FileUploadException ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(FileGetException.class)
+    @ResponseBody
+    public ResponseEntity<String> handleFileGetException(FileGetException ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(FileDeleteException.class)
+    @ResponseBody
+    public ResponseEntity<String> handleFileDeleteException(FileDeleteException ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
     }
 
     // Handling unexpected errors

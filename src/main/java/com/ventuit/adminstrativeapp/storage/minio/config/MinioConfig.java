@@ -1,37 +1,31 @@
-package com.ventuit.adminstrativeapp.minio.config;
+package com.ventuit.adminstrativeapp.storage.minio.config;
 
 import io.minio.BucketExistsArgs;
 import io.minio.MakeBucketArgs;
 import io.minio.MinioClient;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 
+import com.ventuit.adminstrativeapp.storage.minio.MinioProvider;
+
+import lombok.RequiredArgsConstructor;
+
 @Configuration
 @Slf4j
 @Order(1)
+@RequiredArgsConstructor
 public class MinioConfig implements CommandLineRunner {
 
-    @Value("${app.minio.endpoint}")
-    private String minioEndpoint;
-
-    @Value("${app.minio.access-key}")
-    private String minioAccessKey;
-
-    @Value("${app.minio.secret-key}")
-    private String minioSecretKey;
-
-    @Value("${app.minio.bucket-name}")
-    private String bucketName;
+    private final MinioProvider minioProvider;
 
     @Bean
     public MinioClient minioClient() {
         return MinioClient.builder()
-                .endpoint(minioEndpoint)
-                .credentials(minioAccessKey, minioSecretKey)
+                .endpoint(minioProvider.getMinioEndpoint())
+                .credentials(minioProvider.getMinioAccessKey(), minioProvider.getMinioSecretKey())
                 .build();
     }
 
@@ -41,14 +35,15 @@ public class MinioConfig implements CommandLineRunner {
             MinioClient minioClient = minioClient();
 
             // Check if bucket exists
-            boolean bucketExists = minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
+            boolean bucketExists = minioClient
+                    .bucketExists(BucketExistsArgs.builder().bucket(minioProvider.getBucketName()).build());
 
             if (!bucketExists) {
                 // Create bucket if it doesn't exist
-                minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketName).build());
-                log.info("MinIO bucket '{}' created successfully", bucketName);
+                minioClient.makeBucket(MakeBucketArgs.builder().bucket(minioProvider.getBucketName()).build());
+                log.info("MinIO bucket '{}' created successfully", minioProvider.getBucketName());
             } else {
-                log.info("MinIO bucket '{}' already exists", bucketName);
+                log.info("MinIO bucket '{}' already exists", minioProvider.getBucketName());
             }
         } catch (Exception e) {
             log.error("Error initializing MinIO bucket: {}", e.getMessage(), e);

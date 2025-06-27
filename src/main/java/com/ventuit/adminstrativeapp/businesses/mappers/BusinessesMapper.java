@@ -2,6 +2,7 @@ package com.ventuit.adminstrativeapp.businesses.mappers;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -11,16 +12,24 @@ import org.mapstruct.Named;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
 import com.ventuit.adminstrativeapp.businesses.dto.CreateBusinessesDto;
+import com.ventuit.adminstrativeapp.businesses.dto.ListBusinessesDto;
 import com.ventuit.adminstrativeapp.businesses.dto.UpdateBusinessesDto;
 import com.ventuit.adminstrativeapp.businesses.models.BusinessesModel;
 import com.ventuit.adminstrativeapp.core.mappers.interfaces.CrudMapperInterface;
+import com.ventuit.adminstrativeapp.shared.dto.FileResponseDto;
+import com.ventuit.adminstrativeapp.shared.models.FilesModel;
+import com.ventuit.adminstrativeapp.shared.services.FilesService;
 
 @Mapper(componentModel = ComponentModel.SPRING, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public abstract class BusinessesMapper
-        implements CrudMapperInterface<CreateBusinessesDto, UpdateBusinessesDto, CreateBusinessesDto, BusinessesModel> {
+        implements CrudMapperInterface<CreateBusinessesDto, UpdateBusinessesDto, ListBusinessesDto, BusinessesModel> {
+
+    @Autowired
+    private FilesService filesService;
 
     @Override
     @Named("toDto")
+    @Mapping(target = "logo", ignore = true)
     public abstract CreateBusinessesDto toDto(BusinessesModel entity);
 
     @Override
@@ -29,15 +38,20 @@ public abstract class BusinessesMapper
 
     @Override
     @Named("toShowDto")
-    public abstract CreateBusinessesDto toShowDto(BusinessesModel entity);
+    @Mapping(target = "logo", source = "logo", qualifiedByName = "filesModelToFileResponseDto")
+    public abstract ListBusinessesDto toShowDto(BusinessesModel entity);
 
     @Override
     @IterableMapping(qualifiedByName = "toShowDto")
-    public abstract List<CreateBusinessesDto> entitiesToShowDtos(List<BusinessesModel> listEntities);
+    public abstract List<ListBusinessesDto> entitiesToShowDtos(List<BusinessesModel> listEntities);
 
     @Override
     @Mapping(target = "bossesBusinesses", ignore = true)
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "logo", ignore = true)
+    @Mapping(target = "active", ignore = true)
+    @Mapping(target = "activeChangedAt", ignore = true)
+    @Mapping(target = "activeChangedBy", ignore = true)
     public abstract BusinessesModel toEntity(CreateBusinessesDto dto);
 
     @Override
@@ -51,5 +65,13 @@ public abstract class BusinessesMapper
     @Mapping(target = "active", ignore = true)
     @Mapping(target = "activeChangedAt", ignore = true)
     @Mapping(target = "activeChangedBy", ignore = true)
+    @Mapping(target = "logo", ignore = true)
     public abstract BusinessesModel updateFromDto(UpdateBusinessesDto dto, @MappingTarget BusinessesModel entity);
+
+    @Named("filesModelToFileResponseDto")
+    public FileResponseDto filesModelToFileResponseDto(FilesModel filesModel) {
+        if (filesModel == null)
+            return null;
+        return filesService.getFile(filesModel.getId());
+    }
 }
