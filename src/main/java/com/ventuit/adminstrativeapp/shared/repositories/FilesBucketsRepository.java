@@ -19,4 +19,9 @@ public interface FilesBucketsRepository extends BaseRepository<FilesBucketsModel
      * Find file-bucket associations by bucket ID
      */
     public List<FilesBucketsModel> findByBucketId(Integer bucketId);
+
+    /**
+     * Find file-bucket association by file and bucket
+     */
+    public FilesBucketsModel findByFileIdAndBucketId(Integer fileId, Integer bucketId);
 }

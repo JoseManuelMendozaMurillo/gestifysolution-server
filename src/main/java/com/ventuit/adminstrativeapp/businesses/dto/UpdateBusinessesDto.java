@@ -2,6 +2,8 @@ package com.ventuit.adminstrativeapp.businesses.dto;
 
 import java.time.LocalDate;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.ventuit.adminstrativeapp.businesses.models.BusinessesModel;
 import com.ventuit.adminstrativeapp.businesses.models.BusinessesTypeModel;
@@ -11,6 +13,9 @@ import com.ventuit.adminstrativeapp.businesses.serialization.BusinessesTypeModel
 import com.ventuit.adminstrativeapp.businesses.serialization.IndustriesModelDeserializer;
 import com.ventuit.adminstrativeapp.businesses.serialization.TypesRegimensTaxesModelDeserializer;
 import com.ventuit.adminstrativeapp.core.dto.ExtendedBaseDto;
+import com.ventuit.adminstrativeapp.shared.validations.aspectratio.AspectRatio;
+import com.ventuit.adminstrativeapp.shared.validations.imagefile.ImageFile;
+import com.ventuit.adminstrativeapp.shared.validations.maxfilesize.MaxFileSize;
 import com.ventuit.adminstrativeapp.shared.validations.pastorpresentdate.PastOrPresentDate;
 import com.ventuit.adminstrativeapp.shared.validations.rfc.Rfc;
 import com.ventuit.adminstrativeapp.shared.validations.unique.Unique;
@@ -52,4 +57,9 @@ public class UpdateBusinessesDto extends ExtendedBaseDto {
 
     @JsonDeserialize(using = TypesRegimensTaxesModelDeserializer.class)
     private TypesRegimensTaxesModel taxRegimen;
+
+    @ImageFile(message = "Logo must be an image file")
+    @MaxFileSize(value = 2097152, message = "Logo file size must not exceed 2MB") // 2MB
+    @AspectRatio(value = "1:1", tolerance = 10.0, message = "Logo must be square (1:1 aspect ratio) with 10% tolerance")
+    private MultipartFile logo;
 }

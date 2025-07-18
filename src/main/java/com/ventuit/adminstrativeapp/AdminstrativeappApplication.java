@@ -18,7 +18,7 @@ public class AdminstrativeappApplication {
 	OpenAPI customOpenAPI() {
 		return new OpenAPI()
 				.info(new Info()
-						.title("Adminstrativeapp API")
+						.title("Gestifysolution API")
 						.version("1.0"));
 	}
 }
