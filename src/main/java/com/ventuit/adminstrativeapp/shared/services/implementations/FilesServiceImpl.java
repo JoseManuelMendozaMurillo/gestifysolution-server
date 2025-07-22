@@ -1,4 +1,4 @@
-package com.ventuit.adminstrativeapp.shared.services;
+package com.ventuit.adminstrativeapp.shared.services.implementations;
 
 import java.util.List;
 import java.util.UUID;
@@ -19,6 +19,7 @@ import com.ventuit.adminstrativeapp.shared.repositories.BucketsRepository;
 import com.ventuit.adminstrativeapp.shared.repositories.FilesBucketsRepository;
 import com.ventuit.adminstrativeapp.shared.repositories.FilesPathsRepository;
 import com.ventuit.adminstrativeapp.shared.repositories.FilesRepository;
+import com.ventuit.adminstrativeapp.shared.services.interfaces.FilesServiceInterface;
 import com.ventuit.adminstrativeapp.storage.minio.services.MinioService;
 
 import com.ventuit.adminstrativeapp.core.services.BlurHashService;
@@ -38,9 +39,9 @@ import jakarta.persistence.EntityManager;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class FilesService {
+public class FilesServiceImpl implements FilesServiceInterface {
 
-    private static final Logger log = LoggerFactory.getLogger(FilesService.class);
+    private static final Logger log = LoggerFactory.getLogger(FilesServiceImpl.class);
     private final MinioService minioService;
     private final FilesRepository filesRepository;
     private final FilesPathsRepository filesPathsRepository;
@@ -63,6 +64,7 @@ public class FilesService {
      * @param uploadDto File upload data
      * @return File model
      */
+    @Override
     public FilesModel uploadFile(FileUploadDto uploadDto) {
         String fileKey = null;
         String bucketName = null;
@@ -124,20 +126,12 @@ public class FilesService {
     }
 
     /**
-     * Force delete a file from the database using a native query
-     */
-    public void forceDeleteFileById(Integer fileId) {
-        entityManager.createNativeQuery("DELETE FROM files WHERE id = :id")
-                .setParameter("id", fileId)
-                .executeUpdate();
-    }
-
-    /**
      * Delete a file from storage and database
      * 
      * @param fileId File ID to delete
      * @return true if deleted successfully
      */
+    @Override
     @Transactional
     public boolean deleteFileFromAllBuckets(Integer fileId) {
         try {
@@ -195,6 +189,7 @@ public class FilesService {
      * @param fileId File ID
      * @return File response or null if not found
      */
+    @Override
     public FileResponseDto getFile(Integer fileId) {
         try {
             FilesModel file = filesRepository.findById(fileId)
@@ -221,6 +216,7 @@ public class FilesService {
      * @param key File storage key
      * @return File response or null if not found
      */
+    @Override
     public FileResponseDto getFileByKey(String key) {
         try {
             FilesModel file = filesRepository.findByFileKey(key);
@@ -248,6 +244,7 @@ public class FilesService {
      * @param deletedBy the username or system performing the delete
      * @return true if the operation was successful
      */
+    @Override
     @Transactional
     public boolean softDeleteFileFromBucket(Integer fileId, Integer bucketId, String deletedBy) {
         // 1. Soft delete the files_buckets association for this file and bucket
@@ -293,6 +290,7 @@ public class FilesService {
      * @param deletedBy User who is performing the deletion
      * @return true if deleted successfully from all buckets
      */
+    @Override
     @Transactional
     public boolean softDeleteFileFromAllBuckets(Integer fileId, String deletedBy) {
         try {
@@ -352,6 +350,7 @@ public class FilesService {
      * @param fileId File ID to restore from all buckets
      * @return true if restored successfully from all buckets
      */
+    @Override
     @Transactional
     public boolean restoreFileFromAllBuckets(Integer fileId) {
         try {
@@ -406,6 +405,7 @@ public class FilesService {
      * @param uploadDto New file upload data
      * @return Updated file model
      */
+    @Override
     @Transactional
     public FilesModel updateFile(Integer fileId, FileUploadDto uploadDto) {
         String oldFileKey = null;

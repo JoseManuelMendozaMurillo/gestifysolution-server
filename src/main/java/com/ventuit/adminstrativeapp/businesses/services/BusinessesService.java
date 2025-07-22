@@ -17,9 +17,9 @@ import com.ventuit.adminstrativeapp.businesses.repositories.BusinessesRepository
 import com.ventuit.adminstrativeapp.core.services.implementations.CrudServiceImpl;
 import com.ventuit.adminstrativeapp.shared.dto.FileUploadDto;
 import com.ventuit.adminstrativeapp.shared.models.FilesModel;
+import com.ventuit.adminstrativeapp.shared.services.implementations.FilesServiceImpl;
 import com.ventuit.adminstrativeapp.shared.exceptions.EntityNotFoundException;
 import com.ventuit.adminstrativeapp.shared.exceptions.FileUploadException;
-import com.ventuit.adminstrativeapp.shared.services.FilesService;
 import com.ventuit.adminstrativeapp.storage.minio.MinioProvider;
 
 import jakarta.transaction.Transactional;
@@ -31,7 +31,7 @@ public class BusinessesService
         CrudServiceImpl<CreateBusinessesDto, UpdateBusinessesDto, ListBusinessesDto, BusinessesModel, Integer, BusinessesMapper, BusinessesRepository> {
 
     @Autowired
-    private FilesService filesService;
+    private FilesServiceImpl filesService;
     @Autowired
     private MinioProvider minioProvider;
 

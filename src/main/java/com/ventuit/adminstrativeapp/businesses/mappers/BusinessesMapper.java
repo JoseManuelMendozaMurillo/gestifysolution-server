@@ -18,14 +18,14 @@ import com.ventuit.adminstrativeapp.businesses.models.BusinessesModel;
 import com.ventuit.adminstrativeapp.core.mappers.interfaces.CrudMapperInterface;
 import com.ventuit.adminstrativeapp.shared.dto.FileResponseDto;
 import com.ventuit.adminstrativeapp.shared.models.FilesModel;
-import com.ventuit.adminstrativeapp.shared.services.FilesService;
+import com.ventuit.adminstrativeapp.shared.services.implementations.FilesServiceImpl;
 
 @Mapper(componentModel = ComponentModel.SPRING, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public abstract class BusinessesMapper
         implements CrudMapperInterface<CreateBusinessesDto, UpdateBusinessesDto, ListBusinessesDto, BusinessesModel> {
 
     @Autowired
-    private FilesService filesService;
+    private FilesServiceImpl filesService;
 
     @Override
     @Named("toDto")
