@@ -3,6 +3,7 @@ package com.ventuit.adminstrativeapp.branches.models;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import com.ventuit.adminstrativeapp.businesses.models.BusinessesModel;
 import com.ventuit.adminstrativeapp.core.models.ExtendedBaseModel;
 import com.ventuit.adminstrativeapp.shared.models.DirectionsModel;
 import com.ventuit.adminstrativeapp.shared.validations.email.Email;
@@ -14,6 +15,7 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -61,4 +63,8 @@ public class BranchesModel extends ExtendedBaseModel {
     @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "direction_id", nullable = false)
     private DirectionsModel direction;
+
+    @ManyToOne
+    @JoinColumn(name = "business_id", nullable = false)
+    private BusinessesModel businesses;
 }

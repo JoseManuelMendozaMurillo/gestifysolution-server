@@ -7,6 +7,7 @@ import java.util.Set;
 import org.hibernate.annotations.Check;
 
 import com.ventuit.adminstrativeapp.bosses.models.BossesBusinessesModel;
+import com.ventuit.adminstrativeapp.branches.models.BranchesModel;
 import com.ventuit.adminstrativeapp.core.models.ExtendedBaseModel;
 import com.ventuit.adminstrativeapp.shared.models.FilesModel;
 import com.ventuit.adminstrativeapp.shared.validations.pastorpresentdate.PastOrPresentDate;
@@ -80,6 +81,9 @@ public class BusinessesModel extends ExtendedBaseModel {
 
     @OneToMany(mappedBy = "businesses", cascade = CascadeType.ALL)
     private Set<BossesBusinessesModel> bossesBusinesses;
+
+    @OneToMany(mappedBy = "businesses", cascade = CascadeType.ALL)
+    private Set<BranchesModel> branches;
 
     @OneToOne(optional = true)
     @JoinColumn(name = "logo_id", nullable = true, unique = false)
