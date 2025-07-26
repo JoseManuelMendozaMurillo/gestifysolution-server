@@ -52,6 +52,7 @@ public abstract class BusinessesMapper
     @Mapping(target = "active", ignore = true)
     @Mapping(target = "activeChangedAt", ignore = true)
     @Mapping(target = "activeChangedBy", ignore = true)
+    @Mapping(target = "branches", ignore = true)
     public abstract BusinessesModel toEntity(CreateBusinessesDto dto);
 
     @Override
@@ -66,6 +67,7 @@ public abstract class BusinessesMapper
     @Mapping(target = "activeChangedAt", ignore = true)
     @Mapping(target = "activeChangedBy", ignore = true)
     @Mapping(target = "logo", ignore = true)
+    @Mapping(target = "branches", ignore = true)
     public abstract BusinessesModel updateFromDto(UpdateBusinessesDto dto, @MappingTarget BusinessesModel entity);
 
     @Named("filesModelToFileResponseDto")
