@@ -1,13 +1,19 @@
 package com.ventuit.adminstrativeapp.shared.handlers;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.MessageSource;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -34,6 +40,9 @@ public class GlobalExceptionHandler {
 
     // TODO Registering the error into the logs table in the database
 
+    private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+    private final MessageSource messageSource;
+
     @ExceptionHandler(ObjectNotValidException.class)
     @ResponseBody
     public ResponseEntity<ProblemDetail> handleException(ObjectNotValidException ex) {
@@ -46,6 +55,28 @@ public class GlobalExceptionHandler {
         problemDetail.setTitle("Invalid request");
         problemDetail.setDetail("There are one or more invalid fields in the request");
         problemDetail.setProperties(properties);
+        return ResponseEntity.badRequest().body(problemDetail);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ProblemDetail> handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
+
+        HashMap<String, String> fieldsError = new HashMap<>();
+
+        ex.getBindingResult().getFieldErrors().forEach(error -> {
+            // 2. Use the MessageSource to resolve the error code into a message
+            String errorMessage = messageSource.getMessage(error, Locale.getDefault());
+            fieldsError.put(error.getField(), errorMessage);
+        });
+
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("errors", GlobalExceptionHandlerUtils.formatToErrorFields(fieldsError));
+
+        ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+        problemDetail.setTitle("Invalid Request");
+        problemDetail.setDetail("There are one or more invalid fields in the request.");
+        problemDetail.setProperties(properties);
+
         return ResponseEntity.badRequest().body(problemDetail);
     }
 
@@ -139,12 +170,33 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
     }
 
+    // Handling illegal arguments
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseBody
+    public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex) {
+        logger.error("Illegal argument: {}", ex.getMessage());
+        logger.error("Stack trace: ", ex);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("An unexpected error occurred, please try again later.");
+    }
+
+    @ExceptionHandler(InvocationTargetException.class)
+    @ResponseBody
+    public ResponseEntity<String> handleInvocationTargetException(InvocationTargetException ex) {
+        logger.error("Invocation target error: {}", ex.getMessage());
+        logger.error("Stack trace: ", ex);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("An unexpected error occurred, please try again later.");
+    }
+
     // Handling unexpected errors
     @ExceptionHandler(Exception.class)
     @ResponseBody
     public ResponseEntity<String> handleGenericException(Exception ex) {
+        logger.error("Unexpected error: {}", ex.getMessage());
+        logger.error("Stack trace: ", ex);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("An unexpected error occurred: " + ex.getMessage());
+                .body("An unexpected error occurred, please try again later.");
     }
 
 }

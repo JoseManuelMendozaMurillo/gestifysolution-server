@@ -22,7 +22,15 @@ public class ProductsCategoriesModelDeserializer extends JsonDeserializer<Produc
     @Override
     public ProductsCategoriesModel deserialize(JsonParser jsonParser, DeserializationContext deserializationContext)
             throws IOException, JacksonException {
-        Integer categoryId = jsonParser.getIntValue();
+        String value = jsonParser.getValueAsString().trim();
+        System.out.println("Deserializing category ID from value: '" + value + "'");
+        Integer categoryId;
+        try {
+            categoryId = Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Category ID must be a valid integer number");
+        }
+
         return productsCategoriesRepository.findById(categoryId)
                 .orElseThrow(() -> new EntityNotFoundException("Product category", categoryId));
     }

@@ -26,9 +26,11 @@ public abstract class CrudServiceImpl<CREATINGDTO, UPDATINGDTO, LISTDTO, ENTITY 
 
     protected REPOSITORY repository;
     protected MAPPER mapper;
-    protected ObjectsValidator<CREATINGDTO> creatingDtoValidator = new ObjectsValidator<CREATINGDTO>();
-    protected ObjectsValidator<UPDATINGDTO> updatingDtoValidator = new ObjectsValidator<UPDATINGDTO>();
 
+    @Autowired
+    protected ObjectsValidator<CREATINGDTO> creatingDtoValidator;
+    @Autowired
+    protected ObjectsValidator<UPDATINGDTO> updatingDtoValidator;
     @Autowired
     protected EntityManager entityManager;
 

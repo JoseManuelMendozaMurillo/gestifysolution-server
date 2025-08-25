@@ -1,19 +1,25 @@
 package com.ventuit.adminstrativeapp.products.dto;
 
-import com.ventuit.adminstrativeapp.core.dto.ExtendedBaseDto;
+import java.util.List;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.ventuit.adminstrativeapp.products.models.ProductsCategoriesModel;
+import com.ventuit.adminstrativeapp.products.serialization.ProductsCategoriesModelDeserializer;
+import com.ventuit.adminstrativeapp.products.validations.onlyoneportraitimage.OnlyOnePortraitImage;
+
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 
-@EqualsAndHashCode(callSuper = true)
-@SuperBuilder
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class UpdateProductDto extends ExtendedBaseDto {
+public class UpdateProductDto {
+
     @Size(max = 100, message = "Name cannot exceed 100 characters")
     private String name;
 
@@ -24,5 +30,10 @@ public class UpdateProductDto extends ExtendedBaseDto {
 
     private Boolean active;
 
-    private Integer categoryId;
+    @JsonDeserialize(using = ProductsCategoriesModelDeserializer.class)
+    private ProductsCategoriesModel category;
+
+    @Valid
+    @OnlyOnePortraitImage
+    private List<CreateProductImageDto> images;
 }
