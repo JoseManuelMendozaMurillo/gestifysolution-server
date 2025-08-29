@@ -171,7 +171,7 @@ public class ProductsService extends
         if (!optionalEntity.isPresent())
             return true;
 
-        // Deleting the files images
+        // Soft Deleting the files images
         Set<ProductsImagesModel> images = optionalEntity.get().getImages();
         images.forEach(img -> {
             filesService.softDeleteFileFromAllBuckets(img.getFile().getId(), getUsername());
@@ -205,6 +205,29 @@ public class ProductsService extends
 
         // Checking if the entity was restored
         return this.repository.findByIdAndDeletedAtIsNull(id).isPresent();
+    }
+
+    @Override
+    @Transactional(value = TxType.REQUIRED)
+    public Boolean deleteById(Integer id) {
+        Optional<ProductsModel> optionalEntity = this.repository.findById(id);
+
+        if (!optionalEntity.isPresent())
+            return true;
+
+        ProductsModel product = optionalEntity.get();
+
+        List<ProductsImagesModel> imagesToDelete = new ArrayList<>(product.getImages());
+        product.getImages().clear();
+
+        imagesToDelete.forEach(img -> {
+            productsImagesRepository.deleteById(img.getId());
+            filesService.deleteFileFromAllBuckets(img.getFile().getId());
+        });
+
+        this.repository.delete(product);
+
+        return !this.repository.findById(id).isPresent();
     }
 
     private void deleteUploadedFiles(List<FilesModel> files) {
