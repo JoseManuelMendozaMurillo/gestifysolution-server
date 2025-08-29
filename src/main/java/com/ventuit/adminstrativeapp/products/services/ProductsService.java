@@ -185,6 +185,28 @@ public class ProductsService extends
         return !this.repository.findByIdAndDeletedAtIsNull(id).isPresent();
     }
 
+    @Override
+    @Transactional(value = TxType.REQUIRED)
+    public Boolean restoreById(Integer id) {
+        Optional<ProductsModel> optionalEntity = this.repository.findByIdAndDeletedAtIsNotNull(id);
+
+        if (!optionalEntity.isPresent())
+            return true;
+
+        // Restore images
+        Set<ProductsImagesModel> images = optionalEntity.get().getImages();
+        images.forEach(img -> {
+            filesService.restoreFileFromAllBuckets(img.getFile().getId());
+            this.productsImagesRepository.restoreById(img.getId());
+        });
+
+        // Restoring the entity
+        this.repository.restoreById(id);
+
+        // Checking if the entity was restored
+        return this.repository.findByIdAndDeletedAtIsNull(id).isPresent();
+    }
+
     private void deleteUploadedFiles(List<FilesModel> files) {
         for (FilesModel file : files) {
             String productImagePath = file.getFilesPaths().getPath() + "/" + file.getFileKey();
