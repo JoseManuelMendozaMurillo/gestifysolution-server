@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import com.ventuit.adminstrativeapp.products.dto.UpdateProductDto;
 import com.ventuit.adminstrativeapp.products.mappers.ProductsMapper;
 import com.ventuit.adminstrativeapp.products.models.ProductsModel;
 import com.ventuit.adminstrativeapp.products.models.ProductsImagesModel;
+import com.ventuit.adminstrativeapp.products.repositories.ProductsImagesRepository;
 import com.ventuit.adminstrativeapp.products.repositories.ProductsRepository;
 import com.ventuit.adminstrativeapp.core.services.implementations.CrudServiceImpl;
 import com.ventuit.adminstrativeapp.shared.dto.FileUploadDto;
@@ -39,6 +41,8 @@ public class ProductsService extends
     private MinioProvider minioProvider;
     @Autowired
     private MinioService minioService;
+    @Autowired
+    private ProductsImagesRepository productsImagesRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -157,6 +161,28 @@ public class ProductsService extends
             deleteUploadedFiles(uploadedFiles);
             throw e;
         }
+    }
+
+    @Override
+    @Transactional(value = TxType.REQUIRED)
+    public Boolean softDeleteById(Integer id) {
+        Optional<ProductsModel> optionalEntity = this.repository.findById(id);
+
+        if (!optionalEntity.isPresent())
+            return true;
+
+        // Deleting the files images
+        Set<ProductsImagesModel> images = optionalEntity.get().getImages();
+        images.forEach(img -> {
+            filesService.softDeleteFileFromAllBuckets(img.getFile().getId(), getUsername());
+            this.productsImagesRepository.softDeleteById(img.getId(), getUsername());
+        });
+
+        // Deleting the entity
+        this.repository.softDeleteById(id, this.getUsername());
+
+        // Checking if the entity was deleted
+        return !this.repository.findByIdAndDeletedAtIsNull(id).isPresent();
     }
 
     private void deleteUploadedFiles(List<FilesModel> files) {
