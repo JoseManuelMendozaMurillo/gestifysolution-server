@@ -28,105 +28,106 @@ import com.ventuit.adminstrativeapp.core.mappers.interfaces.CrudMapperInterface;
 
 @Mapper(componentModel = ComponentModel.SPRING, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public abstract class ProductsMapper
-        implements CrudMapperInterface<CreateProductDto, UpdateProductDto, ListProductDto, ProductsModel> {
+                implements CrudMapperInterface<CreateProductDto, UpdateProductDto, ListProductDto, ProductsModel> {
 
-    @Autowired
-    private ProductsCategoriesMapper productsCategoriesMapper;
-    @Autowired
-    private ProductsCategoriesRepository productsCategoriesRepository;
-    @Autowired
-    private FilesServiceImpl filesService;
+        @Autowired
+        private ProductsCategoriesMapper productsCategoriesMapper;
+        @Autowired
+        private ProductsCategoriesRepository productsCategoriesRepository;
+        @Autowired
+        private FilesServiceImpl filesService;
 
-    @Override
-    @Named("toDto")
-    @Mapping(target = "images", ignore = true)
-    @Mapping(target = "categoryId", source = "category.id")
-    public abstract CreateProductDto toDto(ProductsModel entity);
+        @Override
+        @Named("toDto")
+        @Mapping(target = "images", ignore = true)
+        @Mapping(target = "categoryId", source = "category.id")
+        public abstract CreateProductDto toDto(ProductsModel entity);
 
-    @Override
-    @IterableMapping(qualifiedByName = "toDto")
-    public List<CreateProductDto> entitiesToDtos(List<ProductsModel> listEntities) {
-        return listEntities.stream()
-                .map(this::toDto)
-                .toList();
-    }
-
-    @Override
-    @Named("toShowDto")
-    @Mapping(target = "category", source = "category", qualifiedByName = "categoryModelToListCategoryDto")
-    @Mapping(target = "images", source = "images", qualifiedByName = "productsImagesModelToListProductImageDto")
-    public abstract ListProductDto toShowDto(ProductsModel entity);
-
-    @Override
-    @IterableMapping(qualifiedByName = "toShowDto")
-    public List<ListProductDto> entitiesToShowDtos(List<ProductsModel> listEntities) {
-        return listEntities.stream()
-                .map(this::toShowDto)
-                .toList();
-    }
-
-    @Override
-    @Mappings({
-            @Mapping(target = "category", source = "categoryId", qualifiedByName = "categoryIdToCategoryModel"),
-            @Mapping(target = "images", ignore = true),
-            @Mapping(target = "id", ignore = true),
-            @Mapping(target = "createdAt", ignore = true),
-            @Mapping(target = "updatedAt", ignore = true),
-            @Mapping(target = "deletedAt", ignore = true),
-            @Mapping(target = "createdBy", ignore = true),
-            @Mapping(target = "updatedBy", ignore = true),
-            @Mapping(target = "deletedBy", ignore = true)
-    })
-    public abstract ProductsModel toEntity(CreateProductDto dto);
-
-    @Override
-    @Mappings({
-            @Mapping(target = "images", ignore = true),
-            @Mapping(target = "id", ignore = true),
-            @Mapping(target = "createdAt", ignore = true),
-            @Mapping(target = "updatedAt", ignore = true),
-            @Mapping(target = "deletedAt", ignore = true),
-            @Mapping(target = "createdBy", ignore = true),
-            @Mapping(target = "updatedBy", ignore = true),
-            @Mapping(target = "deletedBy", ignore = true)
-    })
-    public abstract ProductsModel updateFromDto(UpdateProductDto dto, @MappingTarget ProductsModel entity);
-
-    @Named("categoryIdToCategoryModel")
-    public ProductsCategoriesModel categoryIdToCategoryModel(Integer categoryId) {
-        return categoryId == null ? null
-                : productsCategoriesRepository.findById(categoryId)
-                        .orElseThrow(() -> new EntityNotFoundException("Category not found"));
-    }
-
-    @Named("categoryModelToListCategoryDto")
-    public ListProductsCategoryDto categoryModelToListCategoryDto(ProductsCategoriesModel categoryModel) {
-        return categoryModel == null ? null : productsCategoriesMapper.toShowDto(categoryModel);
-    }
-
-    @Named("productsImagesModelToListProductImageDto")
-    public List<ListProductImageDto> productsImagesModelToListProductImageDto(
-            Set<ProductsImagesModel> productsImagesModels) {
-        if (productsImagesModels == null || productsImagesModels.isEmpty()) {
-            return null;
+        @Override
+        @IterableMapping(qualifiedByName = "toDto")
+        public List<CreateProductDto> entitiesToDtos(List<ProductsModel> listEntities) {
+                return listEntities.stream()
+                                .map(this::toDto)
+                                .toList();
         }
 
-        return productsImagesModels.stream()
-                .map(this::mapProductImageToDto)
-                .toList();
-    }
+        @Override
+        @Named("toShowDto")
+        @Mapping(target = "category", source = "category", qualifiedByName = "categoryModelToListCategoryDto")
+        @Mapping(target = "images", source = "images", qualifiedByName = "productsImagesModelToListProductImageDto")
+        public abstract ListProductDto toShowDto(ProductsModel entity);
 
-    private ListProductImageDto mapProductImageToDto(ProductsImagesModel model) {
-        return ListProductImageDto.builder()
-                .id(model.getId())
-                .image(filesService.getFile(model.getFile().getId()))
-                .portrait(model.isPortrait())
-                .createdAt(model.getCreatedAt())
-                .updatedAt(model.getUpdatedAt())
-                .deletedAt(model.getDeletedAt())
-                .createdBy(model.getCreatedBy())
-                .updatedBy(model.getUpdatedBy())
-                .deletedBy(model.getDeletedBy())
-                .build();
-    }
+        @Override
+        @IterableMapping(qualifiedByName = "toShowDto")
+        public List<ListProductDto> entitiesToShowDtos(List<ProductsModel> listEntities) {
+                return listEntities.stream()
+                                .map(this::toShowDto)
+                                .toList();
+        }
+
+        @Override
+        @Mappings({
+                        @Mapping(target = "category", source = "categoryId", qualifiedByName = "categoryIdToCategoryModel"),
+                        @Mapping(target = "images", ignore = true),
+                        @Mapping(target = "id", ignore = true),
+                        @Mapping(target = "createdAt", ignore = true),
+                        @Mapping(target = "updatedAt", ignore = true),
+                        @Mapping(target = "deletedAt", ignore = true),
+                        @Mapping(target = "createdBy", ignore = true),
+                        @Mapping(target = "updatedBy", ignore = true),
+                        @Mapping(target = "deletedBy", ignore = true)
+        })
+        public abstract ProductsModel toEntity(CreateProductDto dto);
+
+        @Override
+        @Mappings({
+                        @Mapping(target = "category", source = "categoryId", qualifiedByName = "categoryIdToCategoryModel"),
+                        @Mapping(target = "images", ignore = true),
+                        @Mapping(target = "id", ignore = true),
+                        @Mapping(target = "createdAt", ignore = true),
+                        @Mapping(target = "updatedAt", ignore = true),
+                        @Mapping(target = "deletedAt", ignore = true),
+                        @Mapping(target = "createdBy", ignore = true),
+                        @Mapping(target = "updatedBy", ignore = true),
+                        @Mapping(target = "deletedBy", ignore = true)
+        })
+        public abstract ProductsModel updateFromDto(UpdateProductDto dto, @MappingTarget ProductsModel entity);
+
+        @Named("categoryIdToCategoryModel")
+        public ProductsCategoriesModel categoryIdToCategoryModel(Integer categoryId) {
+                return categoryId == null ? null
+                                : productsCategoriesRepository.findById(categoryId)
+                                                .orElseThrow(() -> new EntityNotFoundException("Category not found"));
+        }
+
+        @Named("categoryModelToListCategoryDto")
+        public ListProductsCategoryDto categoryModelToListCategoryDto(ProductsCategoriesModel categoryModel) {
+                return categoryModel == null ? null : productsCategoriesMapper.toShowDto(categoryModel);
+        }
+
+        @Named("productsImagesModelToListProductImageDto")
+        public List<ListProductImageDto> productsImagesModelToListProductImageDto(
+                        Set<ProductsImagesModel> productsImagesModels) {
+                if (productsImagesModels == null || productsImagesModels.isEmpty()) {
+                        return null;
+                }
+
+                return productsImagesModels.stream()
+                                .map(this::mapProductImageToDto)
+                                .toList();
+        }
+
+        private ListProductImageDto mapProductImageToDto(ProductsImagesModel model) {
+                return ListProductImageDto.builder()
+                                .id(model.getId())
+                                .image(filesService.getFile(model.getFile().getId()))
+                                .portrait(model.isPortrait())
+                                .createdAt(model.getCreatedAt())
+                                .updatedAt(model.getUpdatedAt())
+                                .deletedAt(model.getDeletedAt())
+                                .createdBy(model.getCreatedBy())
+                                .updatedBy(model.getUpdatedBy())
+                                .deletedBy(model.getDeletedBy())
+                                .build();
+        }
 }

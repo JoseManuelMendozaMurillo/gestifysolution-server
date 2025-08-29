@@ -27,29 +27,29 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 public class CreateProductDto {
-    @NotBlank(message = "{CreateProductDto.name.NotBlank}")
-    @Size(max = 100, message = "{CreateProductDto.name.Size}")
-    @Unique(model = ProductsModel.class, fieldName = "name", message = "{CreateProductDto.name.Unique}")
+    @NotBlank(message = "{Product.name.NotBlank}")
+    @Size(max = 100, message = "{Product.name.Size}")
+    @Unique(model = ProductsModel.class, fieldName = "name", message = "{Product.name.Unique}")
     private String name;
 
-    @Size(max = 500, message = "{CreateProductDto.description.Size}")
+    @Size(max = 500, message = "{Product.description.Size}")
     private String description;
 
-    @NotNull(message = "{CreateProductDto.price.NotNull}")
-    @DecimalMin(value = "0.0", inclusive = true, message = "{CreateProductDto.price.DecimalMin}")
-    @Digits(integer = 10, fraction = 2, message = "{CreateProductDto.price.Digits}")
+    @NotNull(message = "{Product.price.NotNull}")
+    @DecimalMin(value = "0.0", inclusive = true, message = "{Product.price.DecimalMin}")
+    @Digits(integer = 10, fraction = 2, message = "{Product.price.Digits}")
     private Double price;
 
-    @NotNull(message = "{CreateProductDto.active.NotNull}")
+    @NotNull(message = "{Product.active.NotNull}")
     private Boolean active;
 
-    @NotNull(message = "{CreateProductDto.categoryId.NotNull}")
-    @Min(value = 1, message = "{CreateProductDto.categoryId.Min}")
-    @Exist(repository = ProductsCategoriesRepository.class, method = "existsById", message = "{CreateProductDto.categoryId.Exist}", paramType = Integer.class)
+    @NotNull(message = "{Product.categoryId.NotNull}")
+    @Min(value = 1, message = "{Product.categoryId.Min}")
+    @Exist(repository = ProductsCategoriesRepository.class, method = "existsByIdAndDeletedAtIsNull", message = "{Product.categoryId.Exist}", paramType = Integer.class)
     private Integer categoryId;
 
     @Valid
-    @NotEmpty(message = "{CreateProductDto.images.NotEmpty}")
-    @OnlyOnePortraitImage(message = "{CreateProductDto.images.OnlyOnePortraitImage}")
+    @NotEmpty(message = "{Product.images.NotEmpty}")
+    @OnlyOnePortraitImage(message = "{Product.images.OnlyOnePortraitImage}")
     private List<CreateProductImageDto> images;
 }
