@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.ventuit.adminstrativeapp.products.dto.CreateProductDto;
 import com.ventuit.adminstrativeapp.products.dto.ListProductDto;
-import com.ventuit.adminstrativeapp.products.dto.ListProductImageDto;
+import com.ventuit.adminstrativeapp.products.dto.ListProductsImagesDto;
 import com.ventuit.adminstrativeapp.products.dto.ListProductsCategoryDto;
 import com.ventuit.adminstrativeapp.products.dto.UpdateProductDto;
 import com.ventuit.adminstrativeapp.products.models.ProductsCategoriesModel;
@@ -106,7 +106,7 @@ public abstract class ProductsMapper
         }
 
         @Named("productsImagesModelToListProductImageDto")
-        public List<ListProductImageDto> productsImagesModelToListProductImageDto(
+        public List<ListProductsImagesDto> productsImagesModelToListProductImageDto(
                         Set<ProductsImagesModel> productsImagesModels) {
                 if (productsImagesModels == null || productsImagesModels.isEmpty()) {
                         return null;
@@ -117,8 +117,8 @@ public abstract class ProductsMapper
                                 .toList();
         }
 
-        private ListProductImageDto mapProductImageToDto(ProductsImagesModel model) {
-                return ListProductImageDto.builder()
+        private ListProductsImagesDto mapProductImageToDto(ProductsImagesModel model) {
+                return ListProductsImagesDto.builder()
                                 .id(model.getId())
                                 .image(filesService.getFile(model.getFile().getId()))
                                 .portrait(model.isPortrait())

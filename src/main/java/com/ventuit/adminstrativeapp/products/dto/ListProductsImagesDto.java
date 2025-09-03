@@ -14,7 +14,7 @@ import lombok.experimental.SuperBuilder;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ListProductImageDto extends ExtendedBaseDto {
+public class ListProductsImagesDto extends ExtendedBaseDto {
 
     private Boolean portrait;
 

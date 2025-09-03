@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.InputStream;
 
 import com.ventuit.adminstrativeapp.shared.exceptions.FileUploadException;
+import com.ventuit.adminstrativeapp.shared.models.FilesModel;
 import com.ventuit.adminstrativeapp.storage.dto.FileProxyResponse;
 import com.ventuit.adminstrativeapp.storage.minio.MinioProvider;
 import com.ventuit.adminstrativeapp.shared.exceptions.FileGetException;
@@ -96,6 +97,18 @@ public class MinioService {
             log.error("Error deleting file: {}", e.getMessage(), e);
             throw new FileDeleteException("Failed to delete file", e);
         }
+    }
+
+    public void deleteFile(FilesModel file) {
+        if (file == null)
+            return;
+
+        String objectName = "";
+        if (file.getFilesPaths() != null) {
+            objectName = file.getFilesPaths().getPath() + "/";
+        }
+        objectName += file.getFileKey();
+        deleteFile(objectName);
     }
 
     /**

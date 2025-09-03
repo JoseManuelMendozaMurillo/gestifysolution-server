@@ -26,5 +26,5 @@ public class ListProductDto extends ExtendedBaseDto {
 
     private ListProductsCategoryDto category;
 
-    private List<ListProductImageDto> images;
+    private List<ListProductsImagesDto> images;
 }
