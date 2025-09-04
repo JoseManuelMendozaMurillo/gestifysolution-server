@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import com.ventuit.adminstrativeapp.auth.exceptions.AuthClientErrorException;
 import com.ventuit.adminstrativeapp.auth.exceptions.AuthLogoutException;
@@ -42,6 +44,38 @@ public class GlobalExceptionHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
     private final MessageSource messageSource;
+
+    /**
+     * Handles exceptions thrown when a controller method argument (e.g., a path
+     * variable)
+     * cannot be converted to the required type.
+     *
+     * @param ex The exception thrown by Spring.
+     * @return A ResponseEntity with a 400 Bad Request status and a structured error
+     *         body.
+     */
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    @ResponseBody
+    public ResponseEntity<ProblemDetail> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
+        String parameterName = ex.getName();
+        Object invalidValue = ex.getValue();
+        String requiredType = Objects.requireNonNull(ex.getRequiredType()).getSimpleName();
+
+        String detail = String.format("The parameter '%s' requires a valid '%s' but received '%s'.",
+                parameterName, requiredType, invalidValue);
+
+        ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+        problemDetail.setTitle("Invalid Parameter Type");
+        problemDetail.setDetail(detail);
+
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("parameter", parameterName);
+        properties.put("invalidValue", invalidValue != null ? invalidValue.toString() : "null");
+        properties.put("requiredType", requiredType);
+        problemDetail.setProperties(properties);
+
+        return ResponseEntity.badRequest().body(problemDetail);
+    }
 
     @ExceptionHandler(ObjectNotValidException.class)
     @ResponseBody

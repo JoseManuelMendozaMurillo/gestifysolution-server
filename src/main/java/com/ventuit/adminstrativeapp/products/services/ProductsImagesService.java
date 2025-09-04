@@ -2,6 +2,7 @@ package com.ventuit.adminstrativeapp.products.services;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -96,8 +97,13 @@ public class ProductsImagesService implements ProductsImagesServiceInterfaces {
 
     @Override
     public ListProductsImagesDto getById(Integer id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getById'");
+        Optional<ProductsImagesModel> optionalProductImage = this.repository.findById(id);
+
+        if (!optionalProductImage.isPresent()) {
+            return null;
+        }
+
+        return this.mapper.toShowDto(optionalProductImage.get());
     }
 
     @Override
