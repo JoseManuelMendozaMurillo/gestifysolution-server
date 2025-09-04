@@ -15,6 +15,7 @@ import com.ventuit.adminstrativeapp.products.repositories.ProductsImagesReposito
 import com.ventuit.adminstrativeapp.products.services.interfaces.ProductsImagesServiceInterfaces;
 import com.ventuit.adminstrativeapp.shared.dto.FileUploadDto;
 import com.ventuit.adminstrativeapp.shared.exceptions.FileUploadException;
+import com.ventuit.adminstrativeapp.shared.helpers.AuthenticationHelper;
 import com.ventuit.adminstrativeapp.shared.models.FilesModel;
 import com.ventuit.adminstrativeapp.shared.services.implementations.FilesServiceImpl;
 import com.ventuit.adminstrativeapp.shared.validators.ObjectsValidator;
@@ -38,6 +39,7 @@ public class ProductsImagesService implements ProductsImagesServiceInterfaces {
     private final ObjectsValidator<CreateProductsImagesDto> creatingDtoValidator;
     private final ProductsImagesRepository repository;
     private final ProductsImagesMapper mapper;
+    private final AuthenticationHelper authHelper;
 
     @Override
     @Transactional(value = TxType.REQUIRED)
@@ -108,8 +110,17 @@ public class ProductsImagesService implements ProductsImagesServiceInterfaces {
 
     @Override
     public Boolean softDeleteById(Integer id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'softDeleteById'");
+        Optional<ProductsImagesModel> optionalProductImage = this.repository.findById(id);
+
+        if (!optionalProductImage.isPresent())
+            return null; // Not found
+
+        // Deleting the entity
+        String username = this.authHelper.getUsername();
+        this.repository.softDeleteById(id, username);
+
+        // Checking if the entity was deleted
+        return !this.repository.findByIdAndDeletedAtIsNull(id).isPresent();
     }
 
     @Override

@@ -2,9 +2,11 @@ package com.ventuit.adminstrativeapp.shared.handlers;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import com.ventuit.adminstrativeapp.auth.exceptions.AuthClientErrorException;
@@ -72,6 +75,25 @@ public class GlobalExceptionHandler {
         properties.put("parameter", parameterName);
         properties.put("invalidValue", invalidValue != null ? invalidValue.toString() : "null");
         properties.put("requiredType", requiredType);
+        problemDetail.setProperties(properties);
+
+        return ResponseEntity.badRequest().body(problemDetail);
+    }
+
+    @ExceptionHandler(HandlerMethodValidationException.class)
+    @ResponseBody
+    public ResponseEntity<ProblemDetail> handleMethodValidationException(HandlerMethodValidationException ex) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST,
+                "Validation failed for method argument(s).");
+        problemDetail.setTitle("Validation Failure");
+
+        List<String> errors = ex.getAllValidationResults().stream()
+                .flatMap(result -> result.getResolvableErrors().stream())
+                .map(error -> error.getDefaultMessage())
+                .collect(Collectors.toList());
+
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("errors", errors);
         problemDetail.setProperties(properties);
 
         return ResponseEntity.badRequest().body(problemDetail);

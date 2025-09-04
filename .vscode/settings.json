@@ -23,6 +23,7 @@
         "gruntfuggly",
         "imagefile",
         "initdb",
+        "isnotportraitimage",
         "jdbc",
         "JPQL",
         "jsonnumber",

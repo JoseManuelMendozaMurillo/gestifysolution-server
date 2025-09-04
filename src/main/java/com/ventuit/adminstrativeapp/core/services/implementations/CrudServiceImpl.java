@@ -6,13 +6,13 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.core.OAuth2AuthenticatedPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 
 import com.ventuit.adminstrativeapp.core.mappers.interfaces.CrudMapperInterface;
 import com.ventuit.adminstrativeapp.core.models.ExtendedBaseModel;
 import com.ventuit.adminstrativeapp.core.repositories.BaseRepository;
 import com.ventuit.adminstrativeapp.core.services.interfaces.CrudServiceInterface;
+import com.ventuit.adminstrativeapp.shared.helpers.AuthenticationHelper;
 import com.ventuit.adminstrativeapp.shared.validators.ObjectsValidator;
 
 import jakarta.persistence.EntityManager;
@@ -33,6 +33,8 @@ public abstract class CrudServiceImpl<CREATINGDTO, UPDATINGDTO, LISTDTO, ENTITY 
     protected ObjectsValidator<UPDATINGDTO> updatingDtoValidator;
     @Autowired
     protected EntityManager entityManager;
+    @Autowired
+    protected AuthenticationHelper authHelper;
 
     public CrudServiceImpl(REPOSITORY repository, MAPPER mapper) {
         this.repository = repository;
@@ -174,12 +176,7 @@ public abstract class CrudServiceImpl<CREATINGDTO, UPDATINGDTO, LISTDTO, ENTITY 
     }
 
     protected String getUsername() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.getPrincipal() instanceof OAuth2AuthenticatedPrincipal) {
-            OAuth2AuthenticatedPrincipal principal = (OAuth2AuthenticatedPrincipal) authentication.getPrincipal();
-            return principal.getAttribute("preferred_username");
-        }
-        return "Gestify solution server"; // or a default value
+        return authHelper.getUsername();
     }
 
 }
