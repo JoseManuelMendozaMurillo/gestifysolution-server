@@ -125,8 +125,26 @@ public class ProductsImagesService implements ProductsImagesServiceInterfaces {
 
     @Override
     public Boolean deleteById(Integer id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteById'");
+        Optional<ProductsImagesModel> optionalEntity = this.repository.findById(id);
+
+        if (!optionalEntity.isPresent())
+            return null;
+
+        ProductsImagesModel productsImages = optionalEntity.get();
+        FilesModel fileToDelete = productsImages.getFile();
+
+        // Deleting the entity
+        productsImages.getProduct().getImages().remove(productsImages);
+        this.repository.deleteById(id);
+
+        // 3. If the database deletion was successful, delete the physical file from
+        // MinIO
+        if (fileToDelete != null) {
+            this.minioService.deleteFile(fileToDelete);
+        }
+
+        // Checking if the entity was deleted
+        return !this.repository.findById(id).isPresent();
     }
 
     @Override

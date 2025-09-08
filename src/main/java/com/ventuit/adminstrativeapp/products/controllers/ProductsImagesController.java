@@ -43,6 +43,20 @@ public class ProductsImagesController {
         return ResponseEntity.ok(productImage);
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> delete(@NotNull @IsNotPortrait @PathVariable Integer id) {
+        Boolean isDeleted = this.productsImagesService.deleteById(id);
+
+        if (isDeleted == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        if (!isDeleted) {
+            return ResponseEntity.internalServerError().build();
+        }
+        return ResponseEntity.ok("Product image deleted successfully.");
+    }
+
     @DeleteMapping("/soft/{id}")
     public ResponseEntity<String> softDelete(@NotNull @IsNotPortrait @PathVariable Integer id) {
         Boolean isDeleted = this.productsImagesService.softDeleteById(id);
