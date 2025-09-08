@@ -131,7 +131,15 @@ public class ProductsImagesService implements ProductsImagesServiceInterfaces {
 
     @Override
     public Boolean restoreById(Integer id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'restoreById'");
+        Optional<ProductsImagesModel> optionalEntity = this.repository.findByIdAndDeletedAtIsNotNull(id);
+
+        if (!optionalEntity.isPresent())
+            return null;
+
+        // Restoring the entity
+        this.repository.restoreById(id);
+
+        // Checking if the entity was restored
+        return this.repository.findByIdAndDeletedAtIsNull(id).isPresent();
     }
 }
