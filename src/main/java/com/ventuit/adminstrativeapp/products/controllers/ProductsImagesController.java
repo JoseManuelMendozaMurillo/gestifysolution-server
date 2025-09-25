@@ -1,5 +1,7 @@
 package com.ventuit.adminstrativeapp.products.controllers;
 
+import java.util.List;
+
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -41,6 +43,39 @@ public class ProductsImagesController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(productImage);
+    }
+
+    @GetMapping("/by-product/{id}")
+    public ResponseEntity<List<ListProductsImagesDto>> getByProductId(@NotNull @PathVariable Integer id) {
+        List<ListProductsImagesDto> productImages = this.productsImagesService.getByProductId(id);
+
+        if (productImages == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(productImages);
+    }
+
+    @GetMapping("/by-product/{id}/active")
+    public ResponseEntity<List<ListProductsImagesDto>> getActiveByProductId(@NotNull @PathVariable Integer id) {
+        List<ListProductsImagesDto> productImages = this.productsImagesService.getActiveByProductId(id);
+
+        if (productImages == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(productImages);
+    }
+
+    @GetMapping("/by-product/{id}/inactive")
+    public ResponseEntity<List<ListProductsImagesDto>> getInactiveByProductId(@NotNull @PathVariable Integer id) {
+        List<ListProductsImagesDto> productImages = this.productsImagesService.getInactiveByProductId(id);
+
+        if (productImages == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(productImages);
     }
 
     @DeleteMapping("/{id}")

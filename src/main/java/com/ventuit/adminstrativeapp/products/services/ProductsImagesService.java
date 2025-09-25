@@ -2,6 +2,7 @@ package com.ventuit.adminstrativeapp.products.services;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -11,7 +12,9 @@ import com.ventuit.adminstrativeapp.products.dto.CreateProductsImagesDto;
 import com.ventuit.adminstrativeapp.products.dto.ListProductsImagesDto;
 import com.ventuit.adminstrativeapp.products.mappers.ProductsImagesMapper;
 import com.ventuit.adminstrativeapp.products.models.ProductsImagesModel;
+import com.ventuit.adminstrativeapp.products.models.ProductsModel;
 import com.ventuit.adminstrativeapp.products.repositories.ProductsImagesRepository;
+import com.ventuit.adminstrativeapp.products.repositories.ProductsRepository;
 import com.ventuit.adminstrativeapp.products.services.interfaces.ProductsImagesServiceInterfaces;
 import com.ventuit.adminstrativeapp.shared.dto.FileUploadDto;
 import com.ventuit.adminstrativeapp.shared.exceptions.FileUploadException;
@@ -38,6 +41,7 @@ public class ProductsImagesService implements ProductsImagesServiceInterfaces {
     private final MinioService minioService;
     private final ObjectsValidator<CreateProductsImagesDto> creatingDtoValidator;
     private final ProductsImagesRepository repository;
+    private final ProductsRepository productsRepository;
     private final ProductsImagesMapper mapper;
     private final AuthenticationHelper authHelper;
 
@@ -159,5 +163,56 @@ public class ProductsImagesService implements ProductsImagesServiceInterfaces {
 
         // Checking if the entity was restored
         return this.repository.findByIdAndDeletedAtIsNull(id).isPresent();
+    }
+
+    @Override
+    public List<ListProductsImagesDto> getByProductId(Integer id) {
+        Optional<ProductsModel> optionalProduct = this.productsRepository.findById(id);
+
+        if (!optionalProduct.isPresent()) {
+            return null;
+        }
+
+        List<ProductsImagesModel> images = this.repository.findByProductId(id);
+
+        if (images.isEmpty()) {
+            return List.of();
+        }
+
+        return this.mapper.entitiesToShowDtos(images);
+    }
+
+    @Override
+    public List<ListProductsImagesDto> getActiveByProductId(Integer id) {
+        Optional<ProductsModel> optionalProduct = this.productsRepository.findById(id);
+
+        if (!optionalProduct.isPresent()) {
+            return null;
+        }
+
+        List<ProductsImagesModel> images = this.repository.findByProductIdAndDeletedAtIsNull(id);
+
+        if (images.isEmpty()) {
+            return List.of();
+        }
+
+        return this.mapper.entitiesToShowDtos(images);
+    }
+
+    @Override
+    public List<ListProductsImagesDto> getInactiveByProductId(Integer id) {
+        Optional<ProductsModel> optionalProduct = this.productsRepository.findById(id);
+
+        if (!optionalProduct.isPresent()) {
+            return null;
+        }
+
+        List<ProductsImagesModel> images = this.repository.findByProductIdAndDeletedAtIsNotNull(id);
+
+        if (images.isEmpty()) {
+            return List.of();
+        }
+
+        return this.mapper.entitiesToShowDtos(images);
     }
 }
