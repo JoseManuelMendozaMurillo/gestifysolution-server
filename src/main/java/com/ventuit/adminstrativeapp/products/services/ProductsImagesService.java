@@ -215,4 +215,26 @@ public class ProductsImagesService implements ProductsImagesServiceInterfaces {
 
         return this.mapper.entitiesToShowDtos(images);
     }
+
+    @Override
+    @Transactional(value = TxType.REQUIRED)
+    public ListProductsImagesDto setAsPortraitImage(Integer id) {
+        Optional<ProductsImagesModel> optionalProductImage = this.repository.findById(id);
+
+        if (!optionalProductImage.isPresent()) {
+            return null; // Not found
+        }
+
+        ProductsImagesModel productImage = optionalProductImage.get();
+        Integer productId = productImage.getProduct().getId();
+
+        // Set all other images for this product to be non-portrait
+        repository.setPortraitToFalseForProduct(productId);
+
+        // Set this image as portrait
+        productImage.setPortrait(true);
+        ProductsImagesModel updatedImage = repository.save(productImage);
+
+        return mapper.toShowDto(updatedImage);
+    }
 }

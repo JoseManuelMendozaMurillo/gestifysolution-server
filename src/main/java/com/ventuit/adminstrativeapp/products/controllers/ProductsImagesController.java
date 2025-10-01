@@ -119,4 +119,13 @@ public class ProductsImagesController {
         }
         return ResponseEntity.ok("Product image restored successfully.");
     }
+
+    @PatchMapping("/set-as-portrait/{id}")
+    public ResponseEntity<ListProductsImagesDto> setAsPortraitImage(@NotNull @PathVariable Integer id) {
+        ListProductsImagesDto updatedImage = this.productsImagesService.setAsPortraitImage(id);
+        if (updatedImage == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(updatedImage);
+    }
 }

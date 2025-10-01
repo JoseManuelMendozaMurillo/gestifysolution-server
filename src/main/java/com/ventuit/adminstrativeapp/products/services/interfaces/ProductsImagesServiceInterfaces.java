@@ -23,4 +23,5 @@ public interface ProductsImagesServiceInterfaces {
 
     public Boolean restoreById(Integer id);
 
+    public ListProductsImagesDto setAsPortraitImage(Integer id);
 }
