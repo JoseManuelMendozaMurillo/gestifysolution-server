@@ -1,9 +1,7 @@
 package com.ventuit.adminstrativeapp.bosses.dto;
 
 import java.time.LocalDate;
-import java.util.Set;
 
-import com.ventuit.adminstrativeapp.bosses.models.BossesBusinessesModel;
 import com.ventuit.adminstrativeapp.core.dto.ExtendedBaseDto;
 import com.ventuit.adminstrativeapp.keycloak.dto.ListKeycloakUser;
 
@@ -25,6 +23,4 @@ public class ListBossesDto extends ExtendedBaseDto {
     private String phone;
 
     private LocalDate birthdate;
-
-    private Set<BossesBusinessesModel> bossesBusinesses;
 }

@@ -2,9 +2,7 @@ package com.ventuit.adminstrativeapp.businesses.dto;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Set;
 
-import com.ventuit.adminstrativeapp.bosses.models.BossesBusinessesModel;
 import com.ventuit.adminstrativeapp.businesses.models.BusinessesTypeModel;
 import com.ventuit.adminstrativeapp.businesses.models.IndustriesModel;
 import com.ventuit.adminstrativeapp.businesses.models.TypesRegimensTaxesModel;
@@ -45,6 +43,4 @@ public class ListBusinessesDto extends ExtendedBaseDto {
     private BusinessesTypeModel businessesType;
 
     private TypesRegimensTaxesModel taxRegimen;
-
-    private Set<BossesBusinessesModel> bossesBusinesses;
 }

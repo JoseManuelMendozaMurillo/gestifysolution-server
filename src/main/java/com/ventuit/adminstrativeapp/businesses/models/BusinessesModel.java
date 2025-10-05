@@ -28,6 +28,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 @EqualsAndHashCode(callSuper = true)
@@ -80,9 +81,13 @@ public class BusinessesModel extends ExtendedBaseModel {
     private TypesRegimensTaxesModel taxRegimen;
 
     @OneToMany(mappedBy = "businesses", cascade = CascadeType.ALL)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private Set<BossesBusinessesModel> bossesBusinesses;
 
     @OneToMany(mappedBy = "businesses", cascade = CascadeType.ALL)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private Set<BranchesModel> branches;
 
     @OneToOne(optional = true)

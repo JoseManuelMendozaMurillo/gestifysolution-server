@@ -1,16 +1,41 @@
 package com.ventuit.adminstrativeapp.shared.services.implementations;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
+
+import javax.imageio.ImageIO;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 
 import com.ventuit.adminstrativeapp.bosses.dto.CreateBossesDto;
+import com.ventuit.adminstrativeapp.bosses.models.BossesBusinessesModel;
+import com.ventuit.adminstrativeapp.bosses.models.BossesModel;
+import com.ventuit.adminstrativeapp.bosses.repositories.BossesRepository;
 import com.ventuit.adminstrativeapp.bosses.services.implementations.BossesServiceImpl;
+import com.ventuit.adminstrativeapp.businesses.dto.CreateBusinessesDto;
+import com.ventuit.adminstrativeapp.businesses.dto.ListBusinessesDto;
+import com.ventuit.adminstrativeapp.businesses.models.BusinessesModel;
+import com.ventuit.adminstrativeapp.businesses.models.BusinessesTypeModel;
+import com.ventuit.adminstrativeapp.businesses.models.IndustriesModel;
+import com.ventuit.adminstrativeapp.businesses.models.TypesRegimensTaxesModel;
+import com.ventuit.adminstrativeapp.businesses.repositories.BusinessesRepository;
+import com.ventuit.adminstrativeapp.businesses.repositories.BusinessesTypeRepository;
+import com.ventuit.adminstrativeapp.businesses.repositories.IndustriesRepository;
+import com.ventuit.adminstrativeapp.businesses.repositories.TypesRegimensTaxesRepository;
+import com.ventuit.adminstrativeapp.businesses.services.BusinessesService;
 import com.ventuit.adminstrativeapp.keycloak.dto.CreateKeycloakUser;
+import com.ventuit.adminstrativeapp.shared.helpers.SimpleMultipartFile;
 import com.ventuit.adminstrativeapp.shared.services.interfaces.SeedServiceInterface;
 
 import jakarta.transaction.Transactional;
@@ -23,15 +48,22 @@ public class SeedServiceImpl implements SeedServiceInterface {
 
     private static final Logger logger = LoggerFactory.getLogger(SeedServiceImpl.class);
     private final BossesServiceImpl bossesService;
+    private final BossesRepository bossesRepository;
+    private final BusinessesService businessesService;
+    private final BusinessesRepository businessesRepository;
+    private final IndustriesRepository industriesRepository;
+    private final BusinessesTypeRepository businessesTypeRepository;
+    private final TypesRegimensTaxesRepository typesRegimensTaxesRepository;
 
     @Override
     @Transactional
     public void seed() {
         logger.info("Seeding database...");
         generateFakeBosses(20);
+        generateFakeBusinesses(2);
     }
 
-    public void generateFakeBosses(int numberOfBosses) {
+    private void generateFakeBosses(int numberOfBosses) {
         Faker faker = new Faker(Locale.ENGLISH);
         for (int i = 0; i < numberOfBosses; i++) {
             try {
@@ -52,7 +84,7 @@ public class SeedServiceImpl implements SeedServiceInterface {
                 CreateBossesDto fakeBoss = CreateBossesDto.builder()
                         .user(fakeUser)
                         .phone(formattedPhone)
-                        .birthdate(randomBirthdate())
+                        .birthdate(randomLocalDate())
                         .build();
 
                 // --- Create Boss using existing logic ---
@@ -67,10 +99,99 @@ public class SeedServiceImpl implements SeedServiceInterface {
         logger.info("✅ Successfully generated " + numberOfBosses + " fake bosses.");
     }
 
-    private LocalDate randomBirthdate() {
+    private void generateFakeBusinesses(int numberOfBusinessesPeerBoss) {
+        Faker faker = new Faker(Locale.ENGLISH);
+        List<BossesModel> bosses = bossesRepository.findAll();
+
+        for (BossesModel boss : bosses) {
+            Integer[] businessIds = new Integer[numberOfBusinessesPeerBoss];
+            for (int i = 0; i < numberOfBusinessesPeerBoss; i++) {
+                try {
+                    Integer industryId = Long.valueOf(faker.number().numberBetween(1, 13)).intValue();
+                    IndustriesModel industry = industriesRepository.findById(industryId)
+                            .orElse(industriesRepository.findById(1).orElse(null));
+
+                    Integer businessesTypeId = Long.valueOf(faker.number().numberBetween(1, 12)).intValue();
+                    BusinessesTypeModel businessesType = businessesTypeRepository.findById(businessesTypeId)
+                            .orElse(businessesTypeRepository.findById(1).orElse(null));
+
+                    Integer taxRegimenId = Long.valueOf(faker.number().numberBetween(1, 10)).intValue();
+                    TypesRegimensTaxesModel taxRegimen = typesRegimensTaxesRepository.findById(taxRegimenId)
+                            .orElse(typesRegimensTaxesRepository.findById(1).orElse(null));
+
+                    CreateBusinessesDto fakeBusiness = CreateBusinessesDto.builder()
+                            .name(faker.company().name())
+                            .description(faker.company().catchPhrase())
+                            .rfc(faker.regexify("[A-Z]{4}[0-9]{6}[A-Z0-9]{3}"))
+                            .establishmentDate(randomLocalDate())
+                            .industry(industry)
+                            .businessesType(businessesType)
+                            .taxRegimen(taxRegimen)
+                            .logo(createFakeImage("logo", 200, 200))
+                            .build();
+
+                    ListBusinessesDto business = businessesService.create(fakeBusiness);
+                    businessIds[i] = business.getId();
+                } catch (Exception e) {
+                    logger.error("❌ Failed to create fake business for boss " + boss.getId() + ": "
+                            + e.getMessage());
+                    e.printStackTrace();
+                    throw new RuntimeException("Stopping seed due to an error.", e);
+                }
+            }
+            // Link businesses to boss
+            Set<BossesBusinessesModel> bossBusinesses = boss.getBossesBusinesses();
+            for (Integer businessId : businessIds) {
+                BusinessesModel business = businessesRepository.findById(businessId)
+                        .orElseThrow(() -> new RuntimeException("Business not found"));
+                BossesBusinessesModel bossBusiness = BossesBusinessesModel
+                        .builder()
+                        .boss(boss)
+                        .businesses(business)
+                        .build();
+
+                bossBusinesses.add(bossBusiness);
+            }
+            boss.setBossesBusinesses(bossBusinesses);
+            bossesRepository.save(boss);
+        }
+
+        logger.info("✅ Successfully generated {} fake businesses for each boss.", numberOfBusinessesPeerBoss);
+    }
+
+    private LocalDate randomLocalDate() {
         long minDay = LocalDate.of(1970, 1, 1).toEpochDay();
         long maxDay = LocalDate.of(2000, 12, 31).toEpochDay();
         long randomDay = ThreadLocalRandom.current().nextLong(minDay, maxDay);
         return LocalDate.ofEpochDay(randomDay);
+    }
+
+    private MultipartFile createFakeImage(String name, int width, int height) {
+        try {
+            BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+            Graphics2D graphics = image.createGraphics();
+
+            Faker faker = new Faker();
+            Color randomColor = Color.decode(faker.color().hex());
+            graphics.setColor(randomColor);
+            graphics.fillRect(0, 0, width, height);
+            graphics.dispose();
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ImageIO.write(image, "png", baos);
+            baos.flush();
+            byte[] imageInByte = baos.toByteArray();
+            baos.close();
+
+            return new SimpleMultipartFile(
+                    name,
+                    name + ".png",
+                    "image/png",
+                    imageInByte);
+
+        } catch (Exception e) {
+            logger.error("❌ Failed to create image", e);
+            return null;
+        }
     }
 }
