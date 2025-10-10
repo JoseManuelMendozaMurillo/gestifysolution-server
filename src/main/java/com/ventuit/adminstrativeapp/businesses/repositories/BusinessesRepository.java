@@ -7,5 +7,7 @@ import com.ventuit.adminstrativeapp.core.repositories.BaseRepository;
 
 @Repository
 public interface BusinessesRepository extends BaseRepository<BusinessesModel, Integer> {
+    boolean existsById(Integer id);
 
+    boolean existsByIdAndDeletedAtIsNull(Integer id);
 }

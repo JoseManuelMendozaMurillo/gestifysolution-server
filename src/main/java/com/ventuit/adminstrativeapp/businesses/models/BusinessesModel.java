@@ -85,7 +85,7 @@ public class BusinessesModel extends ExtendedBaseModel {
     @ToString.Exclude
     private Set<BossesBusinessesModel> bossesBusinesses;
 
-    @OneToMany(mappedBy = "businesses", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "business", cascade = CascadeType.ALL)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private Set<BranchesModel> branches;

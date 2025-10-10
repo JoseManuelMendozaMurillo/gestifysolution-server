@@ -23,6 +23,8 @@ import com.ventuit.adminstrativeapp.bosses.models.BossesBusinessesModel;
 import com.ventuit.adminstrativeapp.bosses.models.BossesModel;
 import com.ventuit.adminstrativeapp.bosses.repositories.BossesRepository;
 import com.ventuit.adminstrativeapp.bosses.services.implementations.BossesServiceImpl;
+import com.ventuit.adminstrativeapp.branches.dto.CreateBranchesDto;
+import com.ventuit.adminstrativeapp.branches.services.BranchesService;
 import com.ventuit.adminstrativeapp.businesses.dto.CreateBusinessesDto;
 import com.ventuit.adminstrativeapp.businesses.dto.ListBusinessesDto;
 import com.ventuit.adminstrativeapp.businesses.models.BusinessesModel;
@@ -35,6 +37,7 @@ import com.ventuit.adminstrativeapp.businesses.repositories.IndustriesRepository
 import com.ventuit.adminstrativeapp.businesses.repositories.TypesRegimensTaxesRepository;
 import com.ventuit.adminstrativeapp.businesses.services.BusinessesService;
 import com.ventuit.adminstrativeapp.keycloak.dto.CreateKeycloakUser;
+import com.ventuit.adminstrativeapp.shared.dto.DirectionsDto;
 import com.ventuit.adminstrativeapp.shared.helpers.SimpleMultipartFile;
 import com.ventuit.adminstrativeapp.shared.services.interfaces.SeedServiceInterface;
 
@@ -54,13 +57,15 @@ public class SeedServiceImpl implements SeedServiceInterface {
     private final IndustriesRepository industriesRepository;
     private final BusinessesTypeRepository businessesTypeRepository;
     private final TypesRegimensTaxesRepository typesRegimensTaxesRepository;
+    private final BranchesService branchesService;
 
     @Override
     @Transactional
     public void seed() {
         logger.info("Seeding database...");
         generateFakeBosses(20);
-        generateFakeBusinesses(2);
+        generateFakeBusinesses(1);
+        generateFakeBranches(1);
     }
 
     private void generateFakeBosses(int numberOfBosses) {
@@ -157,6 +162,57 @@ public class SeedServiceImpl implements SeedServiceInterface {
         }
 
         logger.info("✅ Successfully generated {} fake businesses for each boss.", numberOfBusinessesPeerBoss);
+    }
+
+    private void generateFakeBranches(int numberOfBranchesPerBusiness) {
+        Faker faker = new Faker(Locale.ENGLISH);
+        List<BusinessesModel> businesses = businessesRepository.findAll();
+
+        for (BusinessesModel business : businesses) {
+            for (int i = 0; i < numberOfBranchesPerBusiness; i++) {
+                try {
+                    // --- Create fake Direction DTO ---
+                    DirectionsDto fakeDirection = DirectionsDto.builder()
+                            .latitude(faker.address().latitude().replace(',', '.'))
+                            .longitude(faker.address().longitude().replace(',', '.'))
+                            .street(faker.address().streetName())
+                            .exteriorNumber(faker.number().digits(4))
+                            .exteriorLetter(faker.letterify("?").toUpperCase())
+                            .interiorNumber(faker.number().digits(2))
+                            .interiorLetter(faker.letterify("?").toUpperCase())
+                            .neighborhood(faker.address().secondaryAddress())
+                            .postalCode(faker.address().zipCode().substring(0, 5))
+                            .city(faker.address().city())
+                            .state(faker.address().state())
+                            .country(faker.address().country())
+                            .build();
+
+                    // --- Create fake Branch DTO ---
+                    String countryCode = "52"; // Mexico country code
+                    String phoneNumber = "392" + faker.number().digits(7);
+                    String formattedPhone = "+" + countryCode + " " + phoneNumber;
+
+                    CreateBranchesDto fakeBranch = CreateBranchesDto.builder()
+                            .name(business.getName() + " " + faker.address().city())
+                            .phone(formattedPhone)
+                            .email(faker.internet().emailAddress())
+                            .openingDate(randomLocalDate())
+                            .direction(fakeDirection)
+                            .businessId(business.getId())
+                            .build();
+
+                    // --- Create Branch using existing logic ---
+                    branchesService.create(fakeBranch);
+
+                } catch (Exception e) {
+                    logger.error("❌ Failed to create fake branch for business " + business.getId() + ": "
+                            + e.getMessage());
+                    e.printStackTrace();
+                    throw new RuntimeException("Stopping seed due to an error.", e);
+                }
+            }
+        }
+        logger.info("✅ Successfully generated {} fake branches for each business.", numberOfBranchesPerBusiness);
     }
 
     private LocalDate randomLocalDate() {

@@ -7,11 +7,13 @@ import com.ventuit.adminstrativeapp.branches.models.BranchesModel;
 import com.ventuit.adminstrativeapp.core.dto.ExtendedBaseDto;
 import com.ventuit.adminstrativeapp.shared.dto.DirectionsDto;
 import com.ventuit.adminstrativeapp.shared.validations.email.Email;
+import com.ventuit.adminstrativeapp.shared.validations.exist.Exist;
 import com.ventuit.adminstrativeapp.shared.validations.pastorpresentdate.PastOrPresentDate;
 import com.ventuit.adminstrativeapp.shared.validations.phone.Phone;
 import com.ventuit.adminstrativeapp.shared.validations.unique.Unique;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -20,6 +22,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+
+import com.ventuit.adminstrativeapp.businesses.repositories.BusinessesRepository;
 
 @EqualsAndHashCode(callSuper = true)
 @SuperBuilder
@@ -55,4 +59,9 @@ public class CreateBranchesDto extends ExtendedBaseDto {
     @NotNull(message = "You must send the direction's branch information")
     @Valid
     private DirectionsDto direction;
+
+    @NotNull(message = "You must send the business id information")
+    @Min(value = 1, message = "Business id must be greater than 0")
+    @Exist(repository = BusinessesRepository.class, method = "existsByIdAndDeletedAtIsNull", message = "Business id does not exist", paramType = Integer.class)
+    private Integer businessId;
 }

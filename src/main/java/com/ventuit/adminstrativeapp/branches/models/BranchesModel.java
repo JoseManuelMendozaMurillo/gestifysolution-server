@@ -66,5 +66,5 @@ public class BranchesModel extends ExtendedBaseModel {
 
     @ManyToOne
     @JoinColumn(name = "business_id", nullable = false)
-    private BusinessesModel businesses;
+    private BusinessesModel business;
 }
