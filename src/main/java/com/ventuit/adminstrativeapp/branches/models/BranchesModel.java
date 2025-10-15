@@ -2,6 +2,7 @@ package com.ventuit.adminstrativeapp.branches.models;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 import com.ventuit.adminstrativeapp.businesses.models.BusinessesModel;
 import com.ventuit.adminstrativeapp.core.models.ExtendedBaseModel;
@@ -16,12 +17,14 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 @EqualsAndHashCode(callSuper = true)
@@ -64,7 +67,12 @@ public class BranchesModel extends ExtendedBaseModel {
     @JoinColumn(name = "direction_id", nullable = false)
     private DirectionsModel direction;
 
-    @ManyToOne
-    @JoinColumn(name = "business_id", nullable = false)
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "business_id", nullable = false, unique = false)
     private BusinessesModel business;
+
+    @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    private Set<BranchesProductsModel> branchesProducts;
 }

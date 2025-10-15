@@ -48,6 +48,7 @@ public abstract class BranchesMapper
 
     @Override
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "branchesProducts", ignore = true)
     @Mapping(target = "business", source = "businessId", qualifiedByName = "businessIdToBusinessModel")
     public abstract BranchesModel toEntity(CreateBranchesDto dto);
 
@@ -63,6 +64,7 @@ public abstract class BranchesMapper
     @Mapping(target = "activeChangedAt", ignore = true)
     @Mapping(target = "activeChangedBy", ignore = true)
     @Mapping(target = "business", ignore = true)
+    @Mapping(target = "branchesProducts", ignore = true)
     public abstract BranchesModel updateFromDto(UpdateBranchesDto dto, @MappingTarget BranchesModel entity);
 
     @Named("businessIdToBusinessModel")

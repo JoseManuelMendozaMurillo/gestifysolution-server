@@ -1,5 +1,6 @@
 package com.ventuit.adminstrativeapp.products.models;
 
+import com.ventuit.adminstrativeapp.branches.models.BranchesProductsModel;
 import com.ventuit.adminstrativeapp.core.models.ExtendedBaseModel;
 
 import jakarta.persistence.CascadeType;
@@ -21,7 +22,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
-@EqualsAndHashCode(callSuper = true, exclude = "images")
+@EqualsAndHashCode(callSuper = true)
 @SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -49,4 +50,9 @@ public class ProductsModel extends ExtendedBaseModel {
     @OneToMany(mappedBy = "product", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default // Critical fix for Lombok initialization
     private Set<ProductsImagesModel> images = new HashSet<>(); // Initialize here;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    private Set<BranchesProductsModel> branchesProducts;
 }

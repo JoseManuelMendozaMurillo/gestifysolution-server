@@ -69,6 +69,7 @@ public abstract class ProductsMapper
         @Mappings({
                         @Mapping(target = "category", source = "categoryId", qualifiedByName = "categoryIdToCategoryModel"),
                         @Mapping(target = "images", ignore = true),
+                        @Mapping(target = "branchesProducts", ignore = true),
                         @Mapping(target = "id", ignore = true),
                         @Mapping(target = "createdAt", ignore = true),
                         @Mapping(target = "updatedAt", ignore = true),
@@ -83,6 +84,7 @@ public abstract class ProductsMapper
         @Mappings({
                         @Mapping(target = "category", source = "categoryId", qualifiedByName = "categoryIdToCategoryModel"),
                         @Mapping(target = "images", ignore = true),
+                        @Mapping(target = "branchesProducts", ignore = true),
                         @Mapping(target = "id", ignore = true),
                         @Mapping(target = "createdAt", ignore = true),
                         @Mapping(target = "updatedAt", ignore = true),
