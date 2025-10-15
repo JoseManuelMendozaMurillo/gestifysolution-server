@@ -1,6 +1,7 @@
 package com.ventuit.adminstrativeapp.shared.services.implementations;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -24,6 +25,9 @@ import com.ventuit.adminstrativeapp.bosses.models.BossesModel;
 import com.ventuit.adminstrativeapp.bosses.repositories.BossesRepository;
 import com.ventuit.adminstrativeapp.bosses.services.implementations.BossesServiceImpl;
 import com.ventuit.adminstrativeapp.branches.dto.CreateBranchesDto;
+import com.ventuit.adminstrativeapp.branches.models.BranchesModel;
+import com.ventuit.adminstrativeapp.branches.models.BranchesProductsModel;
+import com.ventuit.adminstrativeapp.branches.repositories.BranchesRepository;
 import com.ventuit.adminstrativeapp.branches.services.BranchesService;
 import com.ventuit.adminstrativeapp.businesses.dto.CreateBusinessesDto;
 import com.ventuit.adminstrativeapp.businesses.dto.ListBusinessesDto;
@@ -37,6 +41,14 @@ import com.ventuit.adminstrativeapp.businesses.repositories.IndustriesRepository
 import com.ventuit.adminstrativeapp.businesses.repositories.TypesRegimensTaxesRepository;
 import com.ventuit.adminstrativeapp.businesses.services.BusinessesService;
 import com.ventuit.adminstrativeapp.keycloak.dto.CreateKeycloakUser;
+import com.ventuit.adminstrativeapp.products.dto.CreateProductDto;
+import com.ventuit.adminstrativeapp.products.dto.CreateProductImageDto;
+import com.ventuit.adminstrativeapp.products.dto.CreateProductsCategoryDto;
+import com.ventuit.adminstrativeapp.products.dto.ListProductDto;
+import com.ventuit.adminstrativeapp.products.models.ProductsModel;
+import com.ventuit.adminstrativeapp.products.repositories.ProductsRepository;
+import com.ventuit.adminstrativeapp.products.services.ProductsCategoriesService;
+import com.ventuit.adminstrativeapp.products.services.ProductsService;
 import com.ventuit.adminstrativeapp.shared.dto.DirectionsDto;
 import com.ventuit.adminstrativeapp.shared.helpers.SimpleMultipartFile;
 import com.ventuit.adminstrativeapp.shared.services.interfaces.SeedServiceInterface;
@@ -58,6 +70,10 @@ public class SeedServiceImpl implements SeedServiceInterface {
     private final BusinessesTypeRepository businessesTypeRepository;
     private final TypesRegimensTaxesRepository typesRegimensTaxesRepository;
     private final BranchesService branchesService;
+    private final BranchesRepository branchesRepository;
+    private final ProductsService productsService;
+    private final ProductsRepository productsRepository;
+    private final ProductsCategoriesService productsCategoriesService;
 
     @Override
     @Transactional
@@ -66,6 +82,10 @@ public class SeedServiceImpl implements SeedServiceInterface {
         generateFakeBosses(20);
         generateFakeBusinesses(1);
         generateFakeBranches(1);
+        int numberOfCategories = 10;
+        generateFakeProductCategories(numberOfCategories);
+        generateFakeProducts(5, 3, numberOfCategories);
+        logger.info("Database seeding completed.");
     }
 
     private void generateFakeBosses(int numberOfBosses) {
@@ -213,6 +233,94 @@ public class SeedServiceImpl implements SeedServiceInterface {
             }
         }
         logger.info("✅ Successfully generated {} fake branches for each business.", numberOfBranchesPerBusiness);
+    }
+
+    private void generateFakeProductCategories(int numberOfCategories) {
+        Faker faker = new Faker(Locale.ENGLISH);
+        for (int i = 0; i < numberOfCategories; i++) {
+            try {
+                // --- Create fake Product Category DTO ---
+                String uniqueCategoryName = faker.commerce().department() + "_" + faker.number().digits(8) + "_" + i;
+                CreateProductsCategoryDto fakeCategory = CreateProductsCategoryDto.builder()
+                        .name(uniqueCategoryName)
+                        .description(faker.lorem().sentence())
+                        .image(createFakeImage("product_category_" + (i + 1), 600, 600))
+                        .build();
+
+                // --- Create Product Category using existing logic ---
+                productsCategoriesService.create(fakeCategory);
+            } catch (Exception e) {
+                logger.error("❌ Failed to create fake product category: " + e.getMessage());
+                e.printStackTrace();
+                throw new RuntimeException("Stopping seed due to an error.", e);
+            }
+        }
+        logger.info("✅ Successfully generated {} fake product categories.", numberOfCategories);
+    }
+
+    private void generateFakeProducts(int numberOfProductsPerBranch, int numberOfImagesPerProduct,
+            int numberOfCategories) {
+        Faker faker = new Faker(Locale.ENGLISH);
+        List<BranchesModel> branches = branchesRepository.findAll();
+
+        for (BranchesModel branch : branches) {
+            Integer[] productIds = new Integer[numberOfProductsPerBranch];
+            for (int i = 0; i < numberOfProductsPerBranch; i++) {
+                try {
+                    // --- Create fake Product DTO ---
+                    String uniqueProductName = faker.commerce().productName() + "_" + faker.number().digits(8) + "_"
+                            + branch.getId() + "_" + i;
+                    CreateProductDto fakeProduct = CreateProductDto.builder()
+                            .name(uniqueProductName)
+                            .description(faker.lorem().paragraph())
+                            .price(Double.parseDouble(faker.commerce().price(10.0, 100.0)))
+                            .active(true)
+                            .categoryId(faker.number().numberBetween(1, numberOfCategories + 1))
+                            .images(createProductImages(numberOfImagesPerProduct))
+                            .build();
+
+                    // --- Create Product using existing logic ---
+                    ListProductDto createdProduct = productsService.create(fakeProduct);
+                    productIds[i] = createdProduct.getId();
+                } catch (Exception e) {
+                    logger.error("❌ Failed to create fake product for branch " + branch.getId() + ": "
+                            + e.getMessage());
+                    e.printStackTrace();
+                    throw new RuntimeException("Stopping seed due to an error.", e);
+                }
+            }
+
+            // Link products to branch
+            Set<BranchesProductsModel> branchesProducts = branch.getBranchesProducts();
+            for (Integer productId : productIds) {
+                ProductsModel product = productsRepository.findById(productId)
+                        .orElseThrow(() -> new RuntimeException("Product not found"));
+                BranchesProductsModel branchesProduct = BranchesProductsModel
+                        .builder()
+                        .branch(branch)
+                        .product(product)
+                        .build();
+
+                branchesProducts.add(branchesProduct);
+            }
+            branch.setBranchesProducts(branchesProducts);
+            branchesRepository.save(branch);
+        }
+        logger.info("✅ Successfully generated {} fake products for each branch.", numberOfProductsPerBranch);
+    }
+
+    private List<CreateProductImageDto> createProductImages(int numberOfImagesPerProduct) {
+        List<CreateProductImageDto> images = new ArrayList<>();
+        for (int i = 0; i < numberOfImagesPerProduct; i++) {
+            MultipartFile image = createFakeImage("product_image_" + (i + 1), 800, 800);
+            boolean isPortrait = (i == 0); // First image is portrait
+            CreateProductImageDto productImageDto = CreateProductImageDto.builder()
+                    .image(image)
+                    .portrait(isPortrait)
+                    .build();
+            images.add(productImageDto);
+        }
+        return images;
     }
 
     private LocalDate randomLocalDate() {
