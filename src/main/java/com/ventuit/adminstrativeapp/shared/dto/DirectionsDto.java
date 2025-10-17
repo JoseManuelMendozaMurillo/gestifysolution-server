@@ -19,54 +19,54 @@ import lombok.experimental.SuperBuilder;
 @Data
 public class DirectionsDto extends ExtendedBaseDto {
 
-    @NotBlank(message = "Latitude is required")
-    @Pattern(regexp = RegexUtils.LATITUDE_PATTERN, message = "Invalid latitude")
-    @Size(max = 60, message = "Latitude cannot exceed 60 characters")
+    @NotBlank(message = "{Direction.latitude.NotBlank}")
+    @Pattern(regexp = RegexUtils.LATITUDE_PATTERN, message = "{Direction.latitude.Pattern}")
+    @Size(max = 60, message = "{Direction.latitude.Size}")
     private String latitude;
 
-    @NotBlank(message = "Longitude is required")
-    @Pattern(regexp = RegexUtils.LONGITUDE_PATTERN, message = "Invalid longitude")
-    @Size(max = 60, message = "Longitude cannot exceed 60 characters")
+    @NotBlank(message = "{Direction.longitude.NotBlank}")
+    @Pattern(regexp = RegexUtils.LONGITUDE_PATTERN, message = "{Direction.longitude.Pattern}")
+    @Size(max = 60, message = "{Direction.longitude.Size}")
     private String longitude;
 
-    @NotBlank(message = "Street is required")
-    @Size(max = 60, message = "Street cannot exceed 60 characters")
+    @NotBlank(message = "{Direction.street.NotBlank}")
+    @Size(max = 60, message = "{Direction.street.Size}")
     private String street;
 
-    @NotBlank(message = "Street is required")
-    @Pattern(regexp = RegexUtils.NUMBERS_ONLY_PATTERN, message = "Exterior number must contain only numbers")
-    @Size(max = 10, message = "Exterior number cannot exceed 10 characters")
+    @NotBlank(message = "{Direction.exteriorNumber.NotBlank}")
+    @Pattern(regexp = RegexUtils.NUMBERS_ONLY_PATTERN, message = "{Direction.exteriorNumber.Pattern}")
+    @Size(max = 10, message = "{Direction.exteriorNumber.Size}")
     private String exteriorNumber;
 
-    @Pattern(regexp = RegexUtils.CAPITAL_LETTERS_ONLY_PATTERN, message = "Exterior letter must contain only capital letters")
-    @Size(max = 10, message = "Exterior letter cannot exceed 10 characters")
+    @Pattern(regexp = RegexUtils.CAPITAL_LETTERS_ONLY_PATTERN, message = "{Direction.exteriorLetter.Pattern}")
+    @Size(max = 10, message = "{Direction.exteriorLetter.Size}")
     private String exteriorLetter;
 
-    @Pattern(regexp = RegexUtils.NUMBERS_ONLY_PATTERN, message = "Interior number must contain only numbers")
-    @Size(max = 10, message = "Interior number cannot exceed 10 characters")
+    @Pattern(regexp = RegexUtils.NUMBERS_ONLY_PATTERN, message = "{Direction.interiorNumber.Pattern}")
+    @Size(max = 10, message = "{Direction.interiorNumber.Size}")
     private String interiorNumber;
 
-    @Pattern(regexp = RegexUtils.CAPITAL_LETTERS_ONLY_PATTERN, message = "Interior letter must contain only capital letters")
-    @Size(max = 10, message = "Interior letter cannot exceed 10 characters")
+    @Pattern(regexp = RegexUtils.CAPITAL_LETTERS_ONLY_PATTERN, message = "{Direction.interiorLetter.Pattern}")
+    @Size(max = 10, message = "{Direction.interiorLetter.Size}")
     private String interiorLetter;
 
-    @Size(max = 60, message = "Neighborhood cannot exceed 60 characters")
+    @Size(max = 60, message = "{Direction.neighborhood.Size}")
     private String neighborhood;
 
-    @NotBlank(message = "Postal code is required")
-    @Pattern(regexp = RegexUtils.POSTAL_CODE_PATTERN, message = "Postal code must contain five numbers")
-    @Size(max = 20, message = "Postal code cannot exceed 20 numbers")
+    @NotBlank(message = "{Direction.postalCode.NotBlank}")
+    @Pattern(regexp = RegexUtils.POSTAL_CODE_PATTERN, message = "{Direction.postalCode.Pattern}")
+    @Size(max = 20, message = "{Direction.postalCode.Size}")
     private String postalCode;
 
-    @NotBlank(message = "City is required")
-    @Size(max = 60, message = "City cannot exceed 60 characters")
+    @NotBlank(message = "{Direction.city.NotBlank}")
+    @Size(max = 60, message = "{Direction.city.Size}")
     private String city;
 
-    @NotBlank(message = "State is required")
-    @Size(max = 60, message = "State cannot exceed 60 characters")
+    @NotBlank(message = "{Direction.state.NotBlank}")
+    @Size(max = 60, message = "{Direction.state.Size}")
     private String state;
 
-    @NotBlank(message = "Country is required")
-    @Size(max = 60, message = "Country cannot exceed 60 characters")
+    @NotBlank(message = "{Direction.country.NotBlank}")
+    @Size(max = 60, message = "{Direction.country.Size}")
     private String country;
 }

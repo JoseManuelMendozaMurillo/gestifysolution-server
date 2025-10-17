@@ -32,22 +32,22 @@ import com.ventuit.adminstrativeapp.businesses.repositories.BusinessesRepository
 @Data
 public class CreateBranchesDto extends ExtendedBaseDto {
 
-    @Size(max = 60, message = "Name cannot exceed 60 characters")
-    @NotBlank(message = "You must send the branches's name")
-    @Unique(model = BranchesModel.class, fieldName = "name", message = "This branch is already registered")
+    @Size(max = 60, message = "{Branch.name.Size}")
+    @NotBlank(message = "{Branch.name.NotBlank}")
+    @Unique(model = BranchesModel.class, fieldName = "name", message = "{Branch.name.Unique}")
     private String name;
 
-    @Size(max = 30, message = "Phone cannot exceed 30 characters")
+    @Size(max = 30, message = "{Branch.phone.Size}")
     @Phone
-    @Unique(model = BranchesModel.class, fieldName = "phone", message = "This phone is already registered")
+    @Unique(model = BranchesModel.class, fieldName = "phone", message = "{Branch.phone.Unique}")
     private String phone;
 
-    @Size(max = 60, message = "Email cannot exceed 60 characters")
+    @Size(max = 60, message = "{Branch.email.Size}")
     @Email
-    @Unique(model = BranchesModel.class, fieldName = "email", message = "This email is already registered")
+    @Unique(model = BranchesModel.class, fieldName = "email", message = "{Branch.email.Unique}")
     private String email;
 
-    @PastOrPresentDate(message = "Opening date must be in the past or present")
+    @PastOrPresentDate(message = "{Branch.openingDate.PastOrPresent}")
     private LocalDate openingDate;
 
     private boolean active;
@@ -56,12 +56,12 @@ public class CreateBranchesDto extends ExtendedBaseDto {
 
     private LocalDateTime activeChangedAt;
 
-    @NotNull(message = "You must send the direction's branch information")
+    @NotNull(message = "{Branch.direction.NotNull}")
     @Valid
     private DirectionsDto direction;
 
-    @NotNull(message = "You must send the business id information")
-    @Min(value = 1, message = "Business id must be greater than 0")
-    @Exist(repository = BusinessesRepository.class, method = "existsByIdAndDeletedAtIsNull", message = "Business id does not exist", paramType = Integer.class)
+    @NotNull(message = "{Branch.businessId.NotNull}")
+    @Min(value = 1, message = "{Branch.businessId.Min}")
+    @Exist(repository = BusinessesRepository.class, method = "existsByIdAndDeletedAtIsNull", message = "{Branch.businessId.Exist}", paramType = Integer.class)
     private Integer businessId;
 }
