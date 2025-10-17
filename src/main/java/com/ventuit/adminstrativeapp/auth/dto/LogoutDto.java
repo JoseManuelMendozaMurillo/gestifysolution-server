@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Data
 public class LogoutDto {
 
-    @NotBlank(message = "The refresh token cannot be blank")
+    @NotBlank(message = "{Auth.LogoutDto.refreshToken.NotBlank}")
     private String refreshToken;
 
 }
