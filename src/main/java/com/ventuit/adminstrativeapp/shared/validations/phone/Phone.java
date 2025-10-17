@@ -14,7 +14,7 @@ import jakarta.validation.Payload;
 @Constraint(validatedBy = PhoneValidator.class)
 @Documented
 public @interface Phone {
-    String message() default "Invalid format. Use: +NN NNNNNNNNNN";
+    String message() default "{phone.invalid.format}";
 
     Class<?>[] groups() default {};
 

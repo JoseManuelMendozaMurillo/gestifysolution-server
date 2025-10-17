@@ -14,7 +14,7 @@ import jakarta.validation.Payload;
 @Constraint(validatedBy = EmailValidator.class)
 @Documented
 public @interface Email {
-    String message() default "Invalid email format";
+    String message() default "{email.invalid.format}";
 
     Class<?>[] groups() default {};
 

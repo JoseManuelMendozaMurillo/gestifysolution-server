@@ -14,7 +14,7 @@ import jakarta.validation.Payload;
 @Constraint(validatedBy = UniqueUsernameValidator.class)
 @Documented
 public @interface UniqueUsername {
-    String message() default "The username already exist";
+    String message() default "{User.username.Unique}";
 
     Class<?>[] groups() default {};
 

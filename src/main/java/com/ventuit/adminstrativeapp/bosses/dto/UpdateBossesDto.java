@@ -24,7 +24,7 @@ public class UpdateBossesDto {
     private UpdateKeycloakUser user;
 
     @Phone
-    @Unique(model = BossesModel.class, fieldName = "phone", message = "This phone is already registered")
+    @Unique(model = BossesModel.class, fieldName = "phone", message = "{Boss.phone.Unique}")
     private String phone;
 
     @PastOrPresentDate

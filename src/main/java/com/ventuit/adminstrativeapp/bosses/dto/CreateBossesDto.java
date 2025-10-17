@@ -21,12 +21,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CreateBossesDto {
 
-    @NotNull(message = "User information cannot be null")
+    @NotNull(message = "{User.NotNull}")
     @Valid
     private CreateKeycloakUser user;
 
     @Phone
-    @Unique(model = BossesModel.class, fieldName = "phone", message = "This phone is already registered")
+    @Unique(model = BossesModel.class, fieldName = "phone", message = "{Boss.phone.Unique}")
     private String phone;
 
     @PastOrPresentDate
