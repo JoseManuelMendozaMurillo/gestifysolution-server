@@ -14,27 +14,27 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 public interface CrudControllerInterface<CREATINGDTO, UPDATINGDTO, LISTDTO, ID> {
 
-    @GetMapping("/getAll")
+    @GetMapping()
     @ResponseBody
     ResponseEntity<List<LISTDTO>> getAll();
 
-    @GetMapping("/getAllActive")
+    @GetMapping("/get-all-active")
     @ResponseBody
     ResponseEntity<List<LISTDTO>> getAllActive();
 
-    @GetMapping("/getAllInactive")
+    @GetMapping("/get-all-inactive")
     @ResponseBody
     ResponseEntity<List<LISTDTO>> getAllInactive();
 
-    @GetMapping("/getById/{id}")
+    @GetMapping("/{id}")
     @ResponseBody
     ResponseEntity<?> getById(@PathVariable ID id);
 
-    @GetMapping("/getByActiveId/{id}")
+    @GetMapping("/get-by-active-id/{id}")
     @ResponseBody
     ResponseEntity<?> getByActiveId(@PathVariable ID id);
 
-    @GetMapping("/getByInactiveId/{id}")
+    @GetMapping("/get-by-inactive-id/{id}")
     @ResponseBody
     ResponseEntity<?> getByInactiveId(@PathVariable ID id);
 
