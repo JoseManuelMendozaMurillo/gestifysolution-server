@@ -3,11 +3,17 @@ package com.ventuit.adminstrativeapp.shared.services.implementations;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 import javax.imageio.ImageIO;
+import jakarta.annotation.PreDestroy;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +23,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 import com.ventuit.adminstrativeapp.bosses.dto.CreateBossesDto;
 import com.ventuit.adminstrativeapp.bosses.models.BossesBusinessesModel;
@@ -50,10 +58,11 @@ import com.ventuit.adminstrativeapp.products.repositories.ProductsRepository;
 import com.ventuit.adminstrativeapp.products.services.ProductsCategoriesService;
 import com.ventuit.adminstrativeapp.products.services.ProductsService;
 import com.ventuit.adminstrativeapp.shared.dto.DirectionsDto;
+import com.ventuit.adminstrativeapp.shared.dto.FileUploadDto;
 import com.ventuit.adminstrativeapp.shared.helpers.SimpleMultipartFile;
 import com.ventuit.adminstrativeapp.shared.services.interfaces.SeedServiceInterface;
+import com.ventuit.adminstrativeapp.storage.minio.MinioProvider;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import net.datafaker.Faker;
 
@@ -74,9 +83,14 @@ public class SeedServiceImpl implements SeedServiceInterface {
     private final ProductsService productsService;
     private final ProductsRepository productsRepository;
     private final ProductsCategoriesService productsCategoriesService;
+    private final FilesServiceImpl filesService;
+    private final MinioProvider minioProvider;
+
+    // Shared executor to parallelize heavy seeding tasks (product creation)
+    private final ExecutorService seedExecutor = Executors
+            .newFixedThreadPool(Math.max(2, Runtime.getRuntime().availableProcessors()));
 
     @Override
-    @Transactional
     public void seed() {
         logger.info("Seeding database...");
         generateFakeBosses(20);
@@ -86,6 +100,19 @@ public class SeedServiceImpl implements SeedServiceInterface {
         generateFakeProductCategories(numberOfCategories);
         generateFakeProducts(5, 3, numberOfCategories);
         logger.info("Database seeding completed.");
+    }
+
+    @PreDestroy
+    public void shutdownExecutor() {
+        seedExecutor.shutdown();
+        try {
+            if (!seedExecutor.awaitTermination(5, TimeUnit.SECONDS)) {
+                seedExecutor.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            seedExecutor.shutdownNow();
+            Thread.currentThread().interrupt();
+        }
     }
 
     private void generateFakeBosses(int numberOfBosses) {
@@ -260,33 +287,73 @@ public class SeedServiceImpl implements SeedServiceInterface {
 
     private void generateFakeProducts(int numberOfProductsPerBranch, int numberOfImagesPerProduct,
             int numberOfCategories) {
-        Faker faker = new Faker(Locale.ENGLISH);
         List<BranchesModel> branches = branchesRepository.findAll();
+
+        try {
+            MultipartFile image = createFakeImage("product_image_example", 800, 800);
+            FileUploadDto fileUploadDto = FileUploadDto.builder()
+                    .fileInputStream(new ByteArrayInputStream(image.getBytes()))
+                    .fileSize((long) image.getBytes().length)
+                    .contentType(image.getContentType())
+                    .originalFileName(image.getOriginalFilename())
+                    .path("products/images")
+                    .provider("minio")
+                    .bucket(minioProvider.getBucketName())
+                    .build();
+            filesService.uploadFile(fileUploadDto);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         for (BranchesModel branch : branches) {
             Integer[] productIds = new Integer[numberOfProductsPerBranch];
-            for (int i = 0; i < numberOfProductsPerBranch; i++) {
-                try {
-                    // --- Create fake Product DTO ---
-                    String uniqueProductName = faker.commerce().productName() + "_" + faker.number().digits(8) + "_"
-                            + branch.getId() + "_" + i;
-                    CreateProductDto fakeProduct = CreateProductDto.builder()
-                            .name(uniqueProductName)
-                            .description(faker.lorem().paragraph())
-                            .price(Double.parseDouble(faker.commerce().price(10.0, 100.0)))
-                            .active(true)
-                            .categoryId(faker.number().numberBetween(1, numberOfCategories + 1))
-                            .images(createProductImages(numberOfImagesPerProduct))
-                            .build();
 
-                    // --- Create Product using existing logic ---
-                    ListProductDto createdProduct = productsService.create(fakeProduct);
-                    productIds[i] = createdProduct.getId();
-                } catch (Exception e) {
-                    logger.error("❌ Failed to create fake product for branch " + branch.getId() + ": "
-                            + e.getMessage());
-                    e.printStackTrace();
-                    throw new RuntimeException("Stopping seed due to an error.", e);
+            // Submit product creation tasks to the shared executor to parallelize product
+            // creation
+            List<Future<Integer>> futures = new ArrayList<>();
+            for (int i = 0; i < numberOfProductsPerBranch; i++) {
+                final int idx = i;
+                futures.add(seedExecutor.submit(() -> {
+                    try {
+                        Faker threadFaker = new Faker(Locale.ENGLISH);
+                        // --- Create fake Product DTO (per-thread faker) ---
+                        String uniqueProductName = threadFaker.commerce().productName() + "_"
+                                + threadFaker.number().digits(8)
+                                + "_" + branch.getId() + "_" + idx;
+
+                        CreateProductDto fakeProduct = CreateProductDto.builder()
+                                .name(uniqueProductName)
+                                .description(threadFaker.lorem().paragraph())
+                                .price(Double.parseDouble(threadFaker.commerce().price(10.0, 100.0)))
+                                .active(true)
+                                .categoryId(threadFaker.number().numberBetween(1, numberOfCategories + 1))
+                                .images(createProductImages(numberOfImagesPerProduct))
+                                .build();
+
+                        ListProductDto createdProduct = productsService.create(fakeProduct);
+                        return createdProduct.getId();
+                    } catch (Exception ex) {
+                        logger.error(
+                                "❌ Product creation task failed for branch " + branch.getId() + ": " + ex.getMessage(),
+                                ex);
+                        throw ex;
+                    }
+                }));
+            }
+
+            // Wait for tasks to complete and collect product ids (propagate failures)
+            for (int i = 0; i < futures.size(); i++) {
+                try {
+                    productIds[i] = futures.get(i).get();
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    throw new RuntimeException("Seed interrupted while creating products", ie);
+                } catch (ExecutionException ee) {
+                    // Cancel remaining tasks
+                    for (Future<Integer> f : futures) {
+                        f.cancel(true);
+                    }
+                    throw new RuntimeException("Stopping seed due to product creation failure.", ee.getCause());
                 }
             }
 
