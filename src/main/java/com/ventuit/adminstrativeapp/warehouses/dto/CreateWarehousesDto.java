@@ -26,14 +26,14 @@ import lombok.experimental.SuperBuilder;
 @Data
 public class CreateWarehousesDto extends ExtendedBaseDto {
 
-    @NotBlank(message = "You must send the warehouse's name")
-    @Size(max = 60, message = "Name cannot exceed 60 characters")
-    @Unique(model = WarehousesModel.class, fieldName = "name", message = "This warehouse is already registered")
+    @NotBlank(message = "{Warehouse.name.NotBlank}")
+    @Size(max = 60, message = "{Warehouse.name.Size}")
+    @Unique(model = WarehousesModel.class, fieldName = "name", message = "{Warehouse.name.Unique}")
     private String name;
 
-    @Size(max = 30, message = "Phone cannot exceed 30 characters")
+    @Size(max = 30, message = "{Warehouse.phone.Size}")
     @Phone
-    @Unique(model = WarehousesModel.class, fieldName = "phone", message = "This phone is already registered")
+    @Unique(model = WarehousesModel.class, fieldName = "phone", message = "{Warehouse.phone.Unique}")
     private String phone;
 
     private boolean active;
@@ -42,7 +42,7 @@ public class CreateWarehousesDto extends ExtendedBaseDto {
 
     private LocalDateTime activeChangedAt;
 
-    @NotNull(message = "You must send the warehouse's category")
+    @NotNull(message = "{Warehouse.category.NotNull}")
     @JsonDeserialize(using = WarehousesCategoriesDeserializer.class)
     private WarehousesCategoriesModel category;
 }
