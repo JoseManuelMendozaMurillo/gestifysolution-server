@@ -36,41 +36,41 @@ import lombok.experimental.SuperBuilder;
 @Data
 public class CreateBusinessesDto extends ExtendedBaseDto {
 
-    @NotBlank(message = "You must send the business's name")
-    @Size(max = 50, message = "Name cannot exceed 50 characters")
-    @Unique(model = BusinessesModel.class, fieldName = "name", message = "This business is already registered")
+    @NotBlank(message = "{Business.name.NotBlank}")
+    @Size(max = 50, message = "{Business.name.Size}")
+    @Unique(model = BusinessesModel.class, fieldName = "name", message = "{Business.name.Unique}")
     private String name;
 
-    @Size(max = 200, message = "Description cannot exceed 200 characters")
+    @Size(max = 200, message = "{Business.description.Size}")
     private String description;
 
-    @NotBlank(message = "You must send the business's rfc")
-    @Size(min = 12, max = 13, message = "RFC must be 12 or 13 characters long")
-    @Rfc
-    @Unique(model = BusinessesModel.class, fieldName = "rfc", message = "This rfc is already registered")
+    @NotBlank(message = "{Business.rfc.NotBlank}")
+    @Size(min = 12, max = 13, message = "{Business.rfc.Size}")
+    @Rfc(message = "{Business.rfc.Rfc}")
+    @Unique(model = BusinessesModel.class, fieldName = "rfc", message = "{Business.rfc.Unique}")
     private String rfc;
 
-    @PastOrPresentDate(message = "Establishment date must be in the past or present")
+    @PastOrPresentDate(message = "{Business.establishmentDate.PastOrPresent}")
     private LocalDate establishmentDate;
 
-    @NotNull(message = "You must send the business's industry")
+    @NotNull(message = "{Business.industry.NotNull}")
     @JsonDeserialize(using = IndustriesModelDeserializer.class)
     private IndustriesModel industry;
 
-    @NotNull(message = "You must send the business's type")
+    @NotNull(message = "{Business.businessType.NotNull}")
     @JsonDeserialize(using = BusinessesTypeModelDeserializer.class)
     private BusinessesTypeModel businessesType;
 
-    @NotNull(message = "You must send the business's tax regimen")
+    @NotNull(message = "{Business.taxRegimen.NotNull}")
     @JsonDeserialize(using = TypesRegimensTaxesModelDeserializer.class)
     private TypesRegimensTaxesModel taxRegimen;
 
     /**
      * Logo image file for the business
      */
-    @ImageFile(message = "Logo must be an image file")
-    @MaxFileSize(value = 2097152, message = "Logo file size must not exceed 2MB") // 2MB
-    @AspectRatio(value = "1:1", tolerance = 10.0, message = "Logo must be square (1:1 aspect ratio) with 10% tolerance")
+    @ImageFile(message = "{Business.logo.ImageFile}")
+    @MaxFileSize(value = 2097152, message = "{Business.logo.MaxFileSize}") // 2MB
+    @AspectRatio(value = "1:1", tolerance = 10.0, message = "{Business.logo.AspectRatio}")
     private MultipartFile logo;
 
 }

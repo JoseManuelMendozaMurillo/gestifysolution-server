@@ -34,19 +34,19 @@ import lombok.experimental.SuperBuilder;
 @Data
 public class UpdateBusinessesDto extends ExtendedBaseDto {
 
-    @Size(max = 50, message = "Name cannot exceed 50 characters")
-    @Unique(model = BusinessesModel.class, fieldName = "name", message = "This business is already registered")
+    @Size(max = 50, message = "{Business.name.Size}")
+    @Unique(model = BusinessesModel.class, fieldName = "name", message = "{Business.name.Unique}")
     private String name;
 
-    @Size(max = 200, message = "Description cannot exceed 200 characters")
+    @Size(max = 200, message = "{Business.description.Size}")
     private String description;
 
-    @Size(min = 12, max = 13, message = "RFC must be 12 or 13 characters long")
-    @Rfc
-    @Unique(model = BusinessesModel.class, fieldName = "rfc", message = "This rfc is already registered")
+    @Size(min = 12, max = 13, message = "{Business.rfc.Size}")
+    @Rfc(message = "{Business.rfc.Rfc}")
+    @Unique(model = BusinessesModel.class, fieldName = "rfc", message = "{Business.rfc.Unique}")
     private String rfc;
 
-    @PastOrPresentDate(message = "Establishment date must be in the past or present")
+    @PastOrPresentDate(message = "{Business.establishmentDate.PastOrPresent}")
     private LocalDate establishmentDate;
 
     @JsonDeserialize(using = IndustriesModelDeserializer.class)
@@ -58,8 +58,8 @@ public class UpdateBusinessesDto extends ExtendedBaseDto {
     @JsonDeserialize(using = TypesRegimensTaxesModelDeserializer.class)
     private TypesRegimensTaxesModel taxRegimen;
 
-    @ImageFile(message = "Logo must be an image file")
-    @MaxFileSize(value = 2097152, message = "Logo file size must not exceed 2MB") // 2MB
-    @AspectRatio(value = "1:1", tolerance = 10.0, message = "Logo must be square (1:1 aspect ratio) with 10% tolerance")
+    @ImageFile(message = "{Business.logo.ImageFile}")
+    @MaxFileSize(value = 2097152, message = "{Business.logo.MaxFileSize}") // 2MB
+    @AspectRatio(value = "1:1", tolerance = 10.0, message = "{Business.logo.AspectRatio}")
     private MultipartFile logo;
 }
