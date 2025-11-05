@@ -23,10 +23,10 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @Data
 public class UpdateSuppliesIncomingDto extends ExtendedBaseDto {
-    @PastOrPresentDate()
+    @PastOrPresentDate(message = "{SuppliesIncoming.expirationDate.PastOrPresent}")
     private LocalDate expirationDate;
 
-    @Size(max = 60, message = "Sku cannot exceed 60 characters")
+    @Size(max = 60, message = "{SuppliesIncoming.sku.Size}")
     private String sku;
 
     private Integer quantityPerUnit;

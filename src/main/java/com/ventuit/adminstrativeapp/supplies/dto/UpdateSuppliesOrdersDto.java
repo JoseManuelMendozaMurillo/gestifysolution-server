@@ -26,7 +26,7 @@ public class UpdateSuppliesOrdersDto extends ExtendedBaseDto {
 
     private SuppliesOrdersStatus status;
 
-    @Size(max = 60, message = "Description cannot exceed 60 characters")
+    @Size(max = 60, message = "{SuppliesOrder.description.Size}")
     private String description;
 
     @JsonDeserialize(using = SuppliesDeserializer.class)

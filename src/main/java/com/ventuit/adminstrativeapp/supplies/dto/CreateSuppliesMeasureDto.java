@@ -19,9 +19,9 @@ import lombok.experimental.SuperBuilder;
 @Data
 public class CreateSuppliesMeasureDto extends ExtendedBaseDto {
 
-    @NotBlank(message = "You must send the supplies measure's name")
-    @Size(max = 60, message = "Name cannot exceed 60 characters")
-    @Unique(model = SuppliesMeasureModel.class, fieldName = "measure", message = "This measure is already registered")
+    @NotBlank(message = "{SuppliesMeasure.measure.NotBlank}")
+    @Size(max = 60, message = "{SuppliesMeasure.measure.Size}")
+    @Unique(model = SuppliesMeasureModel.class, fieldName = "measure", message = "{SuppliesMeasure.measure.Unique}")
     private String measure;
 
 }
