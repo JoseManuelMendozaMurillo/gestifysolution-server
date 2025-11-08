@@ -72,6 +72,7 @@ services:
     environment:
       - KC_HOSTNAME=${KEYCLOAK_HOSTNAME}
       - KC_PROXY_HEADERS=xforwarded
+      - KC_HOSTNAME_STRICT_HTTPS=true
     command: ["start-dev"]
 
   gestifysolution-minio:
