@@ -66,6 +66,7 @@ services:
     volumes:
       - ./docker/certs:/opt/keycloak/conf/certs
     environment:
+      - KC_DB_URL=jdbc:${KEYCLOAK_DATABASE_PROVIDER}://${KEYCLOAK_DATABASE_SERVICE_NAME}:${KEYCLOAK_DATABASE_INTERNAL_PORT}/${KEYCLOAK_DATABASE_NAME}?characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true
       - KC_HOSTNAME=${KEYCLOAK_HOSTNAME}
       - KC_HTTPS_CERTIFICATE_FILE=/opt/keycloak/conf/certs/tls.crt
       - KC_HTTPS_CERTIFICATE_KEY_FILE=/opt/keycloak/conf/certs/tls.key
