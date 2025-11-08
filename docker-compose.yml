@@ -70,7 +70,7 @@ services:
       - backend
     environment:
       - KC_HOSTNAME=${KEYCLOAK_HOSTNAME}
-      - KC_PROXY_HEADERS=edge
+      - KC_PROXY_HEADERS=xforwarded
     command: [ "start" ]
 
   gestifysolution-minio:
