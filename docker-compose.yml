@@ -71,6 +71,7 @@ services:
     environment:
       - KC_HOSTNAME=${KEYCLOAK_HOSTNAME}
       - KC_PROXY_HEADERS=edge
+    command: [ "start" ]
 
   gestifysolution-minio:
     extends:
