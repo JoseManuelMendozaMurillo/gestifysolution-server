@@ -58,6 +58,11 @@ services:
     extends:
       file: ./docker/docker-compose.base.yml
       service: gestifysolution-keycloak-base
+    build:
+      context: .
+      dockerfile: ./docker/keycloak/Dockerfile
+      args:
+        - KC_DB_ARG=${KC_DB}
     depends_on:
       gestifysolution-keycloak-db:
         condition: service_healthy
