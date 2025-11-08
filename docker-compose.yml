@@ -64,15 +64,17 @@ services:
       args:
         - KC_DB_ARG=${KEYCLOAK_DATABASE_PROVIDER}
         - KC_PROXY_HEADERS_ARG=xforwarded
+        - KC_FEATURES_ARG=hostname:v1
     depends_on:
       gestifysolution-keycloak-db:
         condition: service_healthy
     networks:
       - backend
     environment:
-      - KC_HOSTNAME=${KEYCLOAK_HOSTNAME}
+      - KC_FEATURES=hostname:v1
+      - KC_HOSTNAME_URL=https://${KEYCLOAK_HOSTNAME}
+      - KC_HTTP_ENABLED=true
       - KC_PROXY_HEADERS=xforwarded
-      - KC_HOSTNAME_STRICT_HTTPS=true
     command: ["start-dev"]
 
   gestifysolution-minio:
