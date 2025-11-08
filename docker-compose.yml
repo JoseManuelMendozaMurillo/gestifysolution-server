@@ -64,7 +64,7 @@ services:
     networks:
       - backend
     command:
-      - "start-dev" # TODO: change to start when ready, this is for development purposes, start requires https and keycloak is not configured for it
+      - "start"
 
   gestifysolution-minio:
     extends:
