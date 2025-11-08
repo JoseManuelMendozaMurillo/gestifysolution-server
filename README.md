@@ -56,6 +56,29 @@ The application provides REST endpoints for MinIO operations:
 5. The development environment will be set up automatically, including all dependencies and services.
 6. The server and services will be available at the same ports as above.
 
+## SSL Certificates for Keycloak
+
+For security reasons, Keycloak requires SSL certificates in production mode. The project includes a script to generate self-signed certificates for development:
+
+1. Generate certificates (for development/testing only):
+   ```sh
+   cd docker
+   chmod +x generate-certs.sh
+   ./generate-certs.sh
+   ```
+
+2. The certificates will be generated in `docker/certs/`:
+   - `tls.crt`: Public certificate
+   - `tls.key`: Private key
+   - `tls.csr`: Certificate signing request
+
+⚠️ **Important Security Notes:**
+- The generated certificates are self-signed and suitable for development only
+- For production, use valid certificates from a trusted Certificate Authority (CA)
+- Never commit certificates to version control
+- Keep your private keys (`*.key` files) secure
+- Different environments should use different certificates
+
 ## API Documentation
 
 The API documentation is generated with **Swagger**.

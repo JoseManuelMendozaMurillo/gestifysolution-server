@@ -63,8 +63,18 @@ services:
         condition: service_healthy
     networks:
       - backend
-    command:
+    volumes:
+      - ./docker/certs:/opt/keycloak/conf/certs
+    environment:
+      - KC_HOSTNAME=${KEYCLOAK_HOSTNAME}
+      - KC_HTTPS_CERTIFICATE_FILE=/opt/keycloak/conf/certs/tls.crt
+      - KC_HTTPS_CERTIFICATE_KEY_FILE=/opt/keycloak/conf/certs/tls.key
+      - KC_PROXY=edge
+    command: 
       - "start"
+      - "--optimized"
+      - "--https-certificate-file=/opt/keycloak/conf/certs/tls.crt"
+      - "--https-certificate-key-file=/opt/keycloak/conf/certs/tls.key"
 
   gestifysolution-minio:
     extends:
