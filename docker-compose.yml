@@ -5,7 +5,7 @@ services:
     extends:
       file: ./docker/docker-compose.base.yml
       service: gestifysolution-server-base
-    build: 
+    build:
       context: .
       dockerfile: dockerfile
     working_dir: /app
@@ -70,7 +70,7 @@ services:
       - KC_HTTPS_CERTIFICATE_FILE=/opt/keycloak/conf/certs/tls.crt
       - KC_HTTPS_CERTIFICATE_KEY_FILE=/opt/keycloak/conf/certs/tls.key
       - KC_PROXY=edge
-    command: 
+    command:
       - "start"
       - "--optimized"
       - "--https-certificate-file=/opt/keycloak/conf/certs/tls.crt"
