@@ -85,6 +85,8 @@ services:
       - backend
     volumes:
       - gestifysolution-minio-data:/data
+    environment:
+      - MINIO_BROWSER_REDIRECT_URL=https://${MINIO_HOSTNAME}
 
 volumes:
   gestifysolution-db-data:
