@@ -63,6 +63,7 @@ services:
       dockerfile: ./docker/keycloak/Dockerfile
       args:
         - KC_DB_ARG=${KEYCLOAK_DATABASE_PROVIDER}
+        - KC_PROXY_HEADERS_ARG=xforwarded
     depends_on:
       gestifysolution-keycloak-db:
         condition: service_healthy
@@ -71,7 +72,7 @@ services:
     environment:
       - KC_HOSTNAME=${KEYCLOAK_HOSTNAME}
       - KC_PROXY_HEADERS=xforwarded
-    command: [ "start" ]
+    command: [ "start", "--optimized"]
 
   gestifysolution-minio:
     extends:
