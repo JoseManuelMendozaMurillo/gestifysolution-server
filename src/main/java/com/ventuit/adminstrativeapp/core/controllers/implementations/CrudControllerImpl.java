@@ -1,7 +1,7 @@
 package com.ventuit.adminstrativeapp.core.controllers.implementations;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
 import com.ventuit.adminstrativeapp.core.controllers.interfaces.CrudControllerInterface;
@@ -20,20 +20,20 @@ public class CrudControllerImpl<CREATINGDTO, UPDATINGDTO, LISTDTO, ID, SERVICE e
     }
 
     @Override
-    public ResponseEntity<List<LISTDTO>> getAll() {
-        List<LISTDTO> data = this.crudService.getAll();
+    public ResponseEntity<Page<LISTDTO>> getAll(Pageable pageable) {
+        Page<LISTDTO> data = this.crudService.getAll(pageable);
         return ResponseEntity.ok(data);
     }
 
     @Override
-    public ResponseEntity<List<LISTDTO>> getAllActive() {
-        List<LISTDTO> data = this.crudService.getAllActive();
+    public ResponseEntity<Page<LISTDTO>> getAllActive(Pageable pageable) {
+        Page<LISTDTO> data = this.crudService.getAllActive(pageable);
         return ResponseEntity.ok(data);
     }
 
     @Override
-    public ResponseEntity<List<LISTDTO>> getAllInactive() {
-        List<LISTDTO> data = this.crudService.getAllInactive();
+    public ResponseEntity<Page<LISTDTO>> getAllInactive(Pageable pageable) {
+        Page<LISTDTO> data = this.crudService.getAllInactive(pageable);
         return ResponseEntity.ok(data);
     }
 

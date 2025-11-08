@@ -1,9 +1,10 @@
 package com.ventuit.adminstrativeapp.core.services.implementations;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -42,18 +43,18 @@ public abstract class CrudServiceImpl<CREATINGDTO, UPDATINGDTO, LISTDTO, ENTITY 
     }
 
     @Override
-    public List<LISTDTO> getAll() {
-        return this.mapper.entitiesToShowDtos(this.repository.findAll());
+    public Page<LISTDTO> getAll(Pageable pageable) {
+        return this.repository.findAll(pageable).map(this.mapper::toShowDto);
     }
 
     @Override
-    public List<LISTDTO> getAllInactive() {
-        return this.mapper.entitiesToShowDtos(this.repository.findByDeletedAtIsNotNull());
+    public Page<LISTDTO> getAllInactive(Pageable pageable) {
+        return this.repository.findByDeletedAtIsNotNull(pageable).map(this.mapper::toShowDto);
     }
 
     @Override
-    public List<LISTDTO> getAllActive() {
-        return this.mapper.entitiesToShowDtos(this.repository.findByDeletedAtIsNull());
+    public Page<LISTDTO> getAllActive(Pageable pageable) {
+        return this.repository.findByDeletedAtIsNull(pageable).map(this.mapper::toShowDto);
     }
 
     @Override

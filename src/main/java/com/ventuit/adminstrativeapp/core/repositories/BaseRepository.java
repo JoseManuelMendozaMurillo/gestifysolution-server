@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.repository.NoRepositoryBean;
@@ -52,9 +54,13 @@ public interface BaseRepository<ENTITY extends ExtendedBaseModel, ID> extends Jp
 
     List<ENTITY> findByDeletedAtIsNull();
 
+    Page<ENTITY> findByDeletedAtIsNull(Pageable pageable);
+
     Optional<ENTITY> findByIdAndDeletedAtIsNull(ID id);
 
     List<ENTITY> findByDeletedAtIsNotNull();
+
+    Page<ENTITY> findByDeletedAtIsNotNull(Pageable pageable);
 
     Optional<ENTITY> findByIdAndDeletedAtIsNotNull(ID id);
 }
