@@ -19,14 +19,14 @@ import com.ventuit.adminstrativeapp.core.controllers.implementations.CrudControl
 public class ProductsController
         extends CrudControllerImpl<CreateProductDto, UpdateProductDto, ListProductDto, Integer, ProductsService> {
 
-    public ProductsController(ProductsService crudService) {
-        super(crudService);
+    public ProductsController(ProductsService service) {
+        super(service);
     }
 
     @Override
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ListProductDto> create(@ModelAttribute CreateProductDto createDto) {
-        ListProductDto entityCreated = this.crudService.create(createDto);
+        ListProductDto entityCreated = this.service.create(createDto);
         return ResponseEntity.ok(entityCreated);
     }
 
@@ -34,7 +34,7 @@ public class ProductsController
     @PostMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ListProductDto> update(@PathVariable Integer id,
             @ModelAttribute UpdateProductDto updateDto) {
-        ListProductDto entityUpdated = this.crudService.update(id, updateDto);
+        ListProductDto entityUpdated = this.service.update(id, updateDto);
         return ResponseEntity.ok(entityUpdated);
     }
 }

@@ -20,14 +20,14 @@ public class BusinessesController
         extends
         CrudControllerImpl<CreateBusinessesDto, UpdateBusinessesDto, ListBusinessesDto, Integer, BusinessesService> {
 
-    public BusinessesController(BusinessesService crudService) {
-        super(crudService);
+    public BusinessesController(BusinessesService service) {
+        super(service);
     }
 
     @Override
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ListBusinessesDto> create(@ModelAttribute CreateBusinessesDto createBusinessesDto) {
-        ListBusinessesDto entityCreated = this.crudService.create(createBusinessesDto);
+        ListBusinessesDto entityCreated = this.service.create(createBusinessesDto);
         return ResponseEntity.ok(entityCreated);
     }
 
@@ -35,7 +35,7 @@ public class BusinessesController
     @PostMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ListBusinessesDto> update(@PathVariable Integer id,
             @ModelAttribute UpdateBusinessesDto businessesDto) {
-        ListBusinessesDto entityCreated = this.crudService.update(id, businessesDto);
+        ListBusinessesDto entityCreated = this.service.update(id, businessesDto);
         return ResponseEntity.ok(entityCreated);
     }
 
