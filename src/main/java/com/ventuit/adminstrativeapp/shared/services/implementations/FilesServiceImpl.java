@@ -55,6 +55,9 @@ public class FilesServiceImpl implements FilesServiceInterface {
     @Value("${app.domain}")
     private String domain;
 
+    @Value("${app.ssl}")
+    private Boolean ssl;
+
     @Value("${server.port}")
     private String serverPort;
 
@@ -610,7 +613,8 @@ public class FilesServiceImpl implements FilesServiceInterface {
     private String generateFileUrl(String fileKey, String filePath) {
         // Determine if this is an image based on the file key extension
         String endpoint = isImageFile(fileKey) ? "images" : "files";
-        return String.format("http://%s:%s/api/v1/minio/%s%s", domain, serverPort, endpoint, filePath + "/" + fileKey);
+        return String.format("%s://%s:%s/api/v1/minio/%s%s", ssl ? "https" : "http", domain, serverPort, endpoint,
+                filePath + "/" + fileKey);
     }
 
     /**

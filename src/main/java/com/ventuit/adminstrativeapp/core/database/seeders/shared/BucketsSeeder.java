@@ -32,8 +32,11 @@ public class BucketsSeeder implements CommandLineRunner {
     @Value("${app.minio.exposed-port-api}")
     private String minioPort;
 
-    @Value("${app.domain}")
-    private String domain;
+    @Value("${app.minio.hostname}")
+    private String minioHostname;
+
+    @Value("${app.minio.ssl}")
+    private Boolean minioSsl;
 
     @Override
     public void run(String... args) throws Exception {
@@ -70,7 +73,8 @@ public class BucketsSeeder implements CommandLineRunner {
             return;
         }
 
-        String url = String.format("http://%s:%s/%s", domain, minioPort, minioBucketName);
+        String url = String.format("%s://%s:%s/%s", minioSsl ? "https" : "http", minioHostname, minioPort,
+                minioBucketName);
 
         BucketsModel minioBucket = BucketsModel.builder()
                 .name(minioBucketName)
