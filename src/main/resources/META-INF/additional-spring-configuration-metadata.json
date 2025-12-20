@@ -1,49 +1,72 @@
-{
-    "properties": [
-        {
-            "name": "app.keycloak.port",
-            "type": "java.lang.String",
-            "description": "Specifies the port number on which the Keycloak server is running.'"
-        },
-        {
-            "name": "app.keycloak.base-url",
-            "type": "java.lang.String",
-            "description": "Defines the base URL of the Keycloak server, excluding the port."
-        },
-        {
-            "name": "app.keycloak.username",
-            "type": "java.lang.String",
-            "description": "Indicates the username of an administrative user in Keycloak."
-        },
-        {
-            "name": "app.keycloak.password",
-            "type": "java.lang.String",
-            "description": "Represents the password associated with the app.keycloak.admin-user."
-        },
-        {
-            "name": "app.keycloak.realm",
-            "type": "java.lang.String",
-            "description": "..."
-        },
-        {
-            "name": "app.keycloak.admin-client",
-            "type": "java.lang.String",
-            "description": "..."
-        },
-        {
-            "name": "app.keycloak.client",
-            "type": "java.lang.String",
-            "description": "..."
-        },
-        {
-            "name": "app.domain",
-            "type": "java.lang.String",
-            "description": "..."
-        },
-        {
-            "name": "app.ssl",
-            "type": "java.lang.String",
-            "description": "..."
-        }
-    ]
-}
+{"properties": [
+  {
+    "name": "app.keycloak.port",
+    "type": "java.lang.String",
+    "description": "Specifies the port number on which the Keycloak server is running."
+  },
+  {
+    "name": "app.keycloak.base-url",
+    "type": "java.lang.String",
+    "description": "Defines the base URL of the Keycloak server, excluding the port."
+  },
+  {
+    "name": "app.keycloak.username",
+    "type": "java.lang.String",
+    "description": "The administrative username used to authenticate with the Keycloak server."
+  },
+  {
+    "name": "app.keycloak.password",
+    "type": "java.lang.String",
+    "description": "The password for the administrative Keycloak user."
+  },
+  {
+    "name": "app.keycloak.realm",
+    "type": "java.lang.String",
+    "description": "The name of the Keycloak realm to be used by the application."
+  },
+  {
+    "name": "app.keycloak.admin-client",
+    "type": "java.lang.String",
+    "description": "The client ID of the Keycloak admin client used for administrative operations."
+  },
+  {
+    "name": "app.keycloak.client",
+    "type": "java.lang.String",
+    "description": "The client ID of the Keycloak client used for user authentication."
+  },
+  {
+    "name": "app.domain",
+    "type": "java.lang.String",
+    "description": "The domain name where the application is hosted."
+  },
+  {
+    "name": "app.ssl",
+    "type": "java.lang.String",
+    "description": "Indicates whether SSL is enabled (true/false) for the application."
+  },
+  {
+    "name": "app.minio.endpoint",
+    "type": "java.lang.String",
+    "description": "The endpoint URL for connecting to the MinIO server."
+  },
+  {
+    "name": "app.minio.access-key",
+    "type": "java.lang.String",
+    "description": "The access key used to authenticate with the MinIO server."
+  },
+  {
+    "name": "app.minio.secret-key",
+    "type": "java.lang.String",
+    "description": "The secret key used to authenticate with the MinIO server."
+  },
+  {
+    "name": "app.minio.bucket-name",
+    "type": "java.lang.String",
+    "description": "The name of the MinIO bucket used for storing files."
+  },
+  {
+    "name": "app.minio.exposed-port-api",
+    "type": "java.lang.String",
+    "description": "The externally exposed port for the MinIO API service."
+  }
+]}

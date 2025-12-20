@@ -32,6 +32,12 @@ replay_pid*
 # Learn more about .gitignore:
 #     https://www.atlassian.com/git/tutorials/saving-changes/gitignore
 
+# SSL Certificates
+docker/certs/*.key
+docker/certs/*.crt
+docker/certs/*.csr
+docker/certs/*pem
+
 # Node artifact files
 node_modules/
 dist/

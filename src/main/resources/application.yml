@@ -2,21 +2,20 @@ spring:
     application:
         name: gestifysolution
     datasource:
-        url: jdbc:mysql://${DOCKER_DATABASE_CONTAINER_NAME}:3306/${MYSQL_DATABASE}
-        username: ${MYSQL_USERNAME}
-        password: ${MYSQL_PASSWORD}
+        url: jdbc:mysql://${DATABASE_SERVICE_NAME}:${DATABASE_INTERNAL_PORT}/${DATABASE_NAME}
+        username: ${DATABASE_USERNAME}
+        password: ${DATABASE_PASSWORD}
         driver-class-name: com.mysql.cj.jdbc.Driver
     jpa:
         hibernate:
-            ddl-auto: create-drop
+            ddl-auto: ${DATABASE_DDL_AUTO}
         database-platform: org.hibernate.dialect.MySQL8Dialect
         show-sql: true
-    # security:
-    #     oauth2:
-    #         resourceserver:
-    #             jwt:
-    #                 issuer-uri: ${KEYCLOAK_BASE_URL}/realms/${KEYCLOAK_REALM_NAME}
-    #                 jwk-set-uri: ${KEYCLOAK_BASE_URL}/realms/${KEYCLOAK_REALM_NAME}/protocol/openid-connect/certs
+    # TODO: Add this params to env file
+    servlet:
+        multipart:
+            max-file-size: ${SERVER_MAX_FILE_SIZE}
+            max-request-size: ${SERVER_MAX_REQUEST_SIZE}
              
 springdoc:
     swagger-ui:
@@ -27,7 +26,7 @@ springdoc:
         path: /docs/api-docs
 
 server:
-    port: ${SERVER_PORT}
+    port: ${SERVER_INTERNAL_PORT}
     servlet:
         context-path: /api/v1
 
@@ -41,3 +40,11 @@ app:
         client: ${KEYCLOAK_CLIENT_NAME}
     domain: ${DOMAIN}
     ssl: ${SSL}
+    minio:
+        endpoint: http://${MINIO_SERVICE_NAME}:${MINIO_INTERNAL_PORT_API}
+        access-key: ${MINIO_ROOT_USER}
+        secret-key: ${MINIO_ROOT_PASSWORD}
+        bucket-name: ${MINIO_BUCKET_NAME}
+        exposed-port-api: ${MINIO_EXPOSED_PORT_API}
+        hostname: ${MINIO_HOSTNAME}
+        ssl: ${MINIO_SSL}

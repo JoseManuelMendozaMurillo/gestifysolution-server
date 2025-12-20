@@ -14,7 +14,7 @@ import jakarta.validation.Payload;
 @Constraint(validatedBy = UniqueEmailValidator.class)
 @Documented
 public @interface UniqueEmail {
-    String message() default "The email already exist";
+    String message() default "{User.email.Unique}";
 
     Class<?>[] groups() default {};
 

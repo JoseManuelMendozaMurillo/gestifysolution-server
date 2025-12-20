@@ -23,20 +23,20 @@ import lombok.experimental.SuperBuilder;
 @Data
 public class CreateSuppliesOrdersDto extends ExtendedBaseDto {
 
-    @NotNull(message = "Quantity cannot be null")
+    @NotNull(message = "{SuppliesOrder.quantity.NotNull}")
     private Integer quantity;
 
-    @NotNull(message = "Status cannot be null")
+    @NotNull(message = "{SuppliesOrder.status.NotNull}")
     private SuppliesOrdersStatus status;
 
-    @Size(max = 60, message = "Description cannot exceed 60 characters")
+    @Size(max = 60, message = "{SuppliesOrder.description.Size}")
     private String description;
 
-    @NotNull(message = "Supplies cannot be null")
+    @NotNull(message = "{SuppliesOrder.supplies.NotNull}")
     @JsonDeserialize(using = SuppliesDeserializer.class)
     private SuppliesModel supplies;
 
-    @NotNull(message = "Supplier cannot be null")
+    @NotNull(message = "{SuppliesOrder.supplier.NotNull}")
     @JsonDeserialize(using = SuppliersDeserializer.class)
     private SuppliersModel supplier;
 }

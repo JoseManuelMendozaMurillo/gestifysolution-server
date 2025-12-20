@@ -14,7 +14,7 @@ import jakarta.validation.Payload;
 @Constraint(validatedBy = PastOrPresentDateValidator.class)
 @Documented
 public @interface PastOrPresentDate {
-    String message() default "Date must be in the past or present";
+    String message() default "{date.pastOrPresent}";
 
     Class<?>[] groups() default {};
 

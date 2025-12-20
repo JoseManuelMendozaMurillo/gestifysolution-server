@@ -1,0 +1,14 @@
+# Image based on Red Hat 
+FROM maven:3.9.8-amazoncorretto-21-al2023
+
+# Installation of additional needed software
+RUN yum update -y && \
+    yum install -y tar gzip ncurses util-linux util-linux-user gnupg2 --allowerasing
+
+# Set up vscode user with sudo access (no password required)
+RUN useradd -m -s /bin/bash vscode && \
+    echo "vscode ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers && \
+    chmod 0440 /etc/sudoers
+
+# Switch to vscode user for development
+USER vscode

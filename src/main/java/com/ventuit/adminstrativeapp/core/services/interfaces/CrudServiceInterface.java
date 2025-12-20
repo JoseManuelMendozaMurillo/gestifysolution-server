@@ -1,14 +1,15 @@
 package com.ventuit.adminstrativeapp.core.services.interfaces;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface CrudServiceInterface<CREATINGDTO, UPDATINGDTO, LISTDTO, ID> {
 
-    List<LISTDTO> getAll();
+    Page<LISTDTO> getAll(Pageable pageable);
 
-    List<LISTDTO> getAllInactive();
+    Page<LISTDTO> getAllInactive(Pageable pageable);
 
-    List<LISTDTO> getAllActive();
+    Page<LISTDTO> getAllActive(Pageable pageable);
 
     LISTDTO getById(ID id);
 

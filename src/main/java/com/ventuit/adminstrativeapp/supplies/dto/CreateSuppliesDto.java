@@ -25,19 +25,19 @@ import lombok.experimental.SuperBuilder;
 @Data
 public class CreateSuppliesDto extends ExtendedBaseDto {
 
-    @NotBlank(message = "You must send the supplies's name")
-    @Size(max = 60, message = "Name cannot exceed 60 characters")
-    @Unique(model = SuppliesModel.class, fieldName = "name", message = "This supplies is already registered")
+    @NotBlank(message = "{Supply.name.NotBlank}")
+    @Size(max = 60, message = "{Supply.name.Size}")
+    @Unique(model = SuppliesModel.class, fieldName = "name", message = "{Supply.name.Unique}")
     private String name;
 
-    @Size(max = 60, message = "Description cannot exceed 60 characters")
+    @Size(max = 60, message = "{Supply.description.Size}")
     private String description;
 
-    @NotNull(message = "Measure cannot be null")
+    @NotNull(message = "{Supply.measure.NotNull}")
     @JsonDeserialize(using = SuppliesMeasureDeserializer.class)
     private SuppliesMeasureModel measure;
 
-    @NotNull(message = "Category cannot be null")
+    @NotNull(message = "{Supply.category.NotNull}")
     @JsonDeserialize(using = SuppliesCategoriesDeserializer.class)
     private SuppliesCategoriesModel category;
 }

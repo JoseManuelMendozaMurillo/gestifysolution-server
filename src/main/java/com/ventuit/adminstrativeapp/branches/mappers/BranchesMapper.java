@@ -9,19 +9,27 @@ import org.mapstruct.Mapping;
 import com.ventuit.adminstrativeapp.branches.dto.CreateBranchesDto;
 import com.ventuit.adminstrativeapp.branches.dto.UpdateBranchesDto;
 import com.ventuit.adminstrativeapp.branches.models.BranchesModel;
+import com.ventuit.adminstrativeapp.businesses.models.BusinessesModel;
+import com.ventuit.adminstrativeapp.businesses.repositories.BusinessesRepository;
 import com.ventuit.adminstrativeapp.core.mappers.interfaces.CrudMapperInterface;
+import com.ventuit.adminstrativeapp.shared.exceptions.EntityNotFoundException;
 
 import org.mapstruct.MappingConstants.ComponentModel;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Mapper(componentModel = ComponentModel.SPRING, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public abstract class BranchesMapper
         implements CrudMapperInterface<CreateBranchesDto, UpdateBranchesDto, CreateBranchesDto, BranchesModel> {
 
+    @Autowired
+    private BusinessesRepository businessesRepository;
+
     @Override
     @Named("toDto")
+    @Mapping(target = "businessId", source = "business.id")
     public abstract CreateBranchesDto toDto(BranchesModel entity);
 
     @Override
@@ -30,14 +38,18 @@ public abstract class BranchesMapper
 
     @Override
     @Named("toShowDto")
+    @Mapping(target = "businessId", source = "business.id")
     public abstract List<CreateBranchesDto> entitiesToShowDtos(List<BranchesModel> listEntities);
 
     @Override
+    @Mapping(target = "businessId", source = "business.id")
     @IterableMapping(qualifiedByName = "toShowDto")
     public abstract CreateBranchesDto toShowDto(BranchesModel entity);
 
     @Override
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "branchesProducts", ignore = true)
+    @Mapping(target = "business", source = "businessId", qualifiedByName = "businessIdToBusinessModel")
     public abstract BranchesModel toEntity(CreateBranchesDto dto);
 
     @Override
@@ -51,5 +63,14 @@ public abstract class BranchesMapper
     @Mapping(target = "active", ignore = true)
     @Mapping(target = "activeChangedAt", ignore = true)
     @Mapping(target = "activeChangedBy", ignore = true)
+    @Mapping(target = "business", ignore = true)
+    @Mapping(target = "branchesProducts", ignore = true)
     public abstract BranchesModel updateFromDto(UpdateBranchesDto dto, @MappingTarget BranchesModel entity);
+
+    @Named("businessIdToBusinessModel")
+    public BusinessesModel businessIdToBusinessModel(Integer businessId) {
+        return businessId == null ? null
+                : businessesRepository.findById(businessId)
+                        .orElseThrow(() -> new EntityNotFoundException("Business not found"));
+    }
 }

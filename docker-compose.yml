@@ -1,46 +1,97 @@
-version: '3.9'
+version: '3.8'
 
 services:
-
   gestifysolution-server:
     extends:
       file: ./docker/docker-compose.base.yml
       service: gestifysolution-server-base
-    build: 
+    build:
       context: .
       dockerfile: dockerfile
-    env_file:
-      - .env
-    depends_on:
-      - gestifysolution-db
+    working_dir: /app
     networks:
       - backend
     env_file:
       - ./.env
+    depends_on:
+      gestifysolution-db:
+        condition: service_healthy
+      gestifysolution-keycloak-db:
+        condition: service_healthy
+      gestifysolution-keycloak:
+        condition: service_started
+      gestifysolution-minio:
+        condition: service_started
+    restart: unless-stopped
 
   gestifysolution-db:
     extends:
       file: ./docker/docker-compose.base.yml
       service: gestifysolution-db-base
     volumes:
-      - ./docker/provisions/mysql/init:/docker-entrypoint-initdb.d
       - gestifysolution-db-data:/var/lib/mysql
     networks:
       - backend
-  
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DATABASE_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  gestifysolution-keycloak-db:
+    extends:
+      file: ./docker/docker-compose.base.yml
+      service: gestifysolution-keycloak-db-base
+    volumes:
+      - gestifysolution-keycloak-db-data:/var/lib/mysql
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${KEYCLOAK_DATABASE_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
   gestifysolution-keycloak:
     extends:
       file: ./docker/docker-compose.base.yml
       service: gestifysolution-keycloak-base
-    environment:
-      - KC_DB_URL=jdbc:mysql://gestifysolution-db:3306/${KEYCLOAK_DATABASE_NAME}
+    build:
+      context: .
+      dockerfile: ./docker/keycloak/Dockerfile
+      args:
+        - KC_DB_ARG=${KEYCLOAK_DATABASE_PROVIDER}
+        - KC_PROXY_HEADERS_ARG=xforwarded
+        - KC_FEATURES_ARG=hostname:v1
     depends_on:
-      - gestifysolution-db
+      gestifysolution-keycloak-db:
+        condition: service_healthy
     networks:
       - backend
+    environment:
+      - KC_FEATURES=hostname:v1
+      - KC_HOSTNAME_URL=https://${KEYCLOAK_HOSTNAME}
+      - KC_HTTP_ENABLED=true
+      - KC_PROXY_HEADERS=xforwarded
+    command: ["start-dev"]
+
+  gestifysolution-minio:
+    extends:
+      file: ./docker/docker-compose.base.yml
+      service: gestifysolution-minio-base
+    networks:
+      - backend
+    volumes:
+      - gestifysolution-minio-data:/data
+    environment:
+      - MINIO_BROWSER_REDIRECT_URL=https://${MINIO_HOSTNAME}
 
 volumes:
   gestifysolution-db-data:
+  gestifysolution-keycloak-db-data:
+  gestifysolution-minio-data:
 
 networks:
   backend:

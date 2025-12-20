@@ -19,30 +19,30 @@ import lombok.NoArgsConstructor;
 @Data
 public class CreateKeycloakUser {
 
-    @NotBlank(message = "username cannot be empty")
-    @Size(min = 3, max = 255, message = "username must have a length between 3 and 255")
-    @Pattern(regexp = RegexUtils.USERNAME_PATTERN, message = "username contains invalid character")
+    @NotBlank(message = "{User.username.NotBlank}")
+    @Size(min = 3, max = 255, message = "{User.username.Size}")
+    @Pattern(regexp = RegexUtils.USERNAME_PATTERN, message = "{User.username.Pattern}")
     @UniqueUsername()
     private String username;
 
-    @NotBlank(message = "email cannot be empty")
-    @Size(max = 255, message = "email cannot exceed 255 characters")
+    @NotBlank(message = "{User.email.NotBlank}")
+    @Size(max = 255, message = "{User.email.Size}")
     @Email
     @UniqueEmail()
     private String email;
 
-    @NotBlank(message = "first name cannot be empty")
-    @Size(max = 255, message = "first name cannot exceed 255 characters")
-    @Pattern(regexp = RegexUtils.NAME_PATTERN, message = "first name contains invalid character")
+    @NotBlank(message = "{User.firstName.NotBlank}")
+    @Size(max = 255, message = "{User.firstName.Size}")
+    @Pattern(regexp = RegexUtils.NAME_PATTERN, message = "{User.firstName.Pattern}")
     private String firstName;
 
-    @NotBlank(message = "last name cannot be empty")
-    @Size(max = 255, message = "last name cannot exceed 255 characters")
-    @Pattern(regexp = RegexUtils.NAME_PATTERN, message = "last name contains invalid character")
+    @NotBlank(message = "{User.lastName.NotBlank}")
+    @Size(max = 255, message = "{User.lastName.Size}")
+    @Pattern(regexp = RegexUtils.NAME_PATTERN, message = "{User.lastName.Pattern}")
     private String lastName;
 
-    @NotBlank(message = "password cannot be empty")
-    @Size(min = 8, max = 255, message = "password must have a length between 8 and 255")
+    @NotBlank(message = "{User.password.NotBlank}")
+    @Size(min = 8, max = 100, message = "{User.password.Size}")
     private String password;
 
 }

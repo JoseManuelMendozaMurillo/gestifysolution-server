@@ -25,18 +25,18 @@ import lombok.experimental.SuperBuilder;
 @Data
 public class UpdateSuppliersDto extends ExtendedBaseDto {
 
-    @Size(max = 60, message = "Name cannot exceed 60 characters")
-    @Unique(model = SuppliersModel.class, fieldName = "name", message = "This supplier is already registered")
+    @Size(max = 60, message = "{Supplier.name.Size}")
+    @Unique(model = SuppliersModel.class, fieldName = "name", message = "{Supplier.name.Unique}")
     private String name;
 
     @Phone
-    @Size(max = 30, message = "Phone cannot exceed 30 characters")
-    @Unique(model = SuppliersModel.class, fieldName = "phone", message = "This phone is already registered")
+    @Size(max = 30, message = "{Supplier.phone.Size}")
+    @Unique(model = SuppliersModel.class, fieldName = "phone", message = "{Supplier.phone.Unique}")
     private String phone;
 
     @Email
-    @Size(max = 60, message = "Email cannot exceed 60 characters")
-    @Unique(model = SuppliersModel.class, fieldName = "email", message = "This email is already registered")
+    @Size(max = 60, message = "{Supplier.email.Size}")
+    @Unique(model = SuppliersModel.class, fieldName = "email", message = "{Supplier.email.Unique}")
     private String email;
 
     private Integer quantityPerUnit;

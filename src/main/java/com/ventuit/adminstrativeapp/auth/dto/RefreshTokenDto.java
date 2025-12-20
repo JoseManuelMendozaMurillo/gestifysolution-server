@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Data
 public class RefreshTokenDto {
 
-    @NotBlank(message = "The refresh token cannot be blank")
+    @NotBlank(message = "{Auth.RefreshTokenDto.refreshToken.NotBlank}")
     private String refreshToken;
 
 }

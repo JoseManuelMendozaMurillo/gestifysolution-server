@@ -18,11 +18,11 @@ import lombok.experimental.SuperBuilder;
 @Data
 public class UpdateWarehousesCategoriesDto extends ExtendedBaseDto {
 
-    @Size(max = 60, message = "The name must not exceed 60 characters.")
-    @Unique(model = WarehousesCategoriesModel.class, fieldName = "name", message = "This category is already registered")
+    @Size(max = 60, message = "{WarehousesCategory.name.Size}")
+    @Unique(model = WarehousesCategoriesModel.class, fieldName = "name", message = "{WarehousesCategory.name.Unique}")
     private String name;
 
-    @Size(max = 100, message = "The description must not exceed 100 characters.")
+    @Size(max = 100, message = "{WarehousesCategory.description.Size}")
     private String description;
 
 }

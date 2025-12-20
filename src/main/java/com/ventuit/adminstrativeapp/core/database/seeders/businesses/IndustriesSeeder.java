@@ -87,6 +87,7 @@ public class IndustriesSeeder implements CommandLineRunner {
                         industries.add(newIndustry);
                 });
                 industriesRepository.saveAll(industries);
+                logger.info("Successfully inserted {} industries into the industries table", industries.size());
         }
 
 }

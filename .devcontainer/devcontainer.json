@@ -1,7 +1,7 @@
 {
 	"name": "Gestify solution development environment",
 	"dockerComposeFile": [
-		"./docker-compose.devcontainer.yml"
+		"./docker-compose.yml"
 	],
 	"service": "gestifysolution-server-dev",
 	"forwardPorts": [
@@ -9,7 +9,9 @@
 	],
 	"runServices": [
 		"gestifysolution-db-dev",
-		"gestifysolution-keycloak-dev"
+		"gestifysolution-keycloak-db-dev",
+		"gestifysolution-keycloak-dev",
+		"gestifysolution-minio-dev"
 	],
 	"shutdownAction": "stopCompose",
 	"workspaceFolder": "/workspace/gestifysolution-server",
@@ -17,6 +19,7 @@
 	"remoteEnv": {
 		"LOCAL_WORKSPACE_FOLDER": "/workspace/gestifysolution-server"
 	},
+	"postCreateCommand": "mvn clean install -DskipTests",
 	"features": {
 		"ghcr.io/devcontainers/features/common-utils:2": {
 			"configureZshAsDefaultShell": true

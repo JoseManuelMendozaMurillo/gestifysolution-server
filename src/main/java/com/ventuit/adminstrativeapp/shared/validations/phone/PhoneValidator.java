@@ -35,7 +35,7 @@ public class PhoneValidator implements ConstraintValidator<Phone, String> {
         // 1. Validate against Regex Pattern
         // ----------------------------------
         if (!phone.matches(RegexUtils.PHONE_NUMBER_PATTERN)) {
-            setCustomMessage(context, "Invalid format: Must be +[country code (1,3 numbers)] [(4,14) numbers]");
+            setCustomMessage(context, "{phone.invalid.format}");
             return false;
         }
 
@@ -56,12 +56,12 @@ public class PhoneValidator implements ConstraintValidator<Phone, String> {
                 countryCode = Integer.parseInt(countryCodeStr);
             } catch (NumberFormatException e) {
                 // Regex ensures this is numeric, so this block is a safeguard
-                setCustomMessage(context, "Invalid country code format");
+                setCustomMessage(context, "{phone.invalid.country.code.format}");
                 return false;
             }
             // Make the validation
             if (!validCountryCodes.contains(countryCode)) {
-                setCustomMessage(context, "Invalid country code: +" + countryCode);
+                setCustomMessage(context, "{phone.invalid.country.code}");
                 return false;
             }
 
@@ -69,7 +69,7 @@ public class PhoneValidator implements ConstraintValidator<Phone, String> {
             // 4. Validate Full Phone Number
             // ----------------------------------
             if (!phoneUtil.isValidNumber(parsedNumber)) {
-                setCustomMessage(context, "Invalid phone number for country code +" + countryCode);
+                setCustomMessage(context, "{phone.invalid.number.for.country}");
                 return false;
             }
 
@@ -77,7 +77,7 @@ public class PhoneValidator implements ConstraintValidator<Phone, String> {
 
         } catch (NumberParseException e) {
             // Fallback for parsing failures (shouldn't happen if regex passed)
-            setCustomMessage(context, "Invalid phone number format");
+            setCustomMessage(context, "{phone.invalid.format}");
             return false;
         }
     }

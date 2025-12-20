@@ -29,25 +29,25 @@ import lombok.experimental.SuperBuilder;
 @Data
 public class CreateSuppliersDto extends ExtendedBaseDto {
 
-    @NotBlank(message = "You must send the supplier's name")
-    @Size(max = 60, message = "Name cannot exceed 60 characters")
-    @Unique(model = SuppliersModel.class, fieldName = "name", message = "This supplier is already registered")
+    @NotBlank(message = "{Supplier.name.NotBlank}")
+    @Size(max = 60, message = "{Supplier.name.Size}")
+    @Unique(model = SuppliersModel.class, fieldName = "name", message = "{Supplier.name.Unique}")
     private String name;
 
     @Phone
-    @Size(max = 30, message = "Phone cannot exceed 30 characters")
-    @Unique(model = SuppliersModel.class, fieldName = "phone", message = "This phone is already registered")
+    @Size(max = 30, message = "{Supplier.phone.Size}")
+    @Unique(model = SuppliersModel.class, fieldName = "phone", message = "{Supplier.phone.Unique}")
     private String phone;
 
     @Email
-    @Size(max = 60, message = "Email cannot exceed 60 characters")
-    @Unique(model = SuppliersModel.class, fieldName = "email", message = "This email is already registered")
+    @Size(max = 60, message = "{Supplier.email.Size}")
+    @Unique(model = SuppliersModel.class, fieldName = "email", message = "{Supplier.email.Unique}")
     private String email;
 
-    @NotNull(message = "Quantity per unit cannot be null")
+    @NotNull(message = "{Supplier.quantityPerUnit.NotNull}")
     private Integer quantityPerUnit;
 
-    @NotNull(message = "Price cannot be null")
+    @NotNull(message = "{Supplier.price.NotNull}")
     private Float price;
 
     private boolean active;
@@ -59,7 +59,7 @@ public class CreateSuppliersDto extends ExtendedBaseDto {
     @Valid
     private DirectionsDto direction;
 
-    @NotNull(message = "Supplies cannot be null")
+    @NotNull(message = "{Supplier.supplies.NotNull}")
     @JsonDeserialize(using = SuppliesDeserializer.class)
     private SuppliesModel supplies;
 }

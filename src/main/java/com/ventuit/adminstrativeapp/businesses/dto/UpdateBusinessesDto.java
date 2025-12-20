@@ -2,6 +2,8 @@ package com.ventuit.adminstrativeapp.businesses.dto;
 
 import java.time.LocalDate;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.ventuit.adminstrativeapp.businesses.models.BusinessesModel;
 import com.ventuit.adminstrativeapp.businesses.models.BusinessesTypeModel;
@@ -11,6 +13,9 @@ import com.ventuit.adminstrativeapp.businesses.serialization.BusinessesTypeModel
 import com.ventuit.adminstrativeapp.businesses.serialization.IndustriesModelDeserializer;
 import com.ventuit.adminstrativeapp.businesses.serialization.TypesRegimensTaxesModelDeserializer;
 import com.ventuit.adminstrativeapp.core.dto.ExtendedBaseDto;
+import com.ventuit.adminstrativeapp.shared.validations.aspectratio.AspectRatio;
+import com.ventuit.adminstrativeapp.shared.validations.imagefile.ImageFile;
+import com.ventuit.adminstrativeapp.shared.validations.maxfilesize.MaxFileSize;
 import com.ventuit.adminstrativeapp.shared.validations.pastorpresentdate.PastOrPresentDate;
 import com.ventuit.adminstrativeapp.shared.validations.rfc.Rfc;
 import com.ventuit.adminstrativeapp.shared.validations.unique.Unique;
@@ -29,19 +34,19 @@ import lombok.experimental.SuperBuilder;
 @Data
 public class UpdateBusinessesDto extends ExtendedBaseDto {
 
-    @Size(max = 50, message = "Name cannot exceed 50 characters")
-    @Unique(model = BusinessesModel.class, fieldName = "name", message = "This business is already registered")
+    @Size(max = 50, message = "{Business.name.Size}")
+    @Unique(model = BusinessesModel.class, fieldName = "name", message = "{Business.name.Unique}")
     private String name;
 
-    @Size(max = 200, message = "Description cannot exceed 200 characters")
+    @Size(max = 200, message = "{Business.description.Size}")
     private String description;
 
-    @Size(min = 12, max = 13, message = "RFC must be 12 or 13 characters long")
-    @Rfc
-    @Unique(model = BusinessesModel.class, fieldName = "rfc", message = "This rfc is already registered")
+    @Size(min = 12, max = 13, message = "{Business.rfc.Size}")
+    @Rfc(message = "{Business.rfc.Rfc}")
+    @Unique(model = BusinessesModel.class, fieldName = "rfc", message = "{Business.rfc.Unique}")
     private String rfc;
 
-    @PastOrPresentDate(message = "Establishment date must be in the past or present")
+    @PastOrPresentDate(message = "{Business.establishmentDate.PastOrPresent}")
     private LocalDate establishmentDate;
 
     @JsonDeserialize(using = IndustriesModelDeserializer.class)
@@ -52,4 +57,9 @@ public class UpdateBusinessesDto extends ExtendedBaseDto {
 
     @JsonDeserialize(using = TypesRegimensTaxesModelDeserializer.class)
     private TypesRegimensTaxesModel taxRegimen;
+
+    @ImageFile(message = "{Business.logo.ImageFile}")
+    @MaxFileSize(value = 2097152, message = "{Business.logo.MaxFileSize}") // 2MB
+    @AspectRatio(value = "1:1", tolerance = 10.0, message = "{Business.logo.AspectRatio}")
+    private MultipartFile logo;
 }

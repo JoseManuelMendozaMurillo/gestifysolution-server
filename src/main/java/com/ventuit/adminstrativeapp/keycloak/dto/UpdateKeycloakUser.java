@@ -16,15 +16,15 @@ import lombok.NoArgsConstructor;
 @Data
 public class UpdateKeycloakUser {
 
-    @Size(max = 255, message = "email cannot exceed 255 characters")
+    @Size(max = 255, message = "{User.email.Size}")
     @Email
     private String email;
 
-    @Size(max = 255, message = "first name cannot exceed 255 characters")
-    @Pattern(regexp = RegexUtils.NAME_PATTERN, message = "first name contains invalid character")
+    @Size(max = 255, message = "{User.firstName.Size}")
+    @Pattern(regexp = RegexUtils.NAME_PATTERN, message = "{User.firstName.Pattern}")
     private String firstName;
 
-    @Size(max = 255, message = "last name cannot exceed 255 characters")
-    @Pattern(regexp = RegexUtils.NAME_PATTERN, message = "last name contains invalid character")
+    @Size(max = 255, message = "{User.lastName.Size}")
+    @Pattern(regexp = RegexUtils.NAME_PATTERN, message = "{User.lastName.Pattern}")
     private String lastName;
 }

@@ -22,13 +22,13 @@ import lombok.experimental.SuperBuilder;
 @Data
 public class UpdateWarehousesDto extends ExtendedBaseDto {
 
-    @Size(max = 60, message = "Name cannot exceed 60 characters")
-    @Unique(model = WarehousesModel.class, fieldName = "name", message = "This warehouse is already registered")
+    @Size(max = 60, message = "{Warehouse.name.Size}")
+    @Unique(model = WarehousesModel.class, fieldName = "name", message = "{Warehouse.name.Unique}")
     private String name;
 
-    @Size(max = 30, message = "Phone cannot exceed 30 characters")
+    @Size(max = 30, message = "{Warehouse.phone.Size}")
     @Phone
-    @Unique(model = WarehousesModel.class, fieldName = "phone", message = "This phone is already registered")
+    @Unique(model = WarehousesModel.class, fieldName = "phone", message = "{Warehouse.phone.Unique}")
     private String phone;
 
     @JsonDeserialize(using = WarehousesCategoriesDeserializer.class)

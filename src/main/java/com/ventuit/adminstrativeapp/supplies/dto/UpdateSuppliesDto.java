@@ -23,11 +23,11 @@ import lombok.experimental.SuperBuilder;
 @Data
 public class UpdateSuppliesDto extends ExtendedBaseDto {
 
-    @Size(max = 60, message = "Name cannot exceed 60 characters")
-    @Unique(model = SuppliesModel.class, fieldName = "name", message = "This supplies is already registered")
+    @Size(max = 60, message = "{Supply.name.Size}")
+    @Unique(model = SuppliesModel.class, fieldName = "name", message = "{Supply.name.Unique}")
     private String name;
 
-    @Size(max = 60, message = "Description cannot exceed 60 characters")
+    @Size(max = 60, message = "{Supply.description.Size}")
     private String description;
 
     @JsonDeserialize(using = SuppliesMeasureDeserializer.class)

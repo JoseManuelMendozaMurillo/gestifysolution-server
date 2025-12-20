@@ -1,18 +1,19 @@
 package com.ventuit.adminstrativeapp.core.services.implementations;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.core.OAuth2AuthenticatedPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 
 import com.ventuit.adminstrativeapp.core.mappers.interfaces.CrudMapperInterface;
 import com.ventuit.adminstrativeapp.core.models.ExtendedBaseModel;
 import com.ventuit.adminstrativeapp.core.repositories.BaseRepository;
 import com.ventuit.adminstrativeapp.core.services.interfaces.CrudServiceInterface;
+import com.ventuit.adminstrativeapp.shared.helpers.AuthenticationHelper;
 import com.ventuit.adminstrativeapp.shared.validators.ObjectsValidator;
 
 import jakarta.persistence.EntityManager;
@@ -26,11 +27,15 @@ public abstract class CrudServiceImpl<CREATINGDTO, UPDATINGDTO, LISTDTO, ENTITY 
 
     protected REPOSITORY repository;
     protected MAPPER mapper;
-    protected ObjectsValidator<CREATINGDTO> creatingDtoValidator = new ObjectsValidator<CREATINGDTO>();
-    protected ObjectsValidator<UPDATINGDTO> updatingDtoValidator = new ObjectsValidator<UPDATINGDTO>();
 
     @Autowired
+    protected ObjectsValidator<CREATINGDTO> creatingDtoValidator;
+    @Autowired
+    protected ObjectsValidator<UPDATINGDTO> updatingDtoValidator;
+    @Autowired
     protected EntityManager entityManager;
+    @Autowired
+    protected AuthenticationHelper authHelper;
 
     public CrudServiceImpl(REPOSITORY repository, MAPPER mapper) {
         this.repository = repository;
@@ -38,18 +43,18 @@ public abstract class CrudServiceImpl<CREATINGDTO, UPDATINGDTO, LISTDTO, ENTITY 
     }
 
     @Override
-    public List<LISTDTO> getAll() {
-        return this.mapper.entitiesToShowDtos(this.repository.findAll());
+    public Page<LISTDTO> getAll(Pageable pageable) {
+        return this.repository.findAll(pageable).map(this.mapper::toShowDto);
     }
 
     @Override
-    public List<LISTDTO> getAllInactive() {
-        return this.mapper.entitiesToShowDtos(this.repository.findByDeletedAtIsNotNull());
+    public Page<LISTDTO> getAllInactive(Pageable pageable) {
+        return this.repository.findByDeletedAtIsNotNull(pageable).map(this.mapper::toShowDto);
     }
 
     @Override
-    public List<LISTDTO> getAllActive() {
-        return this.mapper.entitiesToShowDtos(this.repository.findByDeletedAtIsNull());
+    public Page<LISTDTO> getAllActive(Pageable pageable) {
+        return this.repository.findByDeletedAtIsNull(pageable).map(this.mapper::toShowDto);
     }
 
     @Override
@@ -172,12 +177,7 @@ public abstract class CrudServiceImpl<CREATINGDTO, UPDATINGDTO, LISTDTO, ENTITY 
     }
 
     protected String getUsername() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.getPrincipal() instanceof OAuth2AuthenticatedPrincipal) {
-            OAuth2AuthenticatedPrincipal principal = (OAuth2AuthenticatedPrincipal) authentication.getPrincipal();
-            return principal.getAttribute("preferred_username");
-        }
-        return "Gestify solution server"; // or a default value
+        return authHelper.getUsername();
     }
 
 }

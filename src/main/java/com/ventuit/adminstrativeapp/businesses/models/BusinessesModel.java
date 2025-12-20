@@ -7,7 +7,9 @@ import java.util.Set;
 import org.hibernate.annotations.Check;
 
 import com.ventuit.adminstrativeapp.bosses.models.BossesBusinessesModel;
+import com.ventuit.adminstrativeapp.branches.models.BranchesModel;
 import com.ventuit.adminstrativeapp.core.models.ExtendedBaseModel;
+import com.ventuit.adminstrativeapp.shared.models.FilesModel;
 import com.ventuit.adminstrativeapp.shared.validations.pastorpresentdate.PastOrPresentDate;
 import com.ventuit.adminstrativeapp.shared.validations.rfc.Rfc;
 import com.ventuit.adminstrativeapp.shared.validations.unique.Unique;
@@ -15,6 +17,7 @@ import com.ventuit.adminstrativeapp.shared.validations.unique.Unique;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
@@ -25,6 +28,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 @EqualsAndHashCode(callSuper = true)
@@ -77,5 +81,16 @@ public class BusinessesModel extends ExtendedBaseModel {
     private TypesRegimensTaxesModel taxRegimen;
 
     @OneToMany(mappedBy = "businesses", cascade = CascadeType.ALL)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private Set<BossesBusinessesModel> bossesBusinesses;
+
+    @OneToMany(mappedBy = "business", cascade = CascadeType.ALL)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    private Set<BranchesModel> branches;
+
+    @OneToOne(optional = true)
+    @JoinColumn(name = "logo_id", nullable = true, unique = false)
+    private FilesModel logo;
 }

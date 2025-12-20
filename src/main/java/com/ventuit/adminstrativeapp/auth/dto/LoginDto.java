@@ -16,13 +16,13 @@ import lombok.NoArgsConstructor;
 @Data
 public class LoginDto {
 
-    @NotBlank(message = "username cannot be empty")
-    @Size(min = 3, max = 255, message = "username must have a length between 3 and 255")
-    @Pattern(regexp = RegexUtils.USERNAME_PATTERN, message = "username contains invalid character")
+    @NotBlank(message = "{Auth.LoginDto.username.NotBlank}")
+    @Size(min = 3, max = 255, message = "{Auth.LoginDto.username.Size}")
+    @Pattern(regexp = RegexUtils.USERNAME_PATTERN, message = "{Auth.LoginDto.username.Pattern}")
     private String username;
 
-    @NotBlank(message = "password cannot be empty")
-    @Size(min = 8, max = 255, message = "password must have a length between 8 and 255")
+    @NotBlank(message = "{Auth.LoginDto.password.NotBlank}")
+    @Size(min = 8, max = 255, message = "{Auth.LoginDto.password.Size}")
     private String password;
 
 }

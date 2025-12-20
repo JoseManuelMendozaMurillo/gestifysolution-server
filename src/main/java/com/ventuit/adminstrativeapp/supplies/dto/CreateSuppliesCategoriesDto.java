@@ -19,12 +19,12 @@ import lombok.experimental.SuperBuilder;
 @Data
 public class CreateSuppliesCategoriesDto extends ExtendedBaseDto {
 
-    @NotBlank(message = "You must send the supplies category's name")
-    @Size(max = 60, message = "Category cannot exceed 60 characters")
-    @Unique(model = SuppliesCategoriesModel.class, fieldName = "name", message = "This category is already registered")
+    @NotBlank(message = "{SuppliesCategory.category.NotBlank}")
+    @Size(max = 60, message = "{SuppliesCategory.category.Size}")
+    @Unique(model = SuppliesCategoriesModel.class, fieldName = "name", message = "{SuppliesCategory.category.Unique}")
     private String category;
 
-    @Size(max = 60, message = "Description cannot exceed 60 characters")
+    @Size(max = 60, message = "{SuppliesCategory.description.Size}")
     private String description;
 
 }

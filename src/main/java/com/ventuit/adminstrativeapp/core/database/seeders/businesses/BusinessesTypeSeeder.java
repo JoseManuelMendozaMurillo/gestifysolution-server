@@ -111,5 +111,6 @@ public class BusinessesTypeSeeder implements CommandLineRunner {
                         businessTypes.add(businessesType);
                 });
                 businessesTypeRepository.saveAll(businessTypes);
+                log.info("Successfully inserted {} business types into the business_type table", businessTypes.size());
         }
 }

@@ -24,23 +24,23 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @Data
 public class CreateSuppliesIncomingDto extends ExtendedBaseDto {
-    @PastOrPresentDate()
+    @PastOrPresentDate(message = "{SuppliesIncoming.expirationDate.PastOrPresent}")
     private LocalDate expirationDate;
 
-    @Size(max = 60, message = "Sku cannot exceed 60 characters")
+    @Size(max = 60, message = "{SuppliesIncoming.sku.Size}")
     private String sku;
 
-    @NotNull(message = "Quantity per unit cannot be null")
+    @NotNull(message = "{SuppliesIncoming.quantityPerUnit.NotNull}")
     private Integer quantityPerUnit;
 
-    @NotNull(message = "Price cannot be null")
+    @NotNull(message = "{SuppliesIncoming.price.NotNull}")
     private Float price;
 
-    @NotNull(message = "Supplies cannot be null")
+    @NotNull(message = "{SuppliesIncoming.supplies.NotNull}")
     @JsonDeserialize(using = SuppliesDeserializer.class)
     private SuppliesModel supplies;
 
-    @NotNull(message = "Supplier cannot be null")
+    @NotNull(message = "{SuppliesIncoming.supplier.NotNull}")
     @JsonDeserialize(using = SuppliersDeserializer.class)
     private SuppliersModel supplier;
 }

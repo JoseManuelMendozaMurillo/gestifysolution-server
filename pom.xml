@@ -112,6 +112,30 @@
 			<version>9.0.2</version>
 		</dependency>
 
+		<!-- MinIO Client for S3-compatible storage -->
+		<dependency>
+			<groupId>io.minio</groupId>
+			<artifactId>minio</artifactId>
+			<version>8.5.7</version>
+		</dependency>
+
+		<dependency>
+			<groupId>io.trbl</groupId>
+			<artifactId>blurhash</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+
+		<dependency>
+    		<groupId>net.datafaker</groupId>
+    		<artifactId>datafaker</artifactId>
+    		<version>2.5.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>io.github.cdimascio</groupId>
+			<artifactId>dotenv-java</artifactId>
+			<version>3.0.0</version>
+		</dependency>
 	</dependencies>
 
 	<build>

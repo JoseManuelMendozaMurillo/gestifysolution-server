@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Data
 public class TokenValidationDto {
 
-    @NotBlank(message = "The token cannot be blank")
+    @NotBlank(message = "{Auth.TokenValidationDto.token.NotBlank}")
     private String token;
 
 }

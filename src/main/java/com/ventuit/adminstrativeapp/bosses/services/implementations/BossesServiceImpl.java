@@ -3,9 +3,14 @@ package com.ventuit.adminstrativeapp.bosses.services.implementations;
 import java.util.HashMap;
 import java.util.Optional;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.ventuit.adminstrativeapp.bosses.dto.CreateBossesDto;
 import com.ventuit.adminstrativeapp.bosses.dto.ListBossesDto;
@@ -14,6 +19,10 @@ import com.ventuit.adminstrativeapp.bosses.mappers.BossesMapper;
 import com.ventuit.adminstrativeapp.bosses.models.BossesModel;
 import com.ventuit.adminstrativeapp.bosses.repositories.BossesRepository;
 import com.ventuit.adminstrativeapp.bosses.services.interfaces.BossesServiceInterface;
+import com.ventuit.adminstrativeapp.businesses.dto.ListBusinessesDto;
+import com.ventuit.adminstrativeapp.businesses.mappers.BusinessesMapper;
+import com.ventuit.adminstrativeapp.businesses.models.BusinessesModel;
+import com.ventuit.adminstrativeapp.businesses.repositories.BusinessesRepository;
 import com.ventuit.adminstrativeapp.core.services.implementations.CrudServiceImpl;
 import com.ventuit.adminstrativeapp.keycloak.services.implementations.KeycloakUsersServiceImpl;
 import com.ventuit.adminstrativeapp.keycloak.utils.KeycloakUtils;
@@ -32,6 +41,10 @@ public class BossesServiceImpl
     private KeycloakUsersServiceImpl usersService;
     @Autowired
     private KeycloakUtils keycloakUtils;
+    @Autowired
+    private BusinessesRepository businessesRepository;
+    @Autowired
+    private BusinessesMapper businessesMapper;
 
     public BossesServiceImpl(BossesRepository repository, BossesMapper mapper) {
         super(repository, mapper);
@@ -170,6 +183,41 @@ public class BossesServiceImpl
             return this.repository.countByPhone(phone) > 0;
         } catch (Exception e) {
             throw e;
+        }
+    }
+
+    @Override
+    public Page<ListBusinessesDto> getBossesBusinesses(String bossIdOrUsername, Pageable pageable) {
+        try {
+            Integer bossId = null;
+            boolean isId = NumberUtils.isCreatable(bossIdOrUsername);
+
+            // 1. Resolve the Boss ID
+            if (isId) {
+                bossId = Integer.parseInt(bossIdOrUsername);
+                // Optional: Check if boss exists if strict validation is needed
+                if (!this.repository.existsById(bossId)) {
+                    return null;
+                }
+            } else {
+                // If username, look up the boss to get the ID
+                BossesModel boss = this.repository.findByKeycloakUsername(bossIdOrUsername).orElse(null);
+                if (boss == null) {
+                    return null;
+                }
+                bossId = boss.getId();
+            }
+
+            // 2. Query the database using the Repository (Efficient Pagination)
+            Page<BusinessesModel> businessesPage = this.businessesRepository.findBusinessesByBossId(bossId, pageable);
+
+            // 3. Map the Page of Entities to a Page of DTOs
+            return businessesPage.map(businessesMapper::toShowDto);
+
+        } catch (Exception e) {
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    "An error occurred while fetching boss's businesses: " + e.getMessage());
         }
     }
 
