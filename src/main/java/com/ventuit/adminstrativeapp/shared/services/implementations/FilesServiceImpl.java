@@ -61,6 +61,9 @@ public class FilesServiceImpl implements FilesServiceInterface {
     @Value("${server.port}")
     private String serverPort;
 
+    @Value("${app.environment}")
+    private String environment;
+
     /**
      * Upload a file to storage and register it in the database
      * 
@@ -613,8 +616,16 @@ public class FilesServiceImpl implements FilesServiceInterface {
     private String generateFileUrl(String fileKey, String filePath) {
         // Determine if this is an image based on the file key extension
         String endpoint = isImageFile(fileKey) ? "images" : "files";
-        return String.format("%s://%s:%s/api/v1/minio/%s%s", ssl ? "https" : "http", domain, serverPort, endpoint,
-                filePath + "/" + fileKey);
+
+        // Construct the base URL
+        String baseUrl;
+        if ("local".equalsIgnoreCase(environment)) {
+            baseUrl = String.format("%s://%s:%s", ssl ? "https" : "http", domain, serverPort);
+        } else {
+            baseUrl = String.format("%s://%s", ssl ? "https" : "http", domain);
+        }
+
+        return String.format("%s/api/v1/minio/%s%s", baseUrl, endpoint, filePath + "/" + fileKey);
     }
 
     /**
