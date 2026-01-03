@@ -25,6 +25,12 @@ import com.ventuit.adminstrativeapp.storage.minio.MinioProvider;
 import jakarta.transaction.Transactional;
 import jakarta.transaction.Transactional.TxType;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import com.ventuit.adminstrativeapp.products.repositories.ProductsRepository;
+import com.ventuit.adminstrativeapp.products.mappers.ProductsMapper;
+import com.ventuit.adminstrativeapp.products.dto.ListProductDto;
+
 @Service
 public class BusinessesService
         extends
@@ -34,9 +40,19 @@ public class BusinessesService
     private FilesServiceImpl filesService;
     @Autowired
     private MinioProvider minioProvider;
+    @Autowired
+    private ProductsRepository productsRepository;
+    @Autowired
+    private ProductsMapper productsMapper;
 
     public BusinessesService(BusinessesRepository repository, BusinessesMapper mapper) {
         super(repository, mapper);
+    }
+
+    @Transactional(value = TxType.SUPPORTS)
+    public Page<ListProductDto> getProductsByBusinessId(Integer businessId, Integer categoryId, Pageable pageable) {
+        return productsRepository.findDistinctProductsByBusinessId(businessId, categoryId, pageable)
+                .map(productsMapper::toShowDto);
     }
 
     @Override
