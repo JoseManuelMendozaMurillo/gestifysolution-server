@@ -61,7 +61,9 @@ public class TypesRegimensTaxesSeeder implements CommandLineRunner {
         @Override
         public void run(String... args) throws Exception {
                 try {
-                        insertRegimensTaxes();
+                        if (typesRegimensTaxesRepository.count() == 0) {
+                                insertRegimensTaxes();
+                        }
                 } catch (Exception error) {
                         log.error("An error has occurred when inserting data into the tax_regimens table", error);
                 }
