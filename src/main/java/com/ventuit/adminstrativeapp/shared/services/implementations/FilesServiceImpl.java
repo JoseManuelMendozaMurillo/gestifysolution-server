@@ -499,6 +499,17 @@ public class FilesServiceImpl implements FilesServiceInterface {
         }
     }
 
+    @Override
+    public void deleteAllFiles() {
+        // Delete all records from database tables
+        filesBucketsRepository.deleteAll();
+        filesPathsRepository.deleteAll();
+        filesRepository.deleteAll();
+
+        // Clear MinIO bucket
+        minioService.clearBucket();
+    }
+
     // Private helper methods
 
     private String generateFileKey(String originalFileName) {

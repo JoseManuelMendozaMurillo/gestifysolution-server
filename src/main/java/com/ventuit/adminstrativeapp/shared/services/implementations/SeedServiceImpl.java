@@ -62,6 +62,9 @@ import com.ventuit.adminstrativeapp.shared.dto.FileUploadDto;
 import com.ventuit.adminstrativeapp.shared.helpers.SimpleMultipartFile;
 import com.ventuit.adminstrativeapp.shared.services.interfaces.SeedServiceInterface;
 import com.ventuit.adminstrativeapp.storage.minio.MinioProvider;
+import com.ventuit.adminstrativeapp.products.dto.ListProductsCategoryDto;
+import com.ventuit.adminstrativeapp.keycloak.services.interfaces.KeycloakUsersServiceInterface;
+import com.ventuit.adminstrativeapp.products.repositories.ProductsCategoriesRepository;
 
 import lombok.RequiredArgsConstructor;
 import net.datafaker.Faker;
@@ -83,8 +86,10 @@ public class SeedServiceImpl implements SeedServiceInterface {
     private final ProductsService productsService;
     private final ProductsRepository productsRepository;
     private final ProductsCategoriesService productsCategoriesService;
+    private final ProductsCategoriesRepository productsCategoriesRepository;
     private final FilesServiceImpl filesService;
     private final MinioProvider minioProvider;
+    private final KeycloakUsersServiceInterface keycloakUsersService;
 
     // Shared executor to parallelize heavy seeding tasks (product creation)
     private final ExecutorService seedExecutor = Executors
@@ -92,14 +97,60 @@ public class SeedServiceImpl implements SeedServiceInterface {
 
     @Override
     public void seed() {
+        cleanup();
         logger.info("Seeding database...");
         generateFakeBosses(20);
         generateFakeBusinesses(1);
         generateFakeBranches(1);
         int numberOfCategories = 10;
-        generateFakeProductCategories(numberOfCategories);
-        generateFakeProducts(5, 3, numberOfCategories);
+        List<Integer> categoryIds = generateFakeProductCategories(numberOfCategories);
+        generateFakeProducts(5, 3, categoryIds);
         logger.info("Database seeding completed.");
+    }
+
+    private void cleanup() {
+        logger.info("Starting cleanup...");
+        try {
+            // 1. Delete Keycloak users
+            keycloakUsersService.deleteAllUsers();
+            logger.info("Keycloak users cleaned up.");
+
+            // 2. Delete DB records in reverse order of dependency
+            // branches -> products is handled via Cascade usually, but safe to delete
+            // products first or use repo.deleteAll()
+            // However, BranchesProductsModel link branches and products.
+            // If we delete branches, CascadeType.ALL usually handles children if
+            // configured, assuming standardized JPA.
+            // Explicitly deleting to be safe and match request "delete everything from the
+            // tables where data is saved"
+
+            // Delete Branches (and cascade/relationships)
+            branchesRepository.deleteAll();
+
+            // Delete Products
+            productsRepository.deleteAll();
+
+            // Delete Product Categories
+            productsCategoriesRepository.deleteAll();
+
+            // Delete Bosses (and businesses via cascade)
+            bossesRepository.deleteAll();
+
+            // Delete Businesses (if not cascaded by Bosses)
+            businessesRepository.deleteAll();
+
+            logger.info("Database tables cleaned up.");
+
+            // 3. Delete all files (DB + MinIO)
+            // This must be done LAST because entities like Business (logo) and Products
+            // (images) reference files.
+            filesService.deleteAllFiles();
+            logger.info("Files cleaned up.");
+        } catch (Exception e) {
+            logger.error("Error during cleanup: ", e);
+            // Decide if we want to stop seeding if cleanup fails. Usually yes.
+            throw new RuntimeException("Cleanup failed", e);
+        }
     }
 
     @PreDestroy
@@ -262,8 +313,9 @@ public class SeedServiceImpl implements SeedServiceInterface {
         logger.info("✅ Successfully generated {} fake branches for each business.", numberOfBranchesPerBusiness);
     }
 
-    private void generateFakeProductCategories(int numberOfCategories) {
+    private List<Integer> generateFakeProductCategories(int numberOfCategories) {
         Faker faker = new Faker(Locale.ENGLISH);
+        List<Integer> categoryIds = new ArrayList<>();
         for (int i = 0; i < numberOfCategories; i++) {
             try {
                 // --- Create fake Product Category DTO ---
@@ -275,7 +327,9 @@ public class SeedServiceImpl implements SeedServiceInterface {
                         .build();
 
                 // --- Create Product Category using existing logic ---
-                productsCategoriesService.create(fakeCategory);
+                ListProductsCategoryDto category = productsCategoriesService
+                        .create(fakeCategory);
+                categoryIds.add(category.getId());
             } catch (Exception e) {
                 logger.error("❌ Failed to create fake product category: " + e.getMessage());
                 e.printStackTrace();
@@ -283,10 +337,11 @@ public class SeedServiceImpl implements SeedServiceInterface {
             }
         }
         logger.info("✅ Successfully generated {} fake product categories.", numberOfCategories);
+        return categoryIds;
     }
 
     private void generateFakeProducts(int numberOfProductsPerBranch, int numberOfImagesPerProduct,
-            int numberOfCategories) {
+            List<Integer> categoryIds) {
         List<BranchesModel> branches = branchesRepository.findAll();
 
         try {
@@ -321,12 +376,15 @@ public class SeedServiceImpl implements SeedServiceInterface {
                                 + threadFaker.number().digits(8)
                                 + "_" + branch.getId() + "_" + idx;
 
+                        // Pick a random valid category ID
+                        Integer randomCategoryId = categoryIds.get(threadFaker.random().nextInt(categoryIds.size()));
+
                         CreateProductDto fakeProduct = CreateProductDto.builder()
                                 .name(uniqueProductName)
                                 .description(threadFaker.lorem().paragraph())
                                 .price(Double.parseDouble(threadFaker.commerce().price(10.0, 100.0)))
                                 .active(true)
-                                .categoryId(threadFaker.number().numberBetween(1, numberOfCategories + 1))
+                                .categoryId(randomCategoryId)
                                 .images(createProductImages(numberOfImagesPerProduct))
                                 .build();
 

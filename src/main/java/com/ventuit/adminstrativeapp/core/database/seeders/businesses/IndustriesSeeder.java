@@ -69,7 +69,9 @@ public class IndustriesSeeder implements CommandLineRunner {
         @Override
         public void run(String... args) throws Exception {
                 try {
-                        insertIndustries();
+                        if (industriesRepository.count() == 0) {
+                                insertIndustries();
+                        }
                 } catch (Exception error) {
                         logger.error("An error has occurred when inserting data into the industries table", error);
                 }
