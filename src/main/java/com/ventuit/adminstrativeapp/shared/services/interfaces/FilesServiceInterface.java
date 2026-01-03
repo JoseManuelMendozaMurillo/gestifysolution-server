@@ -22,4 +22,6 @@ public interface FilesServiceInterface {
 
     public boolean deleteFileFromAllBuckets(Integer fileId);
 
+    public void deleteAllFiles();
+
 }

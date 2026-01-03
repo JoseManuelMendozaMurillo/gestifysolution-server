@@ -19,4 +19,6 @@ public interface KeycloakUsersServiceInterface {
     boolean disabledUserByUsername(String username);
 
     boolean deleteUserByUsername(String username);
+
+    void deleteAllUsers();
 }

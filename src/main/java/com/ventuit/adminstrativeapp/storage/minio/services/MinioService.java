@@ -2,6 +2,7 @@ package com.ventuit.adminstrativeapp.storage.minio.services;
 
 import io.minio.*;
 import io.minio.errors.*;
+import io.minio.messages.Item;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.stereotype.Service;
@@ -186,6 +187,30 @@ public class MinioService {
         } catch (Exception e) {
             log.error("Error checking if file is image: {}", e.getMessage(), e);
             return false;
+        }
+    }
+
+    public void clearBucket() {
+        try {
+            Iterable<Result<Item>> results = minioClient.listObjects(
+                    ListObjectsArgs.builder()
+                            .bucket(minioProvider.getBucketName())
+                            .recursive(true)
+                            .build());
+
+            for (Result<Item> result : results) {
+                Item item = result.get();
+                minioClient.removeObject(
+                        RemoveObjectArgs.builder()
+                                .bucket(minioProvider.getBucketName())
+                                .object(item.objectName())
+                                .build());
+                log.info("Deleted object: {}", item.objectName());
+            }
+            log.info("Bucket cleared successfully");
+        } catch (Exception e) {
+            log.error("Error clearing bucket: {}", e.getMessage(), e);
+            throw new FileDeleteException("Failed to clear bucket", e);
         }
     }
 }

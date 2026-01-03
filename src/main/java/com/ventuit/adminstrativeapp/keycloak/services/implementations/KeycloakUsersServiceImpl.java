@@ -185,4 +185,22 @@ public class KeycloakUsersServiceImpl implements KeycloakUsersServiceInterface {
         }
     }
 
+    @Override
+    public void deleteAllUsers() {
+        // Retrieve the UsersResource for the specified realm
+        UsersResource usersResource = keycloak.getAdminClient().users();
+
+        // Get all users
+        List<UserRepresentation> users = usersResource.list(0, 1000); // Pagination might be needed if user count > 1000
+
+        for (UserRepresentation user : users) {
+            try {
+                usersResource.delete(user.getId());
+            } catch (Exception e) {
+                // Log error but continue
+                e.printStackTrace();
+            }
+        }
+    }
+
 }
