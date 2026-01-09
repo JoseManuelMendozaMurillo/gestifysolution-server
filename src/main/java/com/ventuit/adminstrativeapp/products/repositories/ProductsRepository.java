@@ -10,20 +10,34 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ProductsRepository extends BaseRepository<ProductsModel, Integer> {
-    boolean existsById(Integer id);
+        boolean existsById(Integer id);
 
-    boolean existsByIdAndDeletedAtIsNull(Integer id);
+        boolean existsByIdAndDeletedAtIsNull(Integer id);
 
-    @Query("SELECT DISTINCT p FROM ProductsModel p " +
-            "JOIN p.branchesProducts bp " +
-            "JOIN bp.branch b " +
-            "JOIN b.business bu " +
-            "WHERE bu.id = :businessId " +
-            "AND (:categoryId IS NULL OR p.category.id = :categoryId) " +
-            "AND p.deletedAt IS NULL " +
-            "AND p.active = true")
-    Page<ProductsModel> findDistinctProductsByBusinessId(
-            @Param("businessId") Integer businessId,
-            @Param("categoryId") Integer categoryId,
-            Pageable pageable);
+        @Query("SELECT DISTINCT p FROM ProductsModel p " +
+                        "JOIN p.branchesProducts bp " +
+                        "JOIN bp.branch b " +
+                        "JOIN b.business bu " +
+                        "WHERE bu.id = :businessId " +
+                        "AND (:categoryId IS NULL OR p.category.id = :categoryId) " +
+                        "AND p.deletedAt IS NULL " +
+                        "AND p.active = true")
+        Page<ProductsModel> findDistinctProductsByBusinessId(
+                        @Param("businessId") Integer businessId,
+                        @Param("categoryId") Integer categoryId,
+                        Pageable pageable);
+
+        @Query("SELECT p FROM ProductsModel p WHERE " +
+                        "(:categoryId IS NULL OR p.category.id = :categoryId)")
+        Page<ProductsModel> findAll(@Param("categoryId") Integer categoryId, Pageable pageable);
+
+        @Query("SELECT p FROM ProductsModel p WHERE " +
+                        "(:categoryId IS NULL OR p.category.id = :categoryId) " +
+                        "AND p.deletedAt IS NULL")
+        Page<ProductsModel> findAllActive(@Param("categoryId") Integer categoryId, Pageable pageable);
+
+        @Query("SELECT p FROM ProductsModel p WHERE " +
+                        "(:categoryId IS NULL OR p.category.id = :categoryId) " +
+                        "AND p.deletedAt IS NOT NULL")
+        Page<ProductsModel> findAllInactive(@Param("categoryId") Integer categoryId, Pageable pageable);
 }
