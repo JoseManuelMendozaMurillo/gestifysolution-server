@@ -11,6 +11,8 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import com.ventuit.adminstrativeapp.products.dto.CreateProductDto;
 import com.ventuit.adminstrativeapp.products.dto.CreateProductImageDto;
@@ -49,6 +51,22 @@ public class ProductsService extends
 
     public ProductsService(ProductsRepository repository, ProductsMapper mapper) {
         super(repository, mapper);
+    }
+
+    public Page<ListProductDto> getAll(
+            Pageable pageable,
+            Integer categoryId) {
+        return this.repository.findAll(categoryId, pageable).map(this.mapper::toShowDto);
+    }
+
+    public Page<ListProductDto> getAllActive(
+            Pageable pageable, Integer categoryId) {
+        return this.repository.findAllActive(categoryId, pageable).map(this.mapper::toShowDto);
+    }
+
+    public Page<ListProductDto> getAllInactive(
+            Pageable pageable, Integer categoryId) {
+        return this.repository.findAllInactive(categoryId, pageable).map(this.mapper::toShowDto);
     }
 
     @Override
