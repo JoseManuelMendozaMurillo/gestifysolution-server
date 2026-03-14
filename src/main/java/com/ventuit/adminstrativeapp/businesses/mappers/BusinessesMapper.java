@@ -30,6 +30,7 @@ public abstract class BusinessesMapper
     @Override
     @Named("toDto")
     @Mapping(target = "logo", ignore = true)
+    @Mapping(target = "cover", ignore = true)
     public abstract CreateBusinessesDto toDto(BusinessesModel entity);
 
     @Override
@@ -39,6 +40,7 @@ public abstract class BusinessesMapper
     @Override
     @Named("toShowDto")
     @Mapping(target = "logo", source = "logo", qualifiedByName = "filesModelToFileResponseDto")
+    @Mapping(target = "cover", source = "cover", qualifiedByName = "filesModelToFileResponseDto")
     public abstract ListBusinessesDto toShowDto(BusinessesModel entity);
 
     @Override
@@ -49,6 +51,7 @@ public abstract class BusinessesMapper
     @Mapping(target = "bossesBusinesses", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "logo", ignore = true)
+    @Mapping(target = "cover", ignore = true)
     @Mapping(target = "active", ignore = true)
     @Mapping(target = "activeChangedAt", ignore = true)
     @Mapping(target = "activeChangedBy", ignore = true)
@@ -67,6 +70,7 @@ public abstract class BusinessesMapper
     @Mapping(target = "activeChangedAt", ignore = true)
     @Mapping(target = "activeChangedBy", ignore = true)
     @Mapping(target = "logo", ignore = true)
+    @Mapping(target = "cover", ignore = true)
     @Mapping(target = "branches", ignore = true)
     public abstract BusinessesModel updateFromDto(UpdateBusinessesDto dto, @MappingTarget BusinessesModel entity);
 

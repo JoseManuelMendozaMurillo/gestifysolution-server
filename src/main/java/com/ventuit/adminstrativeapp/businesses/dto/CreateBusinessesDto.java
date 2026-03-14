@@ -73,4 +73,12 @@ public class CreateBusinessesDto extends ExtendedBaseDto {
     @AspectRatio(value = "1:1", tolerance = 10.0, message = "{Business.logo.AspectRatio}")
     private MultipartFile logo;
 
+    /**
+     * Cover image file for the business
+     */
+    @ImageFile(message = "{Business.cover.ImageFile}")
+    @MaxFileSize(value = 2097152, message = "{Business.cover.MaxFileSize}") // 2MB
+    @AspectRatio(value = "16:9", tolerance = 10.0, message = "{Business.cover.AspectRatio}")
+    private MultipartFile cover;
+
 }

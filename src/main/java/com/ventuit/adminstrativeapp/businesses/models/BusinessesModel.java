@@ -93,4 +93,8 @@ public class BusinessesModel extends ExtendedBaseModel {
     @OneToOne(optional = true)
     @JoinColumn(name = "logo_id", nullable = true, unique = false)
     private FilesModel logo;
+
+    @OneToOne(optional = true)
+    @JoinColumn(name = "cover_id", nullable = true, unique = false)
+    private FilesModel cover;
 }

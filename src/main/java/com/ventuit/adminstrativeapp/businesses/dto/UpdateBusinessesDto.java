@@ -62,4 +62,9 @@ public class UpdateBusinessesDto extends ExtendedBaseDto {
     @MaxFileSize(value = 2097152, message = "{Business.logo.MaxFileSize}") // 2MB
     @AspectRatio(value = "1:1", tolerance = 10.0, message = "{Business.logo.AspectRatio}")
     private MultipartFile logo;
+
+    @ImageFile(message = "{Business.cover.ImageFile}")
+    @MaxFileSize(value = 2097152, message = "{Business.cover.MaxFileSize}") // 2MB
+    @AspectRatio(value = "16:9", tolerance = 10.0, message = "{Business.cover.AspectRatio}")
+    private MultipartFile cover;
 }

@@ -63,28 +63,16 @@ public class BusinessesService
 
         // Create the file for the logo
         MultipartFile logo = createBusinessesDto.getLogo();
-        FilesModel filesModel = null;
-        if (logo != null) {
-            try {
-                byte[] fileBytes = logo.getBytes(); // Read once
+        FilesModel logoModel = uploadFile(logo, "businesses/logos");
 
-                FileUploadDto fileUploadDto = new FileUploadDto();
-                fileUploadDto.setFileInputStream(new ByteArrayInputStream(fileBytes));
-                fileUploadDto.setFileSize((long) fileBytes.length);
-                fileUploadDto.setContentType(logo.getContentType());
-                fileUploadDto.setOriginalFileName(logo.getOriginalFilename());
-                fileUploadDto.setPath("businesses/logos");
-                fileUploadDto.setProvider("minio");
-                fileUploadDto.setBucket(minioProvider.getBucketName());
-                filesModel = filesService.uploadFile(fileUploadDto);
-            } catch (IOException e) {
-                throw new FileUploadException("Error uploading file", e);
-            }
-        }
+        // Create the file for the cover
+        MultipartFile cover = createBusinessesDto.getCover();
+        FilesModel coverModel = uploadFile(cover, "businesses/covers");
 
         BusinessesModel entity = mapper.toEntity(createBusinessesDto);
 
-        entity.setLogo(filesModel);
+        entity.setLogo(logoModel);
+        entity.setCover(coverModel);
 
         BusinessesModel entitySaved = repository.save(entity);
 
@@ -105,42 +93,75 @@ public class BusinessesService
 
         // Handle logo update if present
         MultipartFile logo = update.getLogo();
-        FilesModel filesModel = null;
-        if (logo != null) {
-            try {
-                byte[] fileBytes = logo.getBytes();
+        FilesModel logoModel = handleFileUpload(logo, entity.getLogo(), "businesses/logos");
 
-                FileUploadDto fileUploadDto = new FileUploadDto();
-                fileUploadDto.setFileInputStream(new ByteArrayInputStream(fileBytes));
-                fileUploadDto.setFileSize((long) fileBytes.length);
-                fileUploadDto.setContentType(logo.getContentType());
-                fileUploadDto.setOriginalFileName(logo.getOriginalFilename());
-                fileUploadDto.setPath("businesses/logos");
-                fileUploadDto.setProvider("minio");
-                fileUploadDto.setBucket(minioProvider.getBucketName());
+        // Handle cover update if present
+        MultipartFile cover = update.getCover();
+        FilesModel coverModel = handleFileUpload(cover, entity.getCover(), "businesses/covers");
 
-                // If there is an existing logo, update it, otherwise upload new
-                if (entity.getLogo() != null) {
-                    filesModel = filesService.updateFile(entity.getLogo().getId(), fileUploadDto);
-                } else {
-                    filesModel = filesService.uploadFile(fileUploadDto);
-                }
-            } catch (IOException e) {
-                throw new FileUploadException("Error uploading file", e);
-            }
-        }
-
-        // Map the update DTO to the entity (except logo)
+        // Map the update DTO to the entity (except logo and cover)
         BusinessesModel updatedEntity = mapper.updateFromDto(update, entity);
 
         // Set the logo if updated
-        if (filesModel != null) {
-            updatedEntity.setLogo(filesModel);
+        if (logoModel != null) {
+            updatedEntity.setLogo(logoModel);
+        }
+
+        // Set the cover if updated
+        if (coverModel != null) {
+            updatedEntity.setCover(coverModel);
         }
 
         BusinessesModel entitySaved = repository.saveAndFlush(updatedEntity);
 
         return mapper.toShowDto(entitySaved);
+    }
+
+    private FilesModel uploadFile(MultipartFile file, String path) {
+        if (file == null) {
+            return null;
+        }
+        try {
+            byte[] fileBytes = file.getBytes();
+
+            FileUploadDto fileUploadDto = new FileUploadDto();
+            fileUploadDto.setFileInputStream(new ByteArrayInputStream(fileBytes));
+            fileUploadDto.setFileSize((long) fileBytes.length);
+            fileUploadDto.setContentType(file.getContentType());
+            fileUploadDto.setOriginalFileName(file.getOriginalFilename());
+            fileUploadDto.setPath(path);
+            fileUploadDto.setProvider("minio");
+            fileUploadDto.setBucket(minioProvider.getBucketName());
+            return filesService.uploadFile(fileUploadDto);
+        } catch (IOException e) {
+            throw new FileUploadException("Error uploading file", e);
+        }
+    }
+
+    private FilesModel handleFileUpload(MultipartFile file, FilesModel existingFile, String path) {
+        if (file == null) {
+            return null;
+        }
+        try {
+            byte[] fileBytes = file.getBytes();
+
+            FileUploadDto fileUploadDto = new FileUploadDto();
+            fileUploadDto.setFileInputStream(new ByteArrayInputStream(fileBytes));
+            fileUploadDto.setFileSize((long) fileBytes.length);
+            fileUploadDto.setContentType(file.getContentType());
+            fileUploadDto.setOriginalFileName(file.getOriginalFilename());
+            fileUploadDto.setPath(path);
+            fileUploadDto.setProvider("minio");
+            fileUploadDto.setBucket(minioProvider.getBucketName());
+
+            if (existingFile != null) {
+                return filesService.updateFile(existingFile.getId(), fileUploadDto);
+            } else {
+                return filesService.uploadFile(fileUploadDto);
+            }
+        } catch (IOException e) {
+            throw new FileUploadException("Error uploading file", e);
+        }
     }
 
     @Override
@@ -157,6 +178,11 @@ public class BusinessesService
         // Delete the logo if it exists
         if (entity.getLogo() != null) {
             filesService.softDeleteFileFromAllBuckets(entity.getLogo().getId(), getUsername());
+        }
+
+        // Delete the cover if it exists
+        if (entity.getCover() != null) {
+            filesService.softDeleteFileFromAllBuckets(entity.getCover().getId(), getUsername());
         }
 
         // Delete the entity
@@ -182,6 +208,11 @@ public class BusinessesService
             filesService.restoreFileFromAllBuckets(entity.getLogo().getId());
         }
 
+        // Restore the cover if it exists
+        if (entity.getCover() != null) {
+            filesService.restoreFileFromAllBuckets(entity.getCover().getId());
+        }
+
         // Restore the entity
         repository.restoreById(id);
 
@@ -200,21 +231,32 @@ public class BusinessesService
 
         BusinessesModel entity = optionalEntity.get();
 
-        // Remove the logo reference and save
+        // Remove the logo and cover references and save
         Integer logoId = null;
         if (entity.getLogo() != null) {
             logoId = entity.getLogo().getId();
             entity.setLogo(null);
-            repository.saveAndFlush(entity); // Save the entity without the logo reference
-            entityManager.flush(); // If you have access to the entity manager
+        }
+
+        Integer coverId = null;
+        if (entity.getCover() != null) {
+            coverId = entity.getCover().getId();
+            entity.setCover(null);
+        }
+
+        if (logoId != null || coverId != null) {
+            repository.saveAndFlush(entity); // Save the entity without the references
+            entityManager.flush();
         }
 
         // Delete the logo file if it existed
         if (logoId != null) {
-            System.out.println("Deleting logo");
             filesService.deleteFileFromAllBuckets(logoId);
-        } else {
-            System.out.println("No logo to delete");
+        }
+
+        // Delete the cover file if it existed
+        if (coverId != null) {
+            filesService.deleteFileFromAllBuckets(coverId);
         }
 
         // Delete the entity

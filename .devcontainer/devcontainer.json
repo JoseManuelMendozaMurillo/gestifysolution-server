@@ -26,7 +26,10 @@
 		},
 		"ghcr.io/devcontainers/features/git:1": {}
 	},
-
+	// Bind mount the local .gemini directory to the container
+	"mounts": [
+		"source=${localEnv:HOME}/.gemini,target=/home/vscode/.gemini,type=bind"
+	],
 	// Configure tool-specific properties.
 	"customizations": {
 		// Configurations to vscode inside to development environment

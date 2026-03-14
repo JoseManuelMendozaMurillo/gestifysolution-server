@@ -28,6 +28,8 @@ public class ListBusinessesDto extends ExtendedBaseDto {
 
     private FileResponseDto logo;
 
+    private FileResponseDto cover;
+
     private String rfc;
 
     private LocalDate establishmentDate;
