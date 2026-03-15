@@ -19,12 +19,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import com.ventuit.adminstrativeapp.products.dto.ListProductDto;
+import com.ventuit.adminstrativeapp.businesses.dto.BusinessesSearchCriteria;
+import com.ventuit.adminstrativeapp.shared.enums.DeletionStatus;
 
 @RestController
 @RequestMapping("businesses")
 public class BusinessesController
         extends
-        CrudControllerImpl<CreateBusinessesDto, UpdateBusinessesDto, ListBusinessesDto, Integer, BusinessesService> {
+        CrudControllerImpl<CreateBusinessesDto, UpdateBusinessesDto, ListBusinessesDto, Integer, BusinessesService>
+        implements BusinessesControllerInterface {
 
     public BusinessesController(BusinessesService service) {
         super(service);
@@ -51,6 +54,27 @@ public class BusinessesController
             @RequestParam(required = false) Integer categoryId,
             Pageable pageable) {
         return ResponseEntity.ok(this.service.getProductsByBusinessId(businessId, categoryId, pageable));
+    }
+
+    @Override
+    @GetMapping("/search")
+    public ResponseEntity<Page<ListBusinessesDto>> searchNotDeleted(@ModelAttribute BusinessesSearchCriteria criteria, Pageable pageable) {
+        criteria.setDeletionStatus(DeletionStatus.NOT_DELETED);
+        return ResponseEntity.ok(this.service.searchBusinesses(criteria, pageable));
+    }
+
+    @Override
+    @GetMapping("/search/all")
+    public ResponseEntity<Page<ListBusinessesDto>> searchAll(@ModelAttribute BusinessesSearchCriteria criteria, Pageable pageable) {
+        criteria.setDeletionStatus(DeletionStatus.ALL);
+        return ResponseEntity.ok(this.service.searchBusinesses(criteria, pageable));
+    }
+
+    @Override
+    @GetMapping("/search/deleted")
+    public ResponseEntity<Page<ListBusinessesDto>> searchDeleted(@ModelAttribute BusinessesSearchCriteria criteria, Pageable pageable) {
+        criteria.setDeletionStatus(DeletionStatus.DELETED);
+        return ResponseEntity.ok(this.service.searchBusinesses(criteria, pageable));
     }
 
 }

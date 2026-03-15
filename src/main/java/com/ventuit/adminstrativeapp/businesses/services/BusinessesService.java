@@ -30,11 +30,15 @@ import org.springframework.data.domain.Pageable;
 import com.ventuit.adminstrativeapp.products.repositories.ProductsRepository;
 import com.ventuit.adminstrativeapp.products.mappers.ProductsMapper;
 import com.ventuit.adminstrativeapp.products.dto.ListProductDto;
+import com.ventuit.adminstrativeapp.businesses.dto.BusinessesSearchCriteria;
+import com.ventuit.adminstrativeapp.businesses.specifications.BusinessesSpecification;
+import org.springframework.data.jpa.domain.Specification;
 
 @Service
 public class BusinessesService
         extends
-        CrudServiceImpl<CreateBusinessesDto, UpdateBusinessesDto, ListBusinessesDto, BusinessesModel, Integer, BusinessesMapper, BusinessesRepository> {
+        CrudServiceImpl<CreateBusinessesDto, UpdateBusinessesDto, ListBusinessesDto, BusinessesModel, Integer, BusinessesMapper, BusinessesRepository> 
+        implements BusinessesServiceInterface {
 
     @Autowired
     private FilesServiceImpl filesService;
@@ -264,5 +268,13 @@ public class BusinessesService
 
         // Return true if the entity was deleted
         return !repository.findById(id).isPresent();
+    }
+
+    @Override
+    @Transactional(value = TxType.SUPPORTS)
+    public Page<ListBusinessesDto> searchBusinesses(BusinessesSearchCriteria criteria, Pageable pageable) {
+        Specification<BusinessesModel> spec = BusinessesSpecification.searchByCriteria(criteria);
+        Page<BusinessesModel> businesses = repository.findAll(spec, pageable);
+        return businesses.map(mapper::toShowDto);
     }
 }
