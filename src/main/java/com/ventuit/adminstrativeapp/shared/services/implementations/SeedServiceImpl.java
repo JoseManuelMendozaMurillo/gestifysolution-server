@@ -231,6 +231,7 @@ public class SeedServiceImpl implements SeedServiceInterface {
                             .businessesType(businessesType)
                             .taxRegimen(taxRegimen)
                             .logo(createFakeImage("logo", 200, 200))
+                            .cover(createFakeImage("cover", 1600, 900))
                             .build();
 
                     ListBusinessesDto business = businessesService.create(fakeBusiness);
