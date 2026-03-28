@@ -52,8 +52,9 @@ public class ProductsModel extends ExtendedBaseModel {
     @Builder.Default // Critical fix for Lombok initialization
     private Set<ProductsImagesModel> images = new HashSet<>(); // Initialize here;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    private Set<BranchesProductsModel> branchesProducts;
+    private Set<BranchesProductsModel> branchesProducts = new HashSet<>();
 }

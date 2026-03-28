@@ -18,6 +18,7 @@ import com.ventuit.adminstrativeapp.products.dto.ListProductDto;
 import com.ventuit.adminstrativeapp.products.dto.ListProductsImagesDto;
 import com.ventuit.adminstrativeapp.products.dto.ListProductsCategoryDto;
 import com.ventuit.adminstrativeapp.products.dto.UpdateProductDto;
+import com.ventuit.adminstrativeapp.branches.models.BranchesProductsModel;
 import com.ventuit.adminstrativeapp.products.models.ProductsCategoriesModel;
 import com.ventuit.adminstrativeapp.products.models.ProductsImagesModel;
 import com.ventuit.adminstrativeapp.products.models.ProductsModel;
@@ -41,6 +42,7 @@ public abstract class ProductsMapper
         @Named("toDto")
         @Mapping(target = "images", ignore = true)
         @Mapping(target = "categoryId", source = "category.id")
+        @Mapping(target = "branchIds", source = "branchesProducts", qualifiedByName = "branchesProductsToBranchIds")
         public abstract CreateProductDto toDto(ProductsModel entity);
 
         @Override
@@ -131,5 +133,15 @@ public abstract class ProductsMapper
                                 .updatedBy(model.getUpdatedBy())
                                 .deletedBy(model.getDeletedBy())
                                 .build();
+        }
+
+        @Named("branchesProductsToBranchIds")
+        public List<Integer> branchesProductsToBranchIds(Set<BranchesProductsModel> branchesProducts) {
+                if (branchesProducts == null || branchesProducts.isEmpty()) {
+                        return null;
+                }
+                return branchesProducts.stream()
+                                .map(bp -> bp.getBranch().getId())
+                                .toList();
         }
 }

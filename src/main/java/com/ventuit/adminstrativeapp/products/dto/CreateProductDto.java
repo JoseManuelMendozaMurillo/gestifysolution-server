@@ -16,11 +16,14 @@ import com.ventuit.adminstrativeapp.products.repositories.ProductsCategoriesRepo
 import com.ventuit.adminstrativeapp.products.validations.onlyoneportraitimage.OnlyOnePortraitImage;
 import com.ventuit.adminstrativeapp.shared.validations.exist.Exist;
 import com.ventuit.adminstrativeapp.shared.validations.unique.Unique;
+import com.ventuit.adminstrativeapp.shared.validations.uniqueelements.UniqueElements;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import com.ventuit.adminstrativeapp.branches.repositories.BranchesRepository;
 
 @Builder
 @NoArgsConstructor
@@ -47,6 +50,12 @@ public class CreateProductDto {
     @Min(value = 1, message = "{Product.categoryId.Min}")
     @Exist(repository = ProductsCategoriesRepository.class, method = "existsByIdAndDeletedAtIsNull", message = "{Product.categoryId.Exist}", paramType = Integer.class)
     private Integer categoryId;
+
+    @NotEmpty(message = "{Product.branchIds.NotEmpty}")
+    @Size(min = 1, message = "{Product.branchIds.NotEmpty}")
+    @UniqueElements(message = "{Product.branchIds.UniqueElements}")
+    @Exist(repository = BranchesRepository.class, method = "existsAllByIdIn", message = "{Product.branchIds.Exist}", paramType = List.class)
+    private List<Integer> branchIds;
 
     @Valid
     @NotEmpty(message = "{Product.images.NotEmpty}")

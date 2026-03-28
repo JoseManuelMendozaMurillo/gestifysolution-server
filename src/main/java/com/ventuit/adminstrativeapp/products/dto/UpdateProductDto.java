@@ -4,9 +4,11 @@ import java.util.List;
 
 import com.ventuit.adminstrativeapp.products.models.ProductsModel;
 import com.ventuit.adminstrativeapp.products.repositories.ProductsCategoriesRepository;
+import com.ventuit.adminstrativeapp.branches.repositories.BranchesRepository;
 import com.ventuit.adminstrativeapp.products.validations.atmostoneportraitimage.AtMostOnePortraitImage;
 import com.ventuit.adminstrativeapp.shared.validations.exist.Exist;
 import com.ventuit.adminstrativeapp.shared.validations.unique.Unique;
+import com.ventuit.adminstrativeapp.shared.validations.uniqueelements.UniqueElements;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.DecimalMin;
@@ -40,6 +42,11 @@ public class UpdateProductDto {
     @Min(value = 1, message = "{Product.categoryId.Min}")
     @Exist(repository = ProductsCategoriesRepository.class, method = "existsByIdAndDeletedAtIsNull", message = "{Product.categoryId.Exist}", paramType = Integer.class)
     private Integer categoryId;
+
+    @Size(min = 1, message = "{Product.branchIds.NotEmpty}")
+    @UniqueElements(message = "{Product.branchIds.UniqueElements}")
+    @Exist(repository = BranchesRepository.class, method = "existsAllByIdIn", message = "{Product.branchIds.Exist}", paramType = List.class)
+    private List<Integer> branchIds;
 
     @Valid
     @AtMostOnePortraitImage(message = "{Product.images.AtMostOnePortraitImage}")

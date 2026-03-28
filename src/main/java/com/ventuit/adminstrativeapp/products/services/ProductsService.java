@@ -19,6 +19,8 @@ import com.ventuit.adminstrativeapp.products.dto.CreateProductImageDto;
 import com.ventuit.adminstrativeapp.products.dto.ListProductDto;
 import com.ventuit.adminstrativeapp.products.dto.UpdateProductDto;
 import com.ventuit.adminstrativeapp.products.mappers.ProductsMapper;
+import com.ventuit.adminstrativeapp.branches.models.BranchesProductsModel;
+import com.ventuit.adminstrativeapp.branches.repositories.BranchesRepository;
 import com.ventuit.adminstrativeapp.products.models.ProductsModel;
 import com.ventuit.adminstrativeapp.products.models.ProductsImagesModel;
 import com.ventuit.adminstrativeapp.products.repositories.ProductsImagesRepository;
@@ -50,6 +52,8 @@ public class ProductsService extends
     private MinioService minioService;
     @Autowired
     private ProductsImagesRepository productsImagesRepository;
+    @Autowired
+    private BranchesRepository branchesRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -109,6 +113,15 @@ public class ProductsService extends
                 product.getImages().add(productsImagesModel);
             }
 
+            // Associate branches
+            for (Integer branchId : createDto.getBranchIds()) {
+                BranchesProductsModel branchProduct = BranchesProductsModel.builder()
+                        .product(product)
+                        .branch(branchesRepository.findById(branchId).orElseThrow())
+                        .build();
+                product.getBranchesProducts().add(branchProduct);
+            }
+
             // Save the product
             ProductsModel productSaved = repository.save(product);
             entityManager.refresh(productSaved);
@@ -140,6 +153,13 @@ public class ProductsService extends
         // If no images are provided, just save the updated product without new images
         if (updateDto.getImages() == null || updateDto.getImages().isEmpty()) {
             updatedProduct = repository.saveAndFlush(updatedProduct);
+
+            // Update branch associations if provided
+            if (updateDto.getBranchIds() != null) {
+                updateBranchAssociations(updatedProduct, updateDto.getBranchIds());
+                updatedProduct = repository.saveAndFlush(updatedProduct);
+            }
+
             return mapper.toShowDto(updatedProduct);
         }
 
@@ -180,6 +200,12 @@ public class ProductsService extends
 
             // Update the product
             updatedProduct = this.repository.saveAndFlush(updatedProduct);
+
+            // Update branch associations if provided
+            if (updateDto.getBranchIds() != null) {
+                updateBranchAssociations(updatedProduct, updateDto.getBranchIds());
+                updatedProduct = repository.saveAndFlush(updatedProduct);
+            }
 
             return mapper.toShowDto(updatedProduct);
         } catch (IOException e) {
@@ -268,6 +294,20 @@ public class ProductsService extends
         for (FilesModel file : files) {
             String productImagePath = file.getFilesPaths().getPath() + "/" + file.getFileKey();
             minioService.deleteFile(productImagePath);
+        }
+    }
+
+    private void updateBranchAssociations(ProductsModel product, List<Integer> branchIds) {
+        // Clear existing associations
+        product.getBranchesProducts().clear();
+
+        // Add new associations
+        for (Integer branchId : branchIds) {
+            BranchesProductsModel branchProduct = BranchesProductsModel.builder()
+                    .product(product)
+                    .branch(branchesRepository.findById(branchId).orElseThrow())
+                    .build();
+            product.getBranchesProducts().add(branchProduct);
         }
     }
 }
