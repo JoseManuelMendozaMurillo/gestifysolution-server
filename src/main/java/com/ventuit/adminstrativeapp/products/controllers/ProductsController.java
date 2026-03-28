@@ -1,5 +1,7 @@
 package com.ventuit.adminstrativeapp.products.controllers;
 
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -13,14 +15,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ventuit.adminstrativeapp.products.dto.CreateProductDto;
-import com.ventuit.adminstrativeapp.products.dto.ListProductDto;
-import com.ventuit.adminstrativeapp.products.dto.UpdateProductDto;
-import com.ventuit.adminstrativeapp.products.dto.ProductsSearchCriteria;
-import com.ventuit.adminstrativeapp.products.services.ProductsService;
-import com.ventuit.adminstrativeapp.shared.enums.DeletionStatus;
 import com.ventuit.adminstrativeapp.core.controllers.implementations.CrudControllerImpl;
 import com.ventuit.adminstrativeapp.products.controllers.interfaces.ProductsControllerInterface;
+import com.ventuit.adminstrativeapp.products.dto.CreateProductDto;
+import com.ventuit.adminstrativeapp.products.dto.ListProductDto;
+import com.ventuit.adminstrativeapp.products.dto.ProductInterestDto;
+import com.ventuit.adminstrativeapp.products.dto.ProductsSearchCriteria;
+import com.ventuit.adminstrativeapp.products.dto.UpdateProductDto;
+import com.ventuit.adminstrativeapp.products.services.ProductsService;
+import com.ventuit.adminstrativeapp.shared.enums.DeletionStatus;
 
 @RestController
 @RequestMapping("products")
@@ -96,5 +99,13 @@ public class ProductsController
         criteria.setDeletionStatus(DeletionStatus.DELETED);
         Page<ListProductDto> data = this.service.searchProducts(criteria, pageable);
         return ResponseEntity.ok(data);
+    }
+
+    @Override
+    @GetMapping("/{productId}/interest")
+    public ResponseEntity<?> getProductInterest(@PathVariable Integer productId) {
+        Optional<ProductInterestDto> result = this.service.getProductInterest(productId);
+        return result.<ResponseEntity<?>>map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 }

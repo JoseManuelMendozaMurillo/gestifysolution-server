@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import com.ventuit.adminstrativeapp.products.dto.ProductInterestDto;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -288,6 +290,30 @@ public class ProductsService extends
     public Page<ListProductDto> searchProducts(ProductsSearchCriteria criteria, Pageable pageable) {
         return this.repository.findAll(ProductsSpecification.searchByCriteria(criteria), pageable)
                 .map(this.mapper::toShowDto);
+    }
+
+    @Override
+    public Optional<ProductInterestDto> getProductInterest(Integer productId) {
+        Optional<ProductsModel> optionalProduct = this.repository.findByIdAndDeletedAtIsNull(productId);
+
+        if (!optionalProduct.isPresent()) {
+            return Optional.empty();
+        }
+
+        ProductsModel product = optionalProduct.get();
+
+        List<Integer> branchIds = product.getBranchesProducts().stream()
+                .map(bp -> bp.getBranch().getId())
+                .collect(java.util.stream.Collectors.toList());
+
+        String message = String.format(
+                "Hola, estoy interesado en comprar el producto %s. ¿Me podrían dar más información sobre disponibilidad y precio? ¡Gracias!",
+                product.getName());
+
+        return Optional.of(ProductInterestDto.builder()
+                .message(message)
+                .branchIds(branchIds)
+                .build());
     }
 
     private void deleteUploadedFiles(List<FilesModel> files) {
