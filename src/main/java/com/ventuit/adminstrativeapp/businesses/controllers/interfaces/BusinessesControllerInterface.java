@@ -1,4 +1,4 @@
-package com.ventuit.adminstrativeapp.businesses.controllers;
+package com.ventuit.adminstrativeapp.businesses.controllers.interfaces;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,14 +12,18 @@ import com.ventuit.adminstrativeapp.businesses.dto.ListBusinessesDto;
 import com.ventuit.adminstrativeapp.businesses.dto.UpdateBusinessesDto;
 import com.ventuit.adminstrativeapp.core.controllers.interfaces.CrudControllerInterface;
 
-public interface BusinessesControllerInterface extends CrudControllerInterface<CreateBusinessesDto, UpdateBusinessesDto, ListBusinessesDto, Integer> {
+public interface BusinessesControllerInterface
+        extends CrudControllerInterface<CreateBusinessesDto, UpdateBusinessesDto, ListBusinessesDto, Integer> {
 
     @GetMapping("/search")
-    ResponseEntity<Page<ListBusinessesDto>> searchNotDeleted(@ModelAttribute BusinessesSearchCriteria criteria, Pageable pageable);
+    ResponseEntity<Page<ListBusinessesDto>> searchNotDeleted(@ModelAttribute BusinessesSearchCriteria criteria,
+            Pageable pageable);
 
     @GetMapping("/search/all")
-    ResponseEntity<Page<ListBusinessesDto>> searchAll(@ModelAttribute BusinessesSearchCriteria criteria, Pageable pageable);
+    ResponseEntity<Page<ListBusinessesDto>> searchAll(@ModelAttribute BusinessesSearchCriteria criteria,
+            Pageable pageable);
 
     @GetMapping("/search/deleted")
-    ResponseEntity<Page<ListBusinessesDto>> searchDeleted(@ModelAttribute BusinessesSearchCriteria criteria, Pageable pageable);
+    ResponseEntity<Page<ListBusinessesDto>> searchDeleted(@ModelAttribute BusinessesSearchCriteria criteria,
+            Pageable pageable);
 }

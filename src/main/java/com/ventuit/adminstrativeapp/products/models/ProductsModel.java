@@ -39,8 +39,9 @@ public class ProductsModel extends ExtendedBaseModel {
     @Column(nullable = false)
     private Double price;
 
-    @Column(nullable = false)
-    private boolean active;
+    @Builder.Default
+    @Column(nullable = false, columnDefinition = "boolean default true")
+    private boolean active = true;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "product_category_id", nullable = false)

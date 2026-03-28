@@ -16,13 +16,17 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ventuit.adminstrativeapp.products.dto.CreateProductDto;
 import com.ventuit.adminstrativeapp.products.dto.ListProductDto;
 import com.ventuit.adminstrativeapp.products.dto.UpdateProductDto;
+import com.ventuit.adminstrativeapp.products.dto.ProductsSearchCriteria;
 import com.ventuit.adminstrativeapp.products.services.ProductsService;
+import com.ventuit.adminstrativeapp.shared.enums.DeletionStatus;
 import com.ventuit.adminstrativeapp.core.controllers.implementations.CrudControllerImpl;
+import com.ventuit.adminstrativeapp.products.controllers.interfaces.ProductsControllerInterface;
 
 @RestController
 @RequestMapping("products")
 public class ProductsController
-        extends CrudControllerImpl<CreateProductDto, UpdateProductDto, ListProductDto, Integer, ProductsService> {
+        extends CrudControllerImpl<CreateProductDto, UpdateProductDto, ListProductDto, Integer, ProductsService>
+        implements ProductsControllerInterface {
 
     public ProductsController(ProductsService service) {
         super(service);
@@ -62,5 +66,35 @@ public class ProductsController
             @ModelAttribute UpdateProductDto updateDto) {
         ListProductDto entityUpdated = this.service.update(id, updateDto);
         return ResponseEntity.ok(entityUpdated);
+    }
+
+    @Override
+    @GetMapping("/search")
+    public ResponseEntity<Page<ListProductDto>> searchNotDeleted(
+            @ModelAttribute ProductsSearchCriteria criteria,
+            @PageableDefault(size = 10, page = 0) Pageable pageable) {
+        criteria.setDeletionStatus(DeletionStatus.NOT_DELETED);
+        Page<ListProductDto> data = this.service.searchProducts(criteria, pageable);
+        return ResponseEntity.ok(data);
+    }
+
+    @Override
+    @GetMapping("/search/all")
+    public ResponseEntity<Page<ListProductDto>> searchAll(
+            @ModelAttribute ProductsSearchCriteria criteria,
+            @PageableDefault(size = 10, page = 0) Pageable pageable) {
+        criteria.setDeletionStatus(DeletionStatus.ALL);
+        Page<ListProductDto> data = this.service.searchProducts(criteria, pageable);
+        return ResponseEntity.ok(data);
+    }
+
+    @Override
+    @GetMapping("/search/deleted")
+    public ResponseEntity<Page<ListProductDto>> searchDeleted(
+            @ModelAttribute ProductsSearchCriteria criteria,
+            @PageableDefault(size = 10, page = 0) Pageable pageable) {
+        criteria.setDeletionStatus(DeletionStatus.DELETED);
+        Page<ListProductDto> data = this.service.searchProducts(criteria, pageable);
+        return ResponseEntity.ok(data);
     }
 }

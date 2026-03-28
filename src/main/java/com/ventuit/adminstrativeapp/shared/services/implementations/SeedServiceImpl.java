@@ -297,6 +297,7 @@ public class SeedServiceImpl implements SeedServiceInterface {
                             .email(faker.internet().emailAddress())
                             .openingDate(randomLocalDate())
                             .direction(fakeDirection)
+                            .active(true)
                             .businessId(business.getId())
                             .build();
 

@@ -21,6 +21,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -54,8 +55,9 @@ public class BranchesModel extends ExtendedBaseModel {
     @PastOrPresentDate(message = "Opening date must be in the past or present")
     private LocalDate openingDate;
 
-    @Column(nullable = false, columnDefinition = "boolean default false")
-    private boolean active;
+    @Builder.Default
+    @Column(nullable = false, columnDefinition = "boolean default true")
+    private boolean active = true;
 
     @Column(nullable = true, insertable = false)
     private Integer activeChangedBy;

@@ -23,6 +23,10 @@ import com.ventuit.adminstrativeapp.products.models.ProductsModel;
 import com.ventuit.adminstrativeapp.products.models.ProductsImagesModel;
 import com.ventuit.adminstrativeapp.products.repositories.ProductsImagesRepository;
 import com.ventuit.adminstrativeapp.products.repositories.ProductsRepository;
+import com.ventuit.adminstrativeapp.products.services.interfaces.ProductsServiceInterface;
+import com.ventuit.adminstrativeapp.products.specifications.ProductsSpecification;
+import com.ventuit.adminstrativeapp.products.dto.ProductsSearchCriteria;
+import org.springframework.data.jpa.domain.Specification;
 import com.ventuit.adminstrativeapp.core.services.implementations.CrudServiceImpl;
 import com.ventuit.adminstrativeapp.shared.dto.FileUploadDto;
 import com.ventuit.adminstrativeapp.shared.models.FilesModel;
@@ -35,7 +39,8 @@ import jakarta.transaction.Transactional.TxType;
 
 @Service
 public class ProductsService extends
-        CrudServiceImpl<CreateProductDto, UpdateProductDto, ListProductDto, ProductsModel, Integer, ProductsMapper, ProductsRepository> {
+        CrudServiceImpl<CreateProductDto, UpdateProductDto, ListProductDto, ProductsModel, Integer, ProductsMapper, ProductsRepository>
+        implements ProductsServiceInterface {
 
     @Autowired
     private FilesServiceImpl filesService;
@@ -67,6 +72,11 @@ public class ProductsService extends
     public Page<ListProductDto> getAllInactive(
             Pageable pageable, Integer categoryId) {
         return this.repository.findAllInactive(categoryId, pageable).map(this.mapper::toShowDto);
+    }
+
+    public Page<ListProductDto> search(ProductsSearchCriteria criteria, Pageable pageable) {
+        Specification<ProductsModel> spec = ProductsSpecification.searchByCriteria(criteria);
+        return this.repository.findAll(spec, pageable).map(this.mapper::toShowDto);
     }
 
     @Override
@@ -246,6 +256,12 @@ public class ProductsService extends
         this.repository.delete(product);
 
         return !this.repository.findById(id).isPresent();
+    }
+
+    @Override
+    public Page<ListProductDto> searchProducts(ProductsSearchCriteria criteria, Pageable pageable) {
+        return this.repository.findAll(ProductsSpecification.searchByCriteria(criteria), pageable)
+                .map(this.mapper::toShowDto);
     }
 
     private void deleteUploadedFiles(List<FilesModel> files) {

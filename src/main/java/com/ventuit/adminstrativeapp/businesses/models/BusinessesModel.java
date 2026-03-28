@@ -25,6 +25,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -59,8 +60,9 @@ public class BusinessesModel extends ExtendedBaseModel {
     @PastOrPresentDate(message = "Establishment date must be in the past or present")
     private LocalDate establishmentDate;
 
-    @Column(nullable = false, columnDefinition = "boolean default false")
-    private boolean active;
+    @Builder.Default
+    @Column(nullable = false, columnDefinition = "boolean default true")
+    private boolean active = true;
 
     @Column(nullable = true, insertable = false)
     private Integer activeChangedBy;

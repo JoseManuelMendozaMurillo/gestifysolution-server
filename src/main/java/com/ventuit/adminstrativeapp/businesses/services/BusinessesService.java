@@ -33,6 +33,7 @@ import com.ventuit.adminstrativeapp.products.dto.ListProductDto;
 import com.ventuit.adminstrativeapp.businesses.dto.BusinessesSearchCriteria;
 import com.ventuit.adminstrativeapp.businesses.specifications.BusinessesSpecification;
 import org.springframework.data.jpa.domain.Specification;
+import com.ventuit.adminstrativeapp.businesses.services.interfaces.BusinessesServiceInterface;
 
 @Service
 public class BusinessesService
