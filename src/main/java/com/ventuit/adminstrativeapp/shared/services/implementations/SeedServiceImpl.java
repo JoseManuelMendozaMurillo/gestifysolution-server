@@ -34,7 +34,6 @@ import com.ventuit.adminstrativeapp.bosses.repositories.BossesRepository;
 import com.ventuit.adminstrativeapp.bosses.services.implementations.BossesServiceImpl;
 import com.ventuit.adminstrativeapp.branches.dto.CreateBranchesDto;
 import com.ventuit.adminstrativeapp.branches.models.BranchesModel;
-import com.ventuit.adminstrativeapp.branches.models.BranchesProductsModel;
 import com.ventuit.adminstrativeapp.branches.repositories.BranchesRepository;
 import com.ventuit.adminstrativeapp.branches.services.BranchesService;
 import com.ventuit.adminstrativeapp.businesses.dto.CreateBusinessesDto;
@@ -53,7 +52,6 @@ import com.ventuit.adminstrativeapp.products.dto.CreateProductDto;
 import com.ventuit.adminstrativeapp.products.dto.CreateProductImageDto;
 import com.ventuit.adminstrativeapp.products.dto.CreateProductsCategoryDto;
 import com.ventuit.adminstrativeapp.products.dto.ListProductDto;
-import com.ventuit.adminstrativeapp.products.models.ProductsModel;
 import com.ventuit.adminstrativeapp.products.repositories.ProductsRepository;
 import com.ventuit.adminstrativeapp.products.services.ProductsCategoriesService;
 import com.ventuit.adminstrativeapp.products.services.ProductsService;
@@ -363,7 +361,6 @@ public class SeedServiceImpl implements SeedServiceInterface {
         }
 
         for (BranchesModel branch : branches) {
-            Integer[] productIds = new Integer[numberOfProductsPerBranch];
 
             // Submit product creation tasks to the shared executor to parallelize product
             // creation
@@ -387,6 +384,7 @@ public class SeedServiceImpl implements SeedServiceInterface {
                                 .price(Double.parseDouble(threadFaker.commerce().price(10.0, 100.0)))
                                 .active(true)
                                 .categoryId(randomCategoryId)
+                                .branchIds(List.of(branch.getId()))
                                 .images(createProductImages(numberOfImagesPerProduct))
                                 .build();
 
@@ -401,10 +399,10 @@ public class SeedServiceImpl implements SeedServiceInterface {
                 }));
             }
 
-            // Wait for tasks to complete and collect product ids (propagate failures)
-            for (int i = 0; i < futures.size(); i++) {
+            // Wait for all tasks to complete and propagate any failures
+            for (Future<Integer> future : futures) {
                 try {
-                    productIds[i] = futures.get(i).get();
+                    future.get();
                 } catch (InterruptedException ie) {
                     Thread.currentThread().interrupt();
                     throw new RuntimeException("Seed interrupted while creating products", ie);
@@ -416,22 +414,6 @@ public class SeedServiceImpl implements SeedServiceInterface {
                     throw new RuntimeException("Stopping seed due to product creation failure.", ee.getCause());
                 }
             }
-
-            // Link products to branch
-            Set<BranchesProductsModel> branchesProducts = branch.getBranchesProducts();
-            for (Integer productId : productIds) {
-                ProductsModel product = productsRepository.findById(productId)
-                        .orElseThrow(() -> new RuntimeException("Product not found"));
-                BranchesProductsModel branchesProduct = BranchesProductsModel
-                        .builder()
-                        .branch(branch)
-                        .product(product)
-                        .build();
-
-                branchesProducts.add(branchesProduct);
-            }
-            branch.setBranchesProducts(branchesProducts);
-            branchesRepository.save(branch);
         }
         logger.info("✅ Successfully generated {} fake products for each branch.", numberOfProductsPerBranch);
     }
